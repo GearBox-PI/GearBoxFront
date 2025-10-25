@@ -34,6 +34,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
+      // Mock para login de admin e funcionario
+      if (email === 'admin@test.com' && password === 'admin123') {
+        const mockUserData: User = {
+          id: '1',
+          email: 'admin@test.com',
+          name: 'Admin Teste',
+          role: 'admin',
+        };
+        
+        const mockToken = 'mock-jwt-token-admin';
+        
+        setToken(mockToken);
+        setUser(mockUserData);
+        
+        localStorage.setItem('auth_token', mockToken);
+        localStorage.setItem('auth_user', JSON.stringify(mockUserData));
+        return;
+      }
+      
+      if (email === 'funcionario@test.com' && password === 'func123') {
+        const mockUserData: User = {
+          id: '2',
+          email: 'funcionario@test.com',
+          name: 'Funcionário Teste',
+          role: 'funcionario',
+        };
+        
+        const mockToken = 'mock-jwt-token-funcionario';
+        
+        setToken(mockToken);
+        setUser(mockUserData);
+        
+        localStorage.setItem('auth_token', mockToken);
+        localStorage.setItem('auth_user', JSON.stringify(mockUserData));
+        return;
+      }
+
       // TODO: Substituir pela URL do seu backend AdonisJS
       const response = await fetch('http://localhost:3333/api/auth/login', {
         method: 'POST',

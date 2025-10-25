@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 
 const navigationItems = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard, roles: ['admin', 'funcionario'] },
-  { name: "Ordens de Serviço", href: "/ordens", icon: Wrench, roles: ['admin'] },
-  { name: "Clientes", href: "/clientes", icon: Users, roles: ['admin'] },
-  { name: "Veículos", href: "/veiculos", icon: Car, roles: ['admin'] },
+  { name: "Ordens de Serviço", href: "/ordens", icon: Wrench, roles: ['admin', 'funcionario'] },
+  { name: "Clientes", href: "/clientes", icon: Users, roles: ['admin', 'funcionario'] },
+  { name: "Veículos", href: "/veiculos", icon: Car, roles: ['admin', 'funcionario'] },
   { name: "Usuários", href: "/usuarios", icon: UserCog, roles: ['admin'] },
 ];
 
