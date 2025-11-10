@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Wrench, Users, Car, UserCog, LogOut } from "lucide-react";
+import { LayoutDashboard, Wrench, Users, Car, UserCog, LogOut, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -18,8 +19,9 @@ const roleLabel: Record<'dono' | 'mecanico', string> = {
 };
 
 export default function Layout() {
-  const { user, logout, isOwner } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [collapsed, setCollapsed] = useState(false);
 
   const navigation = navigationItems.filter((item) =>
     item.roles.includes(user?.role ?? 'mecanico')
@@ -29,26 +31,38 @@ export default function Layout() {
     await logout();
     navigate('/login');
   };
+  const sidebarWidth = collapsed ? "w-20" : "w-64";
+  const contentPadding = collapsed ? "pl-20" : "pl-64";
+
   return (
     <div className="min-h-screen bg-background">
       {/* Sidebar */}
-      <aside className="fixed inset-y-0 left-0 z-50 w-64 bg-card border-r border-border shadow-md">
-        <div className="flex flex-col h-full">
+      <aside className={cn("fixed inset-y-0 left-0 z-50 bg-card border-r border-border shadow-md transition-all duration-300", sidebarWidth)}>
+        <div className="flex flex-col h-full relative">
           {/* Logo */}
-          <div className="h-16 flex items-center px-6 border-b border-border">
-            <div className="flex items-center gap-3">
+          <div className="h-16 flex items-center px-4 border-b border-border">
+            <div className={cn("flex items-center gap-3", collapsed && "justify-center w-full") }>
               <div className="w-10 h-10 rounded-lg bg-gradient-primary flex items-center justify-center">
                 <Wrench className="w-5 h-5 text-primary-foreground" />
               </div>
-              <div>
+              <div className={cn("transition-opacity", collapsed && "opacity-0 pointer-events-none") }>
                 <h1 className="text-lg font-bold text-foreground">AutoGest</h1>
                 <p className="text-xs text-muted-foreground">Mecânica Pro</p>
               </div>
             </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setCollapsed((prev) => !prev)}
+              className="absolute -right-3 top-4 h-7 w-7 rounded-full border border-border bg-card shadow-sm"
+              aria-label={collapsed ? "Expandir menu" : "Recolher menu"}
+            >
+              {collapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
+            </Button>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-4 py-6 space-y-1">
+          <nav className={cn("flex-1 py-6 space-y-1", collapsed ? "px-2" : "px-4") }>
             {navigation.map((item) => (
               <NavLink
                 key={item.name}
@@ -56,7 +70,8 @@ export default function Layout() {
                 end={item.href === "/"}
                 className={({ isActive }) =>
                   cn(
-                    "flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
+                    "flex items-center rounded-lg transition-all",
+                    collapsed ? "justify-center px-2 py-3" : "justify-start gap-3 px-4 py-3",
                     "text-sm font-medium",
                     isActive
                       ? "bg-primary text-primary-foreground shadow-sm"
@@ -65,41 +80,45 @@ export default function Layout() {
                 }
               >
                 <item.icon className="w-5 h-5" />
-                {item.name}
+                {!collapsed && (
+                  <span className="ml-3">{item.name}</span>
+                )}
               </NavLink>
             ))}
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-border space-y-3">
-            <div className="flex items-center gap-3 px-3 py-2">
+          <div className={cn("p-4 border-t border-border space-y-3", collapsed && "px-2") }>
+            <div className={cn("flex items-center gap-3 px-3 py-2", collapsed && "justify-center") }>
               <div className="w-8 h-8 rounded-full bg-gradient-accent flex items-center justify-center">
                 <span className="text-sm font-semibold text-accent-foreground">
                   {(user?.name?.charAt(0)?.toUpperCase() ?? '?')}
                 </span>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-foreground truncate">{user?.name}</p>
-                <p className="text-xs text-muted-foreground truncate">
-                  {user ? roleLabel[user.role] : 'Usuário'}
-                </p>
-              </div>
+              {!collapsed && (
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-foreground truncate">{user?.name}</p>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {user ? roleLabel[user.role] : 'Usuário'}
+                  </p>
+                </div>
+              )}
             </div>
             <Button 
               variant="outline" 
               size="sm" 
-              className="w-full justify-start gap-2"
+              className={cn("w-full gap-2", collapsed ? "justify-center" : "justify-start")}
               onClick={handleLogout}
             >
               <LogOut className="w-4 h-4" />
-              Sair
+              {!collapsed && 'Sair'}
             </Button>
           </div>
         </div>
       </aside>
 
       {/* Main Content */}
-      <div className="pl-64">
+      <div className={cn("transition-[padding] duration-300", contentPadding)}>
         <main className="min-h-screen">
           <Outlet />
         </main>

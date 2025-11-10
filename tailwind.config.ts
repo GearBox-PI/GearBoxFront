@@ -57,6 +57,14 @@ export default {
           DEFAULT: "hsl(var(--warning))",
           light: "hsl(var(--warning-light))",
         },
+        mechanic: {
+          steel: '#1f2937',
+          graphite: '#111827',
+          rust: '#c2410c',
+          bronze: '#b45309',
+          sky: '#1d4ed8',
+          asphalt: '#0f172a',
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",

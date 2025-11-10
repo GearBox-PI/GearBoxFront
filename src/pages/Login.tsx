@@ -47,9 +47,9 @@ export default function Login() {
               <Lock className="h-6 w-6 text-primary" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold">Sistema de Ordens</CardTitle>
+          <CardTitle className="text-2xl font-bold">Gear Box</CardTitle>
           <CardDescription>
-            Entre com suas credenciais para acessar o sistema
+            Faça login para gerenciar ordens, clientes e veículos
           </CardDescription>
         </CardHeader>
         <CardContent>

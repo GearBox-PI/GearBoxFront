@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import Dashboard from "./pages/Dashboard";
 import Ordens from "./pages/Ordens";
 import Clientes from "./pages/Clientes";
@@ -23,6 +24,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <ThemeToggle className="fixed top-4 right-4 z-50" />
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
