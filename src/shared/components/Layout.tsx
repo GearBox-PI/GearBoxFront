@@ -3,6 +3,7 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Wrench,
+  FileText,
   Users,
   Car,
   UserCog,
@@ -25,6 +26,12 @@ const navigationItems = [
     name: "Ordens de Serviço",
     href: "/ordens",
     icon: Wrench,
+    roles: ["dono", "mecanico"],
+  },
+  {
+    name: "Orçamentos",
+    href: "/orcamentos",
+    icon: FileText,
     roles: ["dono", "mecanico"],
   },
   {

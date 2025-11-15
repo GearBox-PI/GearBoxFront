@@ -65,3 +65,17 @@ export interface Service {
   createdAt?: string;
   updatedAt?: string;
 }
+
+export type BudgetStatus = 'aberto' | 'aceito' | 'recusado' | 'cancelado';
+
+export interface Budget {
+  id: string;
+  clientId: string;
+  carId: string;
+  userId: string;
+  description: string;
+  amount: string;
+  status: BudgetStatus;
+  createdAt?: string;
+  updatedAt?: string;
+}

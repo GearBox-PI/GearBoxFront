@@ -1,14 +1,15 @@
 import { useMemo, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { Plus, Search, Clock, CheckCircle2, AlertCircle, XCircle, Loader2 } from 'lucide-react';
+import { Plus, Clock, CheckCircle2, AlertCircle, XCircle, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { listServices, listClients, listCars } from '@/services/gearbox';
 import type { ServiceStatus } from '@/types/api';
+import { PageHeader } from '@/components/PageHeader';
+import { SearchInput } from '@/components/SearchInput';
 
 const statusConfig: Record<
   ServiceStatus,
@@ -92,31 +93,26 @@ export default function Ordens() {
 
   return (
     <div className="page-container bg-gradient-hero rounded-2xl border border-border shadow-lg p-6 md:p-8">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="heading-accent text-3xl font-bold text-foreground mb-2">Ordens de Serviço</h1>
-          <p className="text-muted-foreground">Resultados carregados da Gear Box API</p>
-        </div>
-        <Button className="gap-2 bg-gradient-accent hover:opacity-90" disabled>
-          <Plus className="w-4 h-4" />
-          Registro em breve
-        </Button>
-      </div>
+      <PageHeader
+        title="Ordens de Serviço"
+        subtitle="Resultados carregados da Gear Box API"
+        actions={
+          <Button className="gap-2 bg-gradient-accent hover:opacity-90" disabled>
+            <Plus className="w-4 h-4" />
+            Registro em breve
+          </Button>
+        }
+      />
 
       <div className="mb-6">
-        <div className="relative max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
-            type="text"
-            placeholder="Buscar por cliente, placa ou código da OS..."
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setPage(1);
-            }}
-            className="pl-10"
-          />
-        </div>
+        <SearchInput
+          placeholder="Buscar por cliente, placa ou código da OS..."
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setPage(1);
+          }}
+        />
       </div>
 
       {servicesQuery.isLoading ? (

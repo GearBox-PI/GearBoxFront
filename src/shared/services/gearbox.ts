@@ -5,6 +5,7 @@ import type {
   Client,
   Car,
   Service,
+  Budget,
   Role,
   ApiUser,
 } from '@/types/api';
@@ -52,6 +53,12 @@ export function listCars(token: string, params?: PaginationParams) {
 
 export function listServices(token: string, params?: PaginationParams) {
   return apiRequest<PaginatedResponse<Service>>(`/services${buildQueryString(params)}`, {
+    token,
+  });
+}
+
+export function listBudgets(token: string, params?: PaginationParams) {
+  return apiRequest<PaginatedResponse<Budget>>(`/budgets${buildQueryString(params)}`, {
     token,
   });
 }
