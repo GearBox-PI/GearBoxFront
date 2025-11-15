@@ -111,21 +111,42 @@ export default function DashboardOwner() {
         name: row.nome,
         budgets: row.budgetsTotal,
         services: row.servicesCompleted,
+        acceptRate: row.acceptRate,
+        cancelRate: row.cancelRate,
       })),
     [mechanicRows]
   )
 
   const statusData = useMemo(() => {
-    const summary = ['aberto', 'aceito', 'cancelado', 'recusado'].map((status) => ({
-      status,
-      value: budgets.filter((budget) => budget.status === status).length,
-    }))
-    return summary
+    const totals = {
+      aberto: 0,
+      aceito: 0,
+      cancelado: 0,
+      concluido: 0,
+    }
+
+    budgets.forEach((budget) => {
+      if (!budget.status) return
+      const normalized = budget.status
+        .toString()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+      if (normalized in totals) {
+        totals[normalized] += 1
+      }
+    })
+
+    const labels = {
+      aberto: 'Abertos',
+      aceito: 'Aceitos',
+      cancelado: 'Cancelados',
+      concluido: 'Concluídos',
+    }
+
+    return Object.entries(totals)
+      .map(([key, value]) => ({ label: labels[key], value }))
       .filter((item) => item.value > 0)
-      .map((item) => ({
-        label: item.status.charAt(0).toUpperCase() + item.status.slice(1),
-        value: item.value,
-      }))
   }, [budgets])
 
   const selectedMechanic = mechanics.find((mechanic) => mechanic.id === selectedMechanicId) ?? null
@@ -249,18 +270,21 @@ export default function DashboardOwner() {
   const hasError = usersQuery.isError || budgetsQuery.isError || servicesQuery.isError
 
   return (
-    <div className="page-container space-y-6 rounded-2xl border border-border bg-gradient-hero p-6 shadow-lg md:p-7">
-      <PageHeader
-        eyebrow="Painel Executivo"
-        title="Dashboard do Dono"
-        subtitle="Visão consolidada de budgets, serviços e performance dos mecânicos."
-        actions={<CreateUserModal onSubmit={handleCreateUser} />}
-        className="gap-3"
-      />
+    <div className="page-container bg-gradient-hero rounded-2xl border border-border shadow-lg p-6 md:p-8 space-y-8">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <PageHeader
+          eyebrow="Painel Executivo"
+          title="Dashboard do Dono"
+          subtitle="Visão consolidada de budgets, serviços e performance dos mecânicos."
+          align="start"
+          className="gap-2"
+        />
+        <CreateUserModal onSubmit={handleCreateUser} />
+      </div>
 
       {isLoading ? (
         <Card className="flex items-center justify-center bg-card/80 p-8">
-          <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
         </Card>
       ) : hasError ? (
         <EmptyState title="Erro ao carregar dados" description="Verifique sua conexão e tente novamente." />
@@ -268,10 +292,12 @@ export default function DashboardOwner() {
         <>
           <KpiCards metrics={metrics} />
 
-          <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 xl:grid-cols-3">
-            <MechanicsComparisonChart data={comparisonData} />
-            <BudgetStatusChart data={statusData} />
-            <MechanicDetailChart mechanic={selectedMechanic} data={detailData} />
+          <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+            <MechanicsComparisonChart data={comparisonData} loading={isLoading} />
+            <BudgetStatusChart data={statusData} loading={isLoading} />
+            <div className="xl:col-span-2">
+              <MechanicDetailChart mechanic={selectedMechanic} data={detailData} loading={isLoading} />
+            </div>
           </div>
 
           <MechanicsTable
@@ -285,7 +311,7 @@ export default function DashboardOwner() {
             search={userSearch}
             onSearchChange={setUserSearch}
             deletingId={deletingUserId}
-            renderEdit={(currentUser) => (
+            renderEdit={(currentUser) =>
               currentUser.tipo === 'dono' ? null : (
                 <CreateUserModal
                   mode="edit"
@@ -298,7 +324,7 @@ export default function DashboardOwner() {
                   renderTrigger={({ open }) => (
                     <Button
                       size="sm"
-                      className="bg-gradient-accent hover:opacity-90"
+                      className="bg-gradient-accent px-4 text-sm font-semibold text-white shadow-sm hover:opacity-90"
                       onClick={open}
                     >
                       Editar
@@ -306,7 +332,7 @@ export default function DashboardOwner() {
                   )}
                 />
               )
-            )}
+            }
             onDelete={handleDeleteUser}
             onDeactivateMechanic={(mechanic, payload) => handleDeleteUser(mechanic, payload)}
             onActivateMechanic={handleActivateMechanic}

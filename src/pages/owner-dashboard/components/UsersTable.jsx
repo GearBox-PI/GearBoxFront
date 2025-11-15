@@ -35,7 +35,7 @@ export function UsersTable({
   )
 
   return (
-    <Card className="border-border shadow-sm">
+    <Card className="border-border shadow-sm bg-card/80">
       <CardHeader className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <CardTitle className="text-lg">Usuários do sistema</CardTitle>
         <SearchInput
@@ -46,7 +46,7 @@ export function UsersTable({
         />
       </CardHeader>
       <CardContent className="overflow-x-auto">
-        <Table>
+        <Table className="min-w-[880px] text-sm">
           <TableHeader>
             <TableRow>
               <TableHead>Nome</TableHead>
@@ -59,34 +59,36 @@ export function UsersTable({
           <TableBody>
             {users.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground">
+                <TableCell colSpan={5} className="py-10 text-center text-muted-foreground">
                   Nenhum usuário encontrado.
                 </TableCell>
               </TableRow>
             ) : (
               users.map((user) => (
-                <TableRow key={user.id}>
-                  <TableCell className="font-medium">{user.nome}</TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell className="capitalize">{user.tipo}</TableCell>
-                  <TableCell>
+                <TableRow key={user.id} className="align-middle">
+                  <TableCell className="align-middle font-medium">{user.nome}</TableCell>
+                  <TableCell className="align-middle">{user.email}</TableCell>
+                  <TableCell className="align-middle capitalize">{user.tipo}</TableCell>
+                  <TableCell className="align-middle">
                     <Badge variant={user.ativo !== false ? 'secondary' : 'outline'}>
                       {user.ativo !== false ? 'Ativo' : 'Inativo'}
                     </Badge>
                   </TableCell>
-                  <TableCell className="flex justify-end gap-2">
-                    {renderEdit?.(user)}
-                    {user.tipo === 'mecanico' ? (
-                      <MechanicStatusButton
-                        user={user}
-                        deletingId={deletingId}
-                        mechanics={activeMechanics}
-                        onDeactivate={onDeactivateMechanic}
-                        onActivate={onActivateMechanic}
-                      />
-                    ) : (
-                      <DeleteUserButton user={user} deletingId={deletingId} onConfirm={onDelete} />
-                    )}
+                  <TableCell className="align-middle text-right">
+                    <div className="flex flex-wrap items-center justify-end gap-2">
+                      {renderEdit?.(user)}
+                      {user.tipo === 'mecanico' ? (
+                        <MechanicStatusButton
+                          user={user}
+                          deletingId={deletingId}
+                          mechanics={activeMechanics}
+                          onDeactivate={onDeactivateMechanic}
+                          onActivate={onActivateMechanic}
+                        />
+                      ) : (
+                        <DeleteUserButton user={user} deletingId={deletingId} onConfirm={onDelete} />
+                      )}
+                    </div>
                   </TableCell>
                 </TableRow>
               ))

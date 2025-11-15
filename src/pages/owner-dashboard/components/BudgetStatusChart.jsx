@@ -1,42 +1,68 @@
+import { useMemo } from 'react'
+import ReactECharts from 'echarts-for-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ResponsiveContainer, PieChart, Pie, Cell, Legend, Tooltip } from 'recharts'
 import { ChartPlaceholder } from './ChartPlaceholder'
 
-const COLORS = ['hsl(var(--warning))', 'hsl(var(--success))', 'hsl(var(--destructive))', '#94a3b8']
+const COLORS = ['#FFC107', '#38BDF8', '#F43F5E', '#F472B6']
+const TEXT_COLOR = '#f8fafc'
 
-export function BudgetStatusChart({ data = [] }) {
+export function BudgetStatusChart({ data = [], loading = false }) {
+  const filteredData = useMemo(() => data.filter((item) => item.value > 0), [data])
+
+  const chartOption = useMemo(
+    () => ({
+      backgroundColor: 'transparent',
+      color: COLORS,
+      tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
+      legend: {
+        orient: 'horizontal',
+        bottom: 8,
+        left: 'center',
+        textStyle: { color: TEXT_COLOR, fontSize: 12 },
+        itemWidth: 12,
+        itemHeight: 12,
+      },
+      series: [
+        {
+          name: 'Status dos Budgets',
+          type: 'pie',
+          radius: ['55%', '78%'],
+          center: ['50%', '46%'],
+          avoidLabelOverlap: true,
+          itemStyle: { borderRadius: 6, borderColor: 'rgba(15,15,15,0.2)', borderWidth: 2 },
+          label: {
+            show: true,
+            color: TEXT_COLOR,
+            formatter: '{b}\n{c} ({d}%)',
+            fontSize: 11,
+          },
+          labelLine: { length: 16, length2: 10 },
+          data: filteredData,
+        },
+      ],
+    }),
+    [filteredData]
+  )
+
   return (
     <Card className="border-border shadow-sm bg-card/80">
       <CardHeader className="space-y-1.5 pb-0">
-        <CardTitle className="text-base font-semibold">Status dos Budgets</CardTitle>
-        <p className="text-xs text-muted-foreground">Distribuição geral dos budgets ativos.</p>
+        <CardTitle className="text-lg">Status dos Budgets</CardTitle>
+        <p className="text-xs text-muted-foreground">Distribuição entre abertos, aceitos, cancelados e concluídos.</p>
       </CardHeader>
-      <CardContent className="h-[300px] pt-4">
-        {data.length === 0 ? (
-          <ChartPlaceholder
-            title="Nenhum status registrado"
-            description="Assim que surgirem budgets, o status consolidado aparecerá aqui."
-          />
-        ) : (
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                dataKey="value"
-                data={data}
-                nameKey="label"
-                innerRadius={70}
-                outerRadius={110}
-                paddingAngle={4}
-              >
-                {data.map((entry, index) => (
-                  <Cell key={entry.label} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Legend />
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        )}
+      <CardContent className="pt-4">
+        <div className="h-[630px]">
+          {loading ? (
+            <ChartPlaceholder loading title="Carregando dados..." />
+          ) : filteredData.length === 0 ? (
+            <ChartPlaceholder
+              title="Nenhum status registrado"
+              description="Assim que surgirem budgets, o status consolidado aparecerá aqui."
+            />
+          ) : (
+            <ReactECharts option={chartOption} notMerge lazyUpdate style={{ height: '100%' }} />
+          )}
+        </div>
       </CardContent>
     </Card>
   )
