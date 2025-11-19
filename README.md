@@ -56,3 +56,68 @@ O projeto foi construído com foco em uma experiência de usuário de alta quali
 - Cadastro completo com informações de contato.
 - Histórico de veículos e ordens por cliente.
 - Interface organizada com *badges* informativos.
+
+## ⚙️ Como rodar o front-end
+
+### 1. Pré-requisitos
+- Node.js 20+
+- bun ou npm (o projeto já traz `package-lock.json`, então usamos `npm` nos exemplos)
+
+### 2. Variáveis de ambiente
+Crie um arquivo `.env` na raiz e defina a URL da API AdonisJS:
+
+```bash
+VITE_API_BASE_URL=http://localhost:3333
+```
+
+> Ajuste o host/porta conforme onde o backend estiver rodando.
+
+### 3. Instalação e execução
+
+```bash
+npm install
+npm run dev
+```
+
+O Vite exibirá o link para acesso (por padrão `http://localhost:5173`).
+
+### 4. Scripts úteis
+
+| Comando | Descrição |
+| --- | --- |
+| `npm run dev` | Inicia o Vite em modo desenvolvimento |
+| `npm run build` | Gera o bundle de produção |
+| `npm run preview` | Faz o serve do bundle gerado |
+| `npm run lint` | Executa o ESLint |
+
+## 🔌 Integração com a Gear Box API
+
+O front consome a API AdonisJS (pasta `gear-box-api`) via client central (`src/services/gearbox.ts`). Para que as telas mostrem dados reais:
+
+1. Configure o banco do Adonis e rode as migrações.
+2. Execute os seeders (`node ace db:seed`). Existem dois seeders principais:
+   - `user_seeder` – cria o dono e os mecânicos padrão.
+   - `data_seeder` – popula clientes, veículos e ordens para alimentar Dashboard, Ordens, Clientes e Veículos.
+3. Inicie a API (`npm run dev` na pasta `gear-box-api`).
+4. Garanta que `VITE_API_BASE_URL` aponta para esta instância.
+
+### Credenciais padrão após as seeds
+
+| Papel | E-mail | Senha |
+| --- | --- | --- |
+| Dono | `dono@gearbox.com` | `senha123` |
+| Mecânico | `mec1@gearbox.com` | `senha123` |
+
+> Apenas usuários com papel **dono** acessam o cadastro de usuários e rotas administrativas.
+
+## 📂 Estrutura breve
+
+- `src/contexts/AuthContext.tsx` — autenticação com Adonis (login/logout e persistência do token).
+- `src/services/gearbox.ts` — todas as chamadas REST usadas pelo app.
+- `src/pages/*` — telas já integradas ao backend (Dashboard, Ordens, Clientes, Veículos, Usuários).
+- `src/components/VehicleFormDialog.tsx` — modal que combina FIPE + cadastro via API.
+
+## 🧪 Próximos passos sugeridos
+- Implementar os formulários de criação de clientes e ordens (botões hoje estão desabilitados até a API suportar todo o fluxo).
+- Adicionar tratamento de expiração de token (logout automático ao receber 401).
+- Expandir seeds/testes conforme novos cenários forem necessários para demonstrações.

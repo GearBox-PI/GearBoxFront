@@ -2,7 +2,7 @@ import type { Config } from "tailwindcss";
 
 export default {
   darkMode: ["class"],
-  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
+  content: ["./index.html", "./src/app/**/*.{ts,tsx}", "./src/features/**/*.{ts,tsx}", "./src/shared/**/*.{ts,tsx}"],
   prefix: "",
   theme: {
     container: {
@@ -56,6 +56,14 @@ export default {
         warning: {
           DEFAULT: "hsl(var(--warning))",
           light: "hsl(var(--warning-light))",
+        },
+        mechanic: {
+          steel: '#1f2937',
+          graphite: '#111827',
+          rust: '#c2410c',
+          bronze: '#b45309',
+          sky: '#1d4ed8',
+          asphalt: '#0f172a',
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
