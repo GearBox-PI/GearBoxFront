@@ -35,6 +35,8 @@ import {
 } from "@/shared/components/ui/dialog";
 
 type ExtendedService = Service & {
+  dataPrevista?: string | null;
+  prazoEstimadoDias?: number | null;
   expectedCompletion?: string | null;
   expectedDate?: string | null;
   forecastDate?: string | null;
@@ -93,6 +95,7 @@ const getDateIfValid = (value?: string | null) => {
 
 const getServiceForecastDate = (service: ExtendedService) => {
   const candidates: (keyof ExtendedService)[] = [
+    "dataPrevista",
     "expectedCompletion",
     "expectedDate",
     "forecastDate",

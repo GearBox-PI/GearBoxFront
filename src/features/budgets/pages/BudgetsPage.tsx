@@ -95,6 +95,56 @@ const BUDGET_STATUS_OPTIONS: (BudgetStatus | "todos")[] = [
   "cancelado",
 ];
 
+const BudgetDescription = ({ description }: { description: string }) => {
+  const { t } = useTranslation();
+  const [isOpen, setIsOpen] = useState(false);
+  const shouldTruncate = description && description.length > 150;
+
+  return (
+    <div>
+      <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
+        Descrição
+      </p>
+      <div className="bg-muted/30 p-3 rounded-md border border-border/50">
+        <p
+          className={cn(
+            "text-sm text-foreground whitespace-pre-wrap break-words",
+            shouldTruncate && "line-clamp-3"
+          )}
+        >
+          {description || t("common.empty.noData")}
+        </p>
+        {shouldTruncate && (
+          <>
+            <Button
+              variant="link"
+              className="h-auto p-0 text-xs mt-1 text-primary font-semibold"
+              onClick={() => setIsOpen(true)}
+            >
+              Ver mais
+            </Button>
+            <Dialog open={isOpen} onOpenChange={setIsOpen}>
+              <DialogContent className="sm:max-w-[600px]">
+                <DialogHeader>
+                  <DialogTitle>Descrição do Orçamento</DialogTitle>
+                </DialogHeader>
+                <div className="max-h-[60vh] overflow-y-auto pr-2">
+                  <p className="text-sm text-foreground whitespace-pre-wrap break-words">
+                    {description}
+                  </p>
+                </div>
+                <DialogFooter>
+                  <Button onClick={() => setIsOpen(false)}>Fechar</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+
 export default function BudgetsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
@@ -336,6 +386,7 @@ export default function BudgetsPage() {
     carId: string;
     description: string;
     amount: number;
+    prazoEstimadoDias?: number | null;
   }) => {
     await createBudgetMutation.mutateAsync(values);
   };
@@ -347,6 +398,7 @@ export default function BudgetsPage() {
       carId: string;
       description: string;
       amount: number;
+      prazoEstimadoDias?: number | null;
     }
   ) => {
     await editBudgetMutation.mutateAsync({ id, data: values });
@@ -493,6 +545,12 @@ export default function BudgetsPage() {
               !isOpenForApproval ||
               approving ||
               (isOwner && !hasActiveMechanics);
+            const estimatedDays =
+              budget.prazoEstimadoDias !== undefined &&
+              budget.prazoEstimadoDias !== null &&
+              Number.isFinite(budget.prazoEstimadoDias)
+                ? budget.prazoEstimadoDias
+                : null;
 
             return (
               <Card
@@ -502,124 +560,86 @@ export default function BudgetsPage() {
                 <CardContent className="space-y-5 p-6">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div>
-                      <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                        Orçamento
-                      </p>
                       <p className="text-lg font-semibold text-foreground">
-                        {budget.id}
+                        {clientName}
+                      </p>
+                      <div className="mt-1">
+                        <p className="text-sm font-medium text-foreground">
+                          {car
+                            ? `${car.marca} ${car.modelo}`
+                            : t("common.empty.noData")}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {car?.placa ?? "—"}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right flex flex-col items-end">
+                      <p className="text-2xl font-bold text-foreground">
+                        {formattedAmount}
                       </p>
                       <Badge
                         className={cn(
-                          "mt-2 px-3 py-1 text-xs font-semibold",
+                          "mt-1 w-fit px-3 py-1 text-xs font-semibold",
                           config.badgeClass
                         )}
                       >
                         {config.label}
                       </Badge>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {config.description}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs text-muted-foreground">
-                        {t("budgets.table.amount")}
-                      </p>
-                      <p className="text-2xl font-semibold text-foreground">
-                        {formattedAmount}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {createdAt}
-                      </p>
                     </div>
                   </div>
 
-                  <div className="grid gap-4 text-sm md:grid-cols-2">
+                  <div className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-4 border-y border-border/40 py-4">
                     <div>
-                      <p className="text-xs text-muted-foreground">
-                        {t("budgets.table.client")}
+                      <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                        Orçamento
                       </p>
-                      <p className="font-medium text-foreground">
-                        {clientName}
+                      <p
+                        className="font-medium text-foreground truncate"
+                        title={budget.id}
+                      >
+                        #{budget.id.slice(0, 8)}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground">
-                        {t("orders.table.actions")}
+                      <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                        {t("budgets.table.createdAt")}
+                      </p>
+                      <p className="font-medium text-foreground">{createdAt}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                        {t("budgets.fields.estimatedDays")}
+                      </p>
+                      <p className="font-medium text-foreground">
+                        {estimatedDays ?? "—"}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                        Responsável
                       </p>
                       <p className="font-medium text-foreground">
                         {responsibleName}
                       </p>
                     </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">
-                        {t("budgets.table.vehicle")}
-                      </p>
-                      <p className="font-medium text-foreground">
-                        {car
-                          ? `${car.marca} ${car.modelo}`
-                          : t("common.empty.noData")}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {car?.placa ?? "—"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">
-                        {t("budgets.table.createdAt")}
-                      </p>
-                      <p className="font-medium text-foreground">{createdAt}</p>
-                    </div>
                   </div>
 
-                  <div>
-                    <p className="text-xs text-muted-foreground">
-                      {t("orders.table.order")}
-                    </p>
-                    <p className="text-sm text-foreground">
-                      {budget.description ?? t("common.empty.noData")}
-                    </p>
-                  </div>
+                  <BudgetDescription description={budget.description} />
 
-                  <div className="grid gap-4 text-sm md:grid-cols-2">
-                    <div>
-                      <p className="text-xs text-muted-foreground">
-                        {t("orders.table.status")}
-                      </p>
-                      <p className="font-medium text-foreground">
-                        {lastUpdatedName}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">
-                        {t("budgets.table.createdAt")}
-                      </p>
-                      <p className="font-medium text-foreground">
-                        {budget.updatedAt
-                          ? dateFormat.format(new Date(budget.updatedAt))
-                          : "—"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col gap-2 border-t border-border/60 pt-4">
-                    <p className="text-xs text-muted-foreground">
-                      status:{" "}
-                      <span className="font-medium text-foreground">
-                        {config.label}
-                      </span>
-                    </p>
+                  <div className="flex flex-col gap-4 pt-2">
                     {isOwner && (
-                      <p className="text-xs text-muted-foreground">
-                        {t("common.roles.mechanic")}:{" "}
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <span>{t("common.roles.mechanic")}:</span>
                         <span className="font-medium text-foreground">
                           {assignedMechanicLabel}
                         </span>
-                      </p>
-                    )}
-                    {isOwner && !hasActiveMechanics && (
-                      <p className="text-xs text-destructive">
-                        {t("budgets.toasts.approveError")}
-                      </p>
+                        {!hasActiveMechanics && (
+                          <span className="text-destructive ml-2">
+                            ({t("budgets.toasts.approveError")})
+                          </span>
+                        )}
+                      </div>
                     )}
                     <div className="flex flex-wrap items-center gap-2">
                       {canEditBudget ? (
@@ -632,6 +652,8 @@ export default function BudgetsPage() {
                             carId: budget.carId,
                             description: budget.description,
                             amount: Number(budget.amount),
+                            prazoEstimadoDias:
+                              budget.prazoEstimadoDias ?? undefined,
                           }}
                           onSubmit={(values) =>
                             handleEditBudget(budget.id, values)

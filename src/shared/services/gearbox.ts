@@ -102,7 +102,7 @@ export function listServices(token: string, params?: PaginationParams) {
 export function updateService(
   token: string,
   id: string,
-  payload: Partial<{ status: ServiceStatus }>
+  payload: Partial<{ status: ServiceStatus; dataPrevista: string; prazoEstimadoDias: number }>
 ) {
   return apiRequest<Service>(`/services/${id}`, { method: 'PUT', body: payload, token });
 }
@@ -115,7 +115,14 @@ export function listBudgets(token: string, params?: PaginationParams) {
 
 export function createBudget(
   token: string,
-  payload: { clientId: string; carId: string; description: string; amount: number; status?: BudgetStatus }
+  payload: {
+    clientId: string
+    carId: string
+    description: string
+    amount: number
+    status?: BudgetStatus
+    prazoEstimadoDias?: number | null
+  }
 ) {
   return apiRequest<Budget>('/budgets', { method: 'POST', body: payload, token });
 }
@@ -123,7 +130,14 @@ export function createBudget(
 export function updateBudget(
   token: string,
   id: string,
-  payload: Partial<{ clientId: string; carId: string; description: string; amount: number; status: BudgetStatus }>
+  payload: Partial<{
+    clientId: string
+    carId: string
+    description: string
+    amount: number
+    status: BudgetStatus
+    prazoEstimadoDias: number | null
+  }>
 ) {
   return apiRequest<Budget>(`/budgets/${id}`, { method: 'PUT', body: payload, token });
 }

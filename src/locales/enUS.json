@@ -221,6 +221,30 @@
       "page": "Page",
       "prev": "Previous",
       "next": "Next"
+    },
+    "deadline": {
+      "estimatedDays": "Estimated days",
+      "forecast": "Due date",
+      "status": "Deadline status",
+      "noForecast": "No due date",
+      "late": "Overdue",
+      "dueToday": "Due today",
+      "onTrack": "On track",
+      "remaining": "Days remaining",
+      "remainingDays": "{{count}} day left",
+      "remainingDays_plural": "{{count}} days left",
+      "overdueDays": "{{count}} day overdue",
+      "overdueDays_plural": "{{count}} days overdue",
+      "extended": "Extended",
+      "extendedYes": "Yes",
+      "extendedNo": "No",
+      "extend": "Extend delivery",
+      "extendTitle": "Extend delivery",
+      "extendDays": "Add days",
+      "extendDate": "Set new date",
+      "extendHelper": "Add extra days or choose a new due date",
+      "extendAction": "Apply extension",
+      "extendError": "Provide a valid deadline"
     }
   },
   "budgets": {
@@ -232,6 +256,10 @@
       "all": "All",
       "dateFrom": "Created from",
       "dateTo": "Created to"
+    },
+    "fields": {
+      "estimatedDays": "Estimated time (days)",
+      "estimatedDaysHelper": "How many days to complete the service"
     },
     "status": {
       "aberto": "Open",

@@ -68,6 +68,8 @@ export interface Service {
   status: ServiceStatus;
   description?: string | null;
   totalValue: string;
+  prazoEstimadoDias?: number | null;
+  dataPrevista?: string | null;
   assignedToId?: string | null;
   createdById?: string | null;
   createdAt?: string;
@@ -98,6 +100,7 @@ export interface Budget {
   description: string;
   amount: string;
   status: BudgetStatus;
+  prazoEstimadoDias?: number | null;
   createdAt?: string;
   updatedAt?: string;
   user?: ApiUser | null;

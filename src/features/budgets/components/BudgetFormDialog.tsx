@@ -22,6 +22,7 @@ type BudgetFormValues = {
   carId: string;
   description: string;
   amount: string;
+  prazoEstimadoDias: string;
 };
 
 type BudgetFormDialogProps = {
@@ -31,7 +32,7 @@ type BudgetFormDialogProps = {
   cars: Car[];
   triggerLabel?: string;
   renderTrigger?: (props: { open: () => void; disabled: boolean }) => ReactNode;
-  onSubmit?: (values: { clientId: string; carId: string; description: string; amount: number }) => Promise<void>;
+  onSubmit?: (values: { clientId: string; carId: string; description: string; amount: number; prazoEstimadoDias?: number | null }) => Promise<void>;
 };
 
 const DEFAULT_VALUES: BudgetFormValues = {
@@ -39,6 +40,7 @@ const DEFAULT_VALUES: BudgetFormValues = {
   carId: '',
   description: '',
   amount: '',
+  prazoEstimadoDias: '',
 };
 
 export function BudgetFormDialog({
@@ -89,6 +91,7 @@ export function BudgetFormDialog({
         carId: form.carId,
         description: form.description.trim(),
         amount: Number(form.amount),
+        prazoEstimadoDias: form.prazoEstimadoDias ? Number(form.prazoEstimadoDias) : null,
       });
       toast({
         title: mode === 'edit' ? t('budgets.toasts.approveTitle') : t('budgets.title'),
@@ -204,6 +207,23 @@ export function BudgetFormDialog({
             />
           </div>
 
+          <div className="space-y-2">
+            <Label htmlFor="prazoEstimadoDias">{t('budgets.fields.estimatedDays')}</Label>
+            <Input
+              id="prazoEstimadoDias"
+              type="number"
+              min="0"
+              step="1"
+              inputMode="numeric"
+              placeholder="5"
+              value={form.prazoEstimadoDias}
+              onChange={(event) => setForm((current) => ({ ...current, prazoEstimadoDias: event.target.value }))}
+            />
+            <p className="text-xs text-muted-foreground">
+              {t('budgets.fields.estimatedDaysHelper')}
+            </p>
+          </div>
+
           <DialogFooter>
             <Button type="submit" disabled={isSaving || !isFormValid(form)}>
               {isSaving ? 'Salvando...' : mode === 'edit' ? 'Salvar alterações' : 'Registrar orçamento'}
@@ -224,6 +244,10 @@ function normalizeInitialValues(initialValues?: Partial<BudgetFormValues>): Budg
     amount: typeof initialValues.amount === 'number'
       ? String(initialValues.amount)
       : initialValues.amount ?? DEFAULT_VALUES.amount,
+    prazoEstimadoDias:
+      typeof (initialValues as any).prazoEstimadoDias === 'number'
+        ? String((initialValues as any).prazoEstimadoDias)
+        : (initialValues as any).prazoEstimadoDias ?? DEFAULT_VALUES.prazoEstimadoDias,
   };
 }
 

@@ -221,6 +221,30 @@
       "page": "Página",
       "prev": "Anterior",
       "next": "Próxima"
+    },
+    "deadline": {
+      "estimatedDays": "Prazo estimado (dias)",
+      "forecast": "Data prevista",
+      "status": "Situação do prazo",
+      "noForecast": "Sem previsão",
+      "late": "Atrasado",
+      "dueToday": "Vence hoje",
+      "onTrack": "No prazo",
+      "remaining": "Dias restantes",
+      "remainingDays": "{{count}} dia restante",
+      "remainingDays_plural": "{{count}} dias restantes",
+      "overdueDays": "{{count}} dia em atraso",
+      "overdueDays_plural": "{{count}} dias em atraso",
+      "extended": "Prorrogado",
+      "extendedYes": "Sim",
+      "extendedNo": "Não",
+      "extend": "Prorrogar entrega",
+      "extendTitle": "Prorrogar entrega",
+      "extendDays": "Adicionar dias",
+      "extendDate": "Definir nova data",
+      "extendHelper": "Informe dias adicionais ou escolha uma nova data prevista",
+      "extendAction": "Aplicar prorrogação",
+      "extendError": "Informe um prazo válido"
     }
   },
   "budgets": {
@@ -232,6 +256,10 @@
       "all": "Todos",
       "dateFrom": "Cadastro a partir",
       "dateTo": "Cadastro até"
+    },
+    "fields": {
+      "estimatedDays": "Prazo estimado (dias corridos)",
+      "estimatedDaysHelper": "Informe em quantos dias o serviço deve ficar pronto"
     },
     "status": {
       "aberto": "Aberto",
