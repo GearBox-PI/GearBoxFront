@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -7,7 +7,6 @@ import {
   Users,
   Shield,
   Car,
-  UserCog,
   LogOut,
   PanelLeftClose,
   PanelLeftOpen,
@@ -15,72 +14,85 @@ import {
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { Logo } from "@/components/Logo";
+import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
-const navigationItems = [
+const navigationItems = (t: (key: string) => string) => [
   {
-    name: "Dashboard",
+    name: t("navigation.dashboard"),
     href: "/",
     icon: LayoutDashboard,
     roles: ["dono", "mecanico"],
   },
   {
-    name: "Ordens de Serviço",
+    name: t("navigation.orders"),
     href: "/ordens",
     icon: Wrench,
     roles: ["dono", "mecanico"],
   },
   {
-    name: "Orçamentos",
+    name: t("navigation.budgets"),
     href: "/orcamentos",
     icon: FileText,
     roles: ["dono", "mecanico"],
   },
   {
-    name: "Clientes",
+    name: t("navigation.clients"),
     href: "/clientes",
     icon: Users,
     roles: ["dono", "mecanico"],
   },
   {
-    name: "Veículos",
+    name: t("navigation.vehicles"),
     href: "/veiculos",
     icon: Car,
     roles: ["dono", "mecanico"],
   },
   {
-    name: "Painel do Administrador",
+    name: t("navigation.ownerPanel"),
     href: "/owner-dashboard",
     icon: Shield,
     roles: ["dono"],
   },
 ];
 
-const roleLabel: Record<"dono" | "mecanico", string> = {
-  dono: "Administrador",
-  mecanico: "Mecânico",
-};
-
 export default function Layout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
+  const { t } = useTranslation();
   const SIDEBAR_WIDTH = {
     expanded: 260,
     collapsed: 80,
   };
 
-  const navigation = navigationItems.filter((item) =>
-    item.roles.includes(user?.role ?? "mecanico")
+  const navigation = useMemo(
+    () =>
+      navigationItems(t).filter((item) =>
+        item.roles.includes(user?.role ?? "mecanico")
+      ),
+    [t, user?.role]
   );
+
+  const roleLabel: Record<"dono" | "mecanico", string> = {
+    dono: t("common.roles.owner"),
+    mecanico: t("common.roles.mechanic"),
+  };
+
+  const ariaLabel = collapsed
+    ? t("common.actions.expandMenu", { defaultValue: "Expandir menu" })
+    : t("common.actions.collapseMenu", { defaultValue: "Recolher menu" });
 
   const handleLogout = async () => {
     await logout();
     navigate("/login");
   };
+
   const sidebarPixelWidth = collapsed
     ? SIDEBAR_WIDTH.collapsed
     : SIDEBAR_WIDTH.expanded;
   const contentOffset = sidebarPixelWidth + 24;
+  const appName = t("common.appName");
 
   return (
     <div
@@ -104,7 +116,7 @@ export default function Layout() {
                 )}
               />
               {!collapsed && (
-                <span className="sidebar-brand-title">Gear Box</span>
+                <span className="sidebar-brand-title">{appName}</span>
               )}
             </div>
           </div>
@@ -146,6 +158,14 @@ export default function Layout() {
         </div>
 
         <div className="sidebar-footer">
+          <div className="mb-3">
+            {!collapsed && (
+              <p className="text-xs text-muted-foreground mb-1.5 px-1">
+                {t("language.label")}
+              </p>
+            )}
+            <LanguageSwitcher collapsed={collapsed} />
+          </div>
           <div
             className={cn(
               "sidebar-user",
@@ -160,10 +180,10 @@ export default function Layout() {
             {!collapsed && (
               <div className="min-w-0">
                 <p className="sidebar-user-name truncate">
-                  {user?.name ?? "Usuário"}
+                  {user?.name ?? t("common.empty.noData")}
                 </p>
                 <p className="sidebar-user-role truncate">
-                  {user ? roleLabel[user.role] : "Usuário"}
+                  {user ? roleLabel[user.role] : t("common.roles.mechanic")}
                 </p>
               </div>
             )}
@@ -177,7 +197,7 @@ export default function Layout() {
             onClick={handleLogout}
           >
             <LogOut className="w-4 h-4 text-[var(--sidebar-logout-icon)]" />
-            {!collapsed && <span>Sair</span>}
+            {!collapsed && <span>{t("common.actions.logout")}</span>}
           </button>
         </div>
       </aside>
@@ -189,7 +209,7 @@ export default function Layout() {
           left: `${sidebarPixelWidth + 10}px`,
           top: "40px",
         }}
-        aria-label={collapsed ? "Expandir menu" : "Recolher menu"}
+        aria-label={ariaLabel}
         aria-pressed={!collapsed}
         onClick={() => setCollapsed((prev) => !prev)}
       >

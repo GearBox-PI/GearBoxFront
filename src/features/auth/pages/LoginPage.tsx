@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Logo } from '@/components/Logo';
+import { useTranslation } from 'react-i18next';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -15,6 +16,7 @@ export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,14 +25,14 @@ export default function Login() {
     try {
       await login(email, password);
       toast({
-        title: 'Login realizado com sucesso',
-        description: 'Bem-vindo de volta!',
+        title: t('login.successTitle'),
+        description: t('login.successDesc'),
       });
       navigate('/');
     } catch (error) {
       toast({
-        title: 'Erro ao fazer login',
-        description: error instanceof Error ? error.message : 'Verifique suas credenciais',
+        title: t('login.errorTitle'),
+        description: error instanceof Error ? error.message : t('login.errorDesc'),
         variant: 'destructive',
       });
     } finally {
@@ -45,19 +47,17 @@ export default function Login() {
           <div className="flex justify-center mb-8">
             <Logo size="xl" />
           </div>
-          <CardTitle className="text-2xl font-bold text-foreground">Bem-vindo ao Gear Box</CardTitle>
-          <CardDescription>
-            Faça login para gerenciar ordens, clientes e veículos
-          </CardDescription>
+          <CardTitle className="text-2xl font-bold text-foreground">{t('login.title')}</CardTitle>
+          <CardDescription>{t('login.subtitle')}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">E-mail</Label>
+              <Label htmlFor="email">{t('login.email')}</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="seu@email.com"
+                placeholder={t('login.placeholderEmail')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -65,11 +65,11 @@ export default function Login() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
+              <Label htmlFor="password">{t('login.password')}</Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="••••••••"
+                placeholder={t('login.placeholderPassword')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -77,7 +77,7 @@ export default function Login() {
               />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Entrando...' : 'Entrar'}
+              {loading ? t('login.buttonLoading') : t('login.button')}
             </Button>
           </form>
         </CardContent>

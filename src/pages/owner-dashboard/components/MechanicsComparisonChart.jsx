@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/table";
 import { ChartPlaceholder } from "./ChartPlaceholder";
 import { KpiCards } from "./KpiCards";
+import { useTranslation } from "react-i18next";
 
 const COLORS = {
   text: "#e2e8f0",
@@ -82,6 +83,10 @@ const normalizeToPercent = (value, max) => {
   return Math.min(100, Math.round(((value ?? 0) / max) * 100));
 };
 
+import { useTheme } from "next-themes";
+
+// ...
+
 export function MechanicsComparisonChart({
   data = [],
   loading = false,
@@ -92,6 +97,10 @@ export function MechanicsComparisonChart({
   selectedId,
   onSelect,
 }) {
+  const { t } = useTranslation();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+  const textColor = isDark ? COLORS.text : COLORS.textDark;
   const hasData = data.length > 0;
 
   const preparedSeries = useMemo(() => {
@@ -219,7 +228,7 @@ export function MechanicsComparisonChart({
         formatter: tooltipFormatter,
         borderWidth: 0,
         backgroundColor: "rgba(15,23,42,0.95)",
-        textStyle: { color: COLORS.text, fontFamily: "Inter, sans-serif" },
+        textStyle: { color: "#e2e8f0", fontFamily: "Inter, sans-serif" },
         extraCssText:
           "box-shadow: 0 12px 32px rgba(0,0,0,0.35); border-radius: 12px;",
       },
@@ -229,7 +238,7 @@ export function MechanicsComparisonChart({
         left: "center",
         icon: "circle",
         textStyle: {
-          color: COLORS.text,
+          color: textColor,
           fontSize: 14,
           fontFamily: "Inter, sans-serif",
         },
@@ -248,20 +257,24 @@ export function MechanicsComparisonChart({
         })),
         name: {
           textStyle: {
-            color: COLORS.text,
+            color: textColor,
             fontSize: 14,
             fontWeight: 600,
             fontFamily: "Inter, sans-serif",
           },
           gap: 10,
         },
-        axisLine: { lineStyle: { color: COLORS.axis } },
-        splitLine: { lineStyle: { color: COLORS.grid } },
+        axisLine: {
+          lineStyle: { color: isDark ? COLORS.axis : "rgba(148,163,184,0.6)" },
+        },
+        splitLine: {
+          lineStyle: { color: isDark ? COLORS.grid : "rgba(148,163,184,0.3)" },
+        },
         splitArea: { areaStyle: { color: ["transparent"] } },
       },
       series: seriesEntries,
     };
-  }, [preparedSeries]);
+  }, [preparedSeries, textColor, isDark]);
 
   const renderTable = () => {
     if (!hasData) return null;
@@ -283,7 +296,9 @@ export function MechanicsComparisonChart({
             {data.map((row) => (
               <TableRow
                 key={row.id ?? row.name}
-                className={selectedId && row.id === selectedId ? "bg-muted/30" : ""}
+                className={
+                  selectedId && row.id === selectedId ? "bg-muted/30" : ""
+                }
                 onClick={() => row.id && onSelect?.(row.id)}
               >
                 <TableCell className="font-medium">{row.name}</TableCell>
@@ -306,10 +321,12 @@ export function MechanicsComparisonChart({
       <CardHeader className="space-y-4 pb-2">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <CardTitle className="text-lg">Comparativo de Mecânicos</CardTitle>
+            <CardTitle className="text-lg">
+              {t("owner.charts.mechanicsComparison.title")}
+            </CardTitle>
             <p className="text-xs text-muted-foreground">
-              Budgets, serviços e conversão por profissional{" "}
-              {period?.label ? `(${period.label})` : ""}.
+              {t("owner.charts.mechanicsComparison.subtitle")}{" "}
+              {period?.label ? `(${period.label})` : ""}
             </p>
           </div>
           {period?.options && (
@@ -334,11 +351,11 @@ export function MechanicsComparisonChart({
       <CardContent className="space-y-6 pt-0">
         <div style={{ height: "520px", width: "100%" }}>
           {loading ? (
-            <ChartPlaceholder loading title="Carregando dados..." />
+            <ChartPlaceholder loading title={t("charts.placeholder.loading")} />
           ) : !hasData ? (
             <ChartPlaceholder
-              title="Ainda sem comparativos"
-              description="Cadastre mecânicos ativos e gere budgets para liberar o gráfico."
+              title={t("owner.charts.mechanicsComparison.noData")}
+              description={t("owner.charts.mechanicsComparison.noDataDesc")}
             />
           ) : (
             <ReactECharts

@@ -17,6 +17,7 @@ import { useQuery } from '@tanstack/react-query';
 import { listServices, listClients, listCars } from '@/services/gearbox';
 import { useMemo } from 'react';
 import type { ServiceStatus } from '@/types/api';
+import { useTranslation } from 'react-i18next';
 
 const statusConfig: Record<
   ServiceStatus,
@@ -52,6 +53,7 @@ const currencyFormat = new Intl.NumberFormat('pt-BR', { style: 'currency', curre
 
 export default function Dashboard() {
   const { token } = useAuth();
+  const { t } = useTranslation();
 
   const servicesQuery = useQuery({
     queryKey: ['services', token, 'dashboard'],
@@ -107,33 +109,33 @@ export default function Dashboard() {
 
   const stats = [
     {
-      title: 'Ordens registradas',
+      title: t('dashboardGeneral.stats.orders'),
       value: serviceStats?.meta.total?.toString() ?? '—',
-      change: `${openOrders} em andamento`,
+      change: t('dashboardGeneral.stats.ordersChange', { count: openOrders }),
       icon: Wrench,
       color: 'text-primary',
       bgColor: 'bg-primary/10',
     },
     {
-      title: 'Clientes',
+      title: t('dashboardGeneral.stats.clients'),
       value: clientsQuery.data?.meta.total?.toString() ?? '—',
-      change: 'Total cadastrados',
+      change: t('dashboardGeneral.stats.clientsChange'),
       icon: Users,
       color: 'text-accent',
       bgColor: 'bg-accent-light',
     },
     {
-      title: 'Veículos',
+      title: t('dashboardGeneral.stats.vehicles'),
       value: carsQuery.data?.meta.total?.toString() ?? '—',
-      change: 'Total cadastrados',
+      change: t('dashboardGeneral.stats.vehiclesChange'),
       icon: Car,
       color: 'text-success',
       bgColor: 'bg-success-light',
     },
     {
-      title: 'Receita estimada',
+      title: t('dashboardGeneral.stats.revenue'),
       value: currencyFormat.format(totalRevenue),
-      change: 'Somatório das ordens listadas',
+      change: t('dashboardGeneral.stats.revenueChange'),
       icon: TrendingUp,
       color: 'text-warning',
       bgColor: 'bg-warning-light',
@@ -146,14 +148,16 @@ export default function Dashboard() {
   return (
     <div className="page-container bg-gradient-hero rounded-2xl border border-border shadow-lg p-6 md:p-8">
       <div className="mb-8">
-        <h1 className="heading-accent text-3xl font-bold text-foreground mb-2">Dashboard</h1>
-        <p className="text-muted-foreground">Indicadores consolidados da Gear Box API</p>
+        <h1 className="heading-accent text-3xl font-bold text-foreground mb-2">
+          {t('dashboardGeneral.title')}
+        </h1>
+        <p className="text-muted-foreground">{t('dashboardGeneral.subtitle')}</p>
       </div>
 
       {loadingDashboard ? (
         <div className="flex items-center gap-3 text-muted-foreground mb-8">
           <Loader2 className="w-4 h-4 animate-spin" />
-          Atualizando indicadores...
+          {t('dashboardGeneral.loading')}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -180,19 +184,21 @@ export default function Dashboard() {
 
       <Card className="border-border shadow-md">
         <CardHeader>
-          <CardTitle className="heading-accent text-xl">Ordens de Serviço Recentes</CardTitle>
+          <CardTitle className="heading-accent text-xl">
+            {t('dashboardGeneral.recentOrdersTitle')}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {servicesQuery.isLoading ? (
             <div className="flex items-center gap-3 text-muted-foreground">
               <Loader2 className="w-4 h-4 animate-spin" />
-              Buscando ordens...
+              {t('dashboardGeneral.recentOrdersLoading')}
             </div>
           ) : servicesQuery.isError ? (
             <p className="text-destructive">
               {servicesQuery.error instanceof Error
                 ? servicesQuery.error.message
-                : 'Erro ao listar ordens'}
+                : t('dashboardGeneral.recentOrdersError')}
             </p>
           ) : (
             <div className="space-y-4">

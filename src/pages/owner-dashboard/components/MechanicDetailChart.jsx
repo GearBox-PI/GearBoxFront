@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import ReactECharts from "echarts-for-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartPlaceholder } from "./ChartPlaceholder";
+import { useTranslation } from "react-i18next";
 
 const COLORS = {
   text: "#f8fafc",
@@ -12,6 +13,7 @@ const COLORS = {
 };
 
 export function MechanicDetailChart({ mechanic, data = [], loading = false }) {
+  const { t } = useTranslation();
   const hasMechanic = Boolean(mechanic);
 
   const chartOption = useMemo(() => {
@@ -98,26 +100,26 @@ export function MechanicDetailChart({ mechanic, data = [], loading = false }) {
       <CardHeader className="space-y-1.5 pb-0">
         <CardTitle className="text-lg">
           {hasMechanic
-            ? `Evolução – ${mechanic.nome}`
-            : "Evolução por Mecânico"}
+            ? `${t("owner.charts.mechanicDetail.title")} – ${mechanic.nome}`
+            : t("owner.charts.mechanicDetail.title")}
         </CardTitle>
         <p className="text-xs text-muted-foreground">
-          Desempenho mensal de budgets e serviços.
+          {t("owner.header.subtitle")}
         </p>
       </CardHeader>
       <CardContent className="pt-4">
         <div style={{ height: "450px", width: "100%" }}>
           {loading ? (
-            <ChartPlaceholder loading title="Carregando dados..." />
+            <ChartPlaceholder loading title={t("charts.placeholder.loading")} />
           ) : !hasMechanic ? (
             <ChartPlaceholder
-              title="Selecione um mecânico para visualizar"
-              description="Escolha um profissional na tabela abaixo para carregar esta visão."
+              title={t("owner.charts.mechanicDetail.select")}
+              description={t("owner.charts.mechanicDetail.selectDesc")}
             />
           ) : data.length === 0 ? (
             <ChartPlaceholder
-              title="Sem histórico por aqui"
-              description="Quando este mecânico gerar budgets ou serviços, a evolução aparecerá."
+              title={t("owner.charts.mechanicDetail.empty")}
+              description={t("owner.charts.mechanicDetail.emptyDesc")}
             />
           ) : (
             <ReactECharts

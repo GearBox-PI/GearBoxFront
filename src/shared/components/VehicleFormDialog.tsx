@@ -32,6 +32,7 @@ import { Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import type { Client } from "@/types/api";
 import { createCar } from "@/services/gearbox";
+import { useTranslation } from "react-i18next";
 
 const vehicleSchema = z.object({
   clientId: z.string().uuid({ message: "Selecione um cliente" }),
@@ -59,6 +60,7 @@ export default function VehicleFormDialog({ open, onOpenChange, clients, onCreat
   const [modelCode, setModelCode] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const { token } = useAuth();
+  const { t } = useTranslation();
 
   const { brands, loading: brandsLoading } = useFipeBrands();
   const { models, loading: modelsLoading } = useFipeModels(brandCode);
@@ -77,7 +79,7 @@ export default function VehicleFormDialog({ open, onOpenChange, clients, onCreat
 
   async function onSubmit(values: VehicleFormValues) {
     if (!token) {
-      toast.error("Sessão expirada. Faça login novamente.");
+      toast.error(t("login.errorDesc"));
       return;
     }
     setSubmitting(true);
@@ -89,7 +91,7 @@ export default function VehicleFormDialog({ open, onOpenChange, clients, onCreat
       );
 
       if (!vehicleDetails) {
-        throw new Error("Não foi possível obter os dados da FIPE.");
+        throw new Error(t("vehicles.subtitle"));
       }
 
       const sanitizedPlate = values.plate.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
@@ -102,14 +104,14 @@ export default function VehicleFormDialog({ open, onOpenChange, clients, onCreat
         ano: Number(vehicleDetails.AnoModelo),
       });
 
-      toast.success("Veículo cadastrado com sucesso!");
+      toast.success(t("vehicles.title"));
       form.reset();
       setBrandCode(null);
       setModelCode(null);
       onCreated?.();
       onOpenChange(false);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Erro ao cadastrar veículo");
+      toast.error(error instanceof Error ? error.message : t("emptyState.error"));
     } finally {
       setSubmitting(false);
     }
@@ -119,9 +121,9 @@ export default function VehicleFormDialog({ open, onOpenChange, clients, onCreat
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Novo Veículo</DialogTitle>
+          <DialogTitle>{t("vehicles.title")}</DialogTitle>
           <DialogDescription>
-            Preencha os dados do veículo utilizando a tabela FIPE
+            {t("vehicles.subtitle")}
           </DialogDescription>
         </DialogHeader>
 
@@ -132,11 +134,11 @@ export default function VehicleFormDialog({ open, onOpenChange, clients, onCreat
               name="clientId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Cliente</FormLabel>
+                  <FormLabel>{t("clients.table.name")}</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value} disabled={!clients.length}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder={clients.length ? "Selecione o cliente" : "Sem clientes cadastrados"} />
+                        <SelectValue placeholder={clients.length ? t("clients.table.name") : t("common.empty.noData")} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -157,7 +159,7 @@ export default function VehicleFormDialog({ open, onOpenChange, clients, onCreat
               name="brandCode"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Marca</FormLabel>
+                  <FormLabel>{t("vehicles.table.brand")}</FormLabel>
                   <Select
                     onValueChange={(value) => {
                       field.onChange(value);
@@ -170,7 +172,7 @@ export default function VehicleFormDialog({ open, onOpenChange, clients, onCreat
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder={brandsLoading ? "Carregando..." : "Selecione a marca"} />
+                        <SelectValue placeholder={brandsLoading ? t("charts.placeholder.loading") : t("vehicles.table.brand")} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -191,7 +193,7 @@ export default function VehicleFormDialog({ open, onOpenChange, clients, onCreat
               name="modelCode"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Modelo</FormLabel>
+                  <FormLabel>{t("vehicles.table.model")}</FormLabel>
                   <Select
                     disabled={!brandCode || modelsLoading}
                     onValueChange={(value) => {
@@ -206,10 +208,10 @@ export default function VehicleFormDialog({ open, onOpenChange, clients, onCreat
                         <SelectValue 
                           placeholder={
                             !brandCode 
-                              ? "Selecione a marca primeiro" 
+                              ? t("vehicles.table.brand") 
                               : modelsLoading 
-                              ? "Carregando..." 
-                              : "Selecione o modelo"
+                              ? t("charts.placeholder.loading") 
+                              : t("vehicles.table.model")
                           } 
                         />
                       </SelectTrigger>
@@ -232,7 +234,7 @@ export default function VehicleFormDialog({ open, onOpenChange, clients, onCreat
               name="yearCode"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Ano</FormLabel>
+                  <FormLabel>{t("vehicles.table.year")}</FormLabel>
                   <Select
                     disabled={!modelCode || yearsLoading}
                     onValueChange={field.onChange}
@@ -243,10 +245,10 @@ export default function VehicleFormDialog({ open, onOpenChange, clients, onCreat
                         <SelectValue 
                           placeholder={
                             !modelCode 
-                              ? "Selecione o modelo primeiro" 
+                              ? t("vehicles.table.model") 
                               : yearsLoading 
-                              ? "Carregando..." 
-                              : "Selecione o ano"
+                              ? t("charts.placeholder.loading") 
+                              : t("vehicles.table.year")
                           } 
                         />
                       </SelectTrigger>
@@ -269,7 +271,7 @@ export default function VehicleFormDialog({ open, onOpenChange, clients, onCreat
               name="plate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Placa</FormLabel>
+                  <FormLabel>{t("vehicles.table.plate")}</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="ABC1234"

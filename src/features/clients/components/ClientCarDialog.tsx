@@ -31,6 +31,7 @@ import { useFipeBrands, useFipeModels, useFipeYears, getFipeVehicleDetails } fro
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { useTranslation } from 'react-i18next';
 
 const carSchema = z.object({
   brandCode: z.string().min(1, 'Selecione uma marca'),
@@ -58,6 +59,7 @@ export function ClientCarDialog({ clientId, clientName, renderTrigger, onSubmit 
   const [modelCode, setModelCode] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const { brands, loading: brandsLoading } = useFipeBrands();
   const { models, loading: modelsLoading } = useFipeModels(brandCode);
@@ -79,7 +81,7 @@ export function ClientCarDialog({ clientId, clientName, renderTrigger, onSubmit 
     try {
       const details = await getFipeVehicleDetails(values.brandCode, values.modelCode, values.yearCode);
       if (!details) {
-        throw new Error('Não foi possível obter os dados da FIPE.');
+        throw new Error(t('vehicles.subtitle'));
       }
       const sanitizedPlate = values.plate.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
       await onSubmit({
@@ -90,8 +92,8 @@ export function ClientCarDialog({ clientId, clientName, renderTrigger, onSubmit 
         ano: Number(details.AnoModelo),
       });
       toast({
-        title: 'Veículo cadastrado',
-        description: `${details.Marca} ${details.Modelo} vinculado a ${clientName}.`,
+        title: t('vehicles.title'),
+        description: `${details.Marca} ${details.Modelo} ${t('clients.table.name')}: ${clientName}.`,
       });
       form.reset();
       setBrandCode(null);
@@ -99,8 +101,8 @@ export function ClientCarDialog({ clientId, clientName, renderTrigger, onSubmit 
       setOpen(false);
     } catch (error: unknown) {
       toast({
-        title: 'Não foi possível cadastrar o veículo',
-        description: error instanceof Error ? error.message : 'Tente novamente.',
+        title: t('budgets.toasts.rejectError'),
+        description: error instanceof Error ? error.message : t('budgets.toasts.defaultError'),
         variant: 'destructive',
       });
     } finally {
@@ -113,7 +115,7 @@ export function ClientCarDialog({ clientId, clientName, renderTrigger, onSubmit 
   ) : (
     <DialogTrigger asChild>
       <Button variant="outline" size="sm" disabled={submitting}>
-        Adicionar carro
+        {t('common.actions.save')}
       </Button>
     </DialogTrigger>
   );
@@ -123,8 +125,8 @@ export function ClientCarDialog({ clientId, clientName, renderTrigger, onSubmit 
       {trigger}
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Adicionar veículo</DialogTitle>
-          <DialogDescription>Dados puxados da FIPE para {clientName}.</DialogDescription>
+          <DialogTitle>{t('vehicles.title')}</DialogTitle>
+          <DialogDescription>{t('vehicles.subtitle')}</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
@@ -137,7 +139,7 @@ export function ClientCarDialog({ clientId, clientName, renderTrigger, onSubmit 
               name="brandCode"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Marca</FormLabel>
+                  <FormLabel>{t('vehicles.table.brand')}</FormLabel>
                   <Select
                     onValueChange={(value) => {
                       field.onChange(value)
@@ -150,7 +152,7 @@ export function ClientCarDialog({ clientId, clientName, renderTrigger, onSubmit 
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder={brandsLoading ? 'Carregando marcas...' : 'Selecione a marca'} />
+                        <SelectValue placeholder={brandsLoading ? t('charts.placeholder.loading') : t('vehicles.table.brand')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -171,7 +173,7 @@ export function ClientCarDialog({ clientId, clientName, renderTrigger, onSubmit 
               name="modelCode"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Modelo</FormLabel>
+                  <FormLabel>{t('vehicles.table.model')}</FormLabel>
                   <Select
                     disabled={!brandCode || modelsLoading}
                     onValueChange={(value) => {
@@ -183,7 +185,7 @@ export function ClientCarDialog({ clientId, clientName, renderTrigger, onSubmit 
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder={!brandCode ? 'Escolha primeiro a marca' : modelsLoading ? 'Carregando modelos...' : 'Selecione o modelo'} />
+                        <SelectValue placeholder={!brandCode ? t('vehicles.table.brand') : modelsLoading ? t('charts.placeholder.loading') : t('vehicles.table.model')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -204,7 +206,7 @@ export function ClientCarDialog({ clientId, clientName, renderTrigger, onSubmit 
               name="yearCode"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Ano</FormLabel>
+                  <FormLabel>{t('vehicles.table.year')}</FormLabel>
                   <Select
                     disabled={!brandCode || !modelCode || yearsLoading}
                     onValueChange={field.onChange}
@@ -212,7 +214,7 @@ export function ClientCarDialog({ clientId, clientName, renderTrigger, onSubmit 
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder={!modelCode ? 'Selecione o modelo primeiro' : yearsLoading ? 'Carregando anos...' : 'Selecione o ano'} />
+                        <SelectValue placeholder={!modelCode ? t('vehicles.table.model') : yearsLoading ? t('charts.placeholder.loading') : t('vehicles.table.year')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -233,7 +235,7 @@ export function ClientCarDialog({ clientId, clientName, renderTrigger, onSubmit 
               name="plate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Placa</FormLabel>
+                  <FormLabel>{t('vehicles.table.plate')}</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="ABC1D23"
@@ -249,7 +251,7 @@ export function ClientCarDialog({ clientId, clientName, renderTrigger, onSubmit 
 
             <DialogFooter>
               <Button type="submit" disabled={submitting}>
-                {submitting ? 'Salvando...' : 'Adicionar veículo'}
+                {submitting ? t('charts.placeholder.loading') : t('vehicles.title')}
               </Button>
             </DialogFooter>
           </form>

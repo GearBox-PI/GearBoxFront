@@ -15,48 +15,57 @@ import VehiclesPage from "@/features/vehicles/pages/VehiclesPage";
 import LoginPage from "@/features/auth/pages/LoginPage";
 import NotFoundPage from "@/features/misc/pages/NotFoundPage";
 import DashboardOwner from "@/pages/owner-dashboard/DashboardOwner";
+import { useTranslation } from "react-i18next";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <AuthProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <ThemeToggle className="fixed top-4 right-4 z-50" />
-          <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route
-              path="/"
-              element={
-                <ProtectedRoute>
-                  <Layout />
-                </ProtectedRoute>
-              }
-            >
-              <Route index element={<DashboardPage />} />
-              <Route path="ordens" element={<OrdersPage />} />
-              <Route path="orcamentos" element={<BudgetsPage />} />
-              <Route path="clientes" element={<ClientsPage />} />
-              <Route path="veiculos" element={<VehiclesPage />} />
+const App = () => {
+  useTranslation();
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <AuthProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <ThemeToggle className="fixed top-4 right-4 z-50" />
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
               <Route
-                path="owner-dashboard"
+                path="/"
                 element={
-                  <ProtectedRoute requireOwner>
-                    <DashboardOwner />
+                  <ProtectedRoute>
+                    <Layout />
                   </ProtectedRoute>
                 }
-              />
-            </Route>
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </BrowserRouter>
-      </AuthProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+              >
+                <Route index element={<DashboardPage />} />
+                <Route path="ordens" element={<OrdersPage />} />
+                <Route path="servicos" element={<OrdersPage />} />
+                <Route path="serviços" element={<OrdersPage />} />
+                <Route path="orders" element={<OrdersPage />} />
+                <Route path="orcamentos" element={<BudgetsPage />} />
+                <Route path="orçamentos" element={<BudgetsPage />} />
+                <Route path="budgets" element={<BudgetsPage />} />
+                <Route path="clientes" element={<ClientsPage />} />
+                <Route path="veiculos" element={<VehiclesPage />} />
+                <Route
+                  path="owner-dashboard"
+                  element={
+                    <ProtectedRoute requireOwner>
+                      <DashboardOwner />
+                    </ProtectedRoute>
+                  }
+                />
+              </Route>
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </BrowserRouter>
+        </AuthProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

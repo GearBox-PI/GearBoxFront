@@ -23,36 +23,36 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useToast } from '@/components/ui/use-toast';
 import { Input } from '@/components/ui/input';
+import { useTranslation } from 'react-i18next';
 
-const statusConfig: Record<
-  ServiceStatus,
-  { label: string; icon: typeof Clock; className: string; iconClass: string }
-> = {
+const statusConfig = (
+  t: (key: string) => string
+): Record<ServiceStatus, { label: string; icon: typeof Clock; className: string; iconClass: string }> => ({
   Pendente: {
-    label: 'Pendente',
+    label: t('orders.status.pending'),
     icon: AlertCircle,
     className: 'bg-[hsl(var(--warning-light))] text-[hsl(var(--warning))] border-transparent',
     iconClass: 'text-[hsl(var(--warning))]',
   },
   'Em andamento': {
-    label: 'Em andamento',
+    label: t('orders.status.inProgress'),
     icon: Clock,
     className: 'bg-[rgba(245,163,0,0.15)] text-[hsl(var(--primary))] border-transparent',
     iconClass: 'text-[hsl(var(--primary))]',
   },
   Concluído: {
-    label: 'Concluído',
+    label: t('orders.status.done'),
     icon: CheckCircle2,
     className: 'bg-[hsl(var(--success-light))] text-[hsl(var(--success))] border-transparent',
     iconClass: 'text-[hsl(var(--success))]',
   },
   Cancelado: {
-    label: 'Cancelado',
+    label: t('orders.status.cancelled'),
     icon: XCircle,
     className: 'bg-[rgba(239,83,80,0.15)] text-[hsl(var(--destructive))] border-transparent',
     iconClass: 'text-[hsl(var(--destructive))]',
   },
-};
+});
 
 const SERVICE_STATUS_OPTIONS: ServiceStatus[] = ['Pendente', 'Em andamento', 'Concluído', 'Cancelado'];
 const SERVICE_STATUS_FILTER_OPTIONS: (ServiceStatus | 'todos')[] = ['todos', ...SERVICE_STATUS_OPTIONS];
@@ -77,6 +77,8 @@ export default function Ordens() {
   const [statusDialogPayload, setStatusDialogPayload] = useState<StatusDialogPayload | null>(null);
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useTranslation();
+  const statusLabels = statusConfig(t);
 
   const servicesQuery = useQuery({
     queryKey: ['services', token, page],
@@ -99,21 +101,21 @@ export default function Ordens() {
   const updateStatusMutation = useMutation({
     mutationFn: ({ id, status }: { id: string; status: ServiceStatus }) => {
       if (!token) {
-        throw new Error('Sessão expirada');
+        throw new Error(t('orders.toasts.updateErrorDesc'));
       }
       return updateService(token, id, { status });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['services'] });
       toast({
-        title: 'Status atualizado',
-        description: 'O status do serviço foi sincronizado com o banco.',
+        title: t('orders.toasts.statusUpdated'),
+        description: t('orders.toasts.statusSynced'),
       });
     },
     onError: (error: unknown) => {
       toast({
-        title: 'Falha ao atualizar status',
-        description: error instanceof Error ? error.message : 'Tente novamente.',
+        title: t('orders.toasts.updateError'),
+        description: error instanceof Error ? error.message : t('orders.toasts.updateErrorDesc'),
         variant: 'destructive',
       });
     },
@@ -198,19 +200,19 @@ export default function Ordens() {
   return (
     <div className="page-container bg-gradient-hero rounded-2xl border border-border shadow-lg p-6 md:p-8">
       <PageHeader
-        title="Ordens de Serviço"
-        subtitle="Resultados carregados da Gear Box API"
+        title={t('orders.title')}
+        subtitle={t('orders.subtitle')}
         actions={
           <Button className="gap-2 bg-gradient-accent hover:opacity-90" disabled>
             <Plus className="w-4 h-4" />
-            Registro em breve
+            {t('common.actions.viewDetails')}
           </Button>
         }
       />
 
       <div className="mb-6">
         <SearchInput
-          placeholder="Buscar por cliente, placa ou código da OS..."
+          placeholder={t('orders.search')}
           value={searchTerm}
           onChange={(e) => {
             setSearchTerm(e.target.value);
@@ -220,43 +222,43 @@ export default function Ordens() {
       </div>
       <div className="grid gap-3 md:grid-cols-4">
         <div className="space-y-1 text-xs">
-          <p className="text-muted-foreground uppercase tracking-wide">Status</p>
+          <p className="text-muted-foreground uppercase tracking-wide">{t('orders.filters.status')}</p>
           <Select
             value={statusFilter}
             onValueChange={(value: typeof statusFilter) => setStatusFilter(value)}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Todos" />
+              <SelectValue placeholder={t('orders.filters.all')} />
             </SelectTrigger>
             <SelectContent>
               {SERVICE_STATUS_FILTER_OPTIONS.map((status) => (
                 <SelectItem key={status} value={status}>
-                  {status === 'todos' ? 'Todos' : status}
+              {status === 'todos' ? t('orders.filters.all') : statusLabels[status].label}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
         <div className="space-y-1 text-xs">
-          <p className="text-muted-foreground uppercase tracking-wide">Cadastro a partir</p>
+          <p className="text-muted-foreground uppercase tracking-wide">{t('orders.filters.dateFrom')}</p>
           <Input type="date" value={createdFrom} onChange={(event) => setCreatedFrom(event.target.value)} />
         </div>
         <div className="space-y-1 text-xs">
-          <p className="text-muted-foreground uppercase tracking-wide">Cadastro até</p>
+          <p className="text-muted-foreground uppercase tracking-wide">{t('orders.filters.dateTo')}</p>
           <Input type="date" value={createdTo} onChange={(event) => setCreatedTo(event.target.value)} />
         </div>
       </div>
 
-      {servicesQuery.isLoading ? (
+        {servicesQuery.isLoading ? (
           <div className="flex items-center gap-3 text-muted-foreground">
             <Loader2 className="w-4 h-4 animate-spin" />
-            Carregando ordens...
+            {t('dashboardGeneral.recentOrdersLoading')}
           </div>
         ) : servicesQuery.isError ? (
           <p className="text-destructive">
             {servicesQuery.error instanceof Error
               ? servicesQuery.error.message
-              : 'Erro ao buscar ordens'}
+              : t('dashboardGeneral.recentOrdersError')}
           </p>
         ) : (
           <>
@@ -264,8 +266,8 @@ export default function Ordens() {
             {filteredServices.map((service) => {
                 const statusMutationId = updateStatusMutation.variables?.id;
                 const isUpdatingStatus = statusMutationId === service.id && updateStatusMutation.isPending;
-                const config = statusConfig[service.status];
-                const StatusIcon = config.icon;
+                const config = statusLabels[service.status];
+                const StatusIcon = config?.icon;
                 const clientName = clientMap.get(service.clientId) ?? 'Cliente não encontrado';
                 const car = carMap.get(service.carId);
                 const total = currencyFormat.format(Number(service.totalValue) || 0);
@@ -332,12 +334,12 @@ export default function Ordens() {
                               disabled={isUpdatingStatus || statusDialogOpen}
                             >
                               <SelectTrigger>
-                                <SelectValue placeholder="Selecione status" />
+                                <SelectValue placeholder={t('orders.filters.status')} />
                               </SelectTrigger>
                               <SelectContent>
                                 {SERVICE_STATUS_OPTIONS.map((status) => (
                                   <SelectItem key={status} value={status}>
-                                    {status}
+                                    {statusLabels[status].label}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -348,19 +350,17 @@ export default function Ordens() {
                         </div>
                       ) : (
                         <p className="text-xs text-muted-foreground">
-                          Somente o perfil administrador ou o responsável desta ordem pode alterar o status.
+                          {t('orders.dialogs.updateStatusDescription')}
                         </p>
                       )}
                     </div>
                     <div className="space-y-2">
-                      <p className="text-xs text-muted-foreground">Responsável pela criação</p>
+                      <p className="text-xs text-muted-foreground">{t('orders.table.actions')}</p>
                       <p className="text-sm text-foreground">
                         {service.user?.nome ?? '—'}
                       </p>
-                      <p className="text-xs text-muted-foreground">Última atualização feita por</p>
-                      <p className="text-sm text-foreground">
-                        {service.updatedBy?.nome ?? '—'}
-                      </p>
+                      <p className="text-xs text-muted-foreground">{t('orders.table.status')}</p>
+                      <p className="text-sm text-foreground">{service.updatedBy?.nome ?? '—'}</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -371,7 +371,7 @@ export default function Ordens() {
             {servicesQuery.data?.meta && (
               <div className="flex items-center justify-between mt-6">
                 <p className="text-sm text-muted-foreground">
-                  Página {servicesQuery.data.meta.currentPage} de {servicesQuery.data.meta.lastPage}
+                  {t('orders.pagination.page', { defaultValue: 'Página' })} {servicesQuery.data.meta.currentPage} / {servicesQuery.data.meta.lastPage}
                 </p>
                 <div className="flex gap-2">
                   <Button
@@ -380,7 +380,7 @@ export default function Ordens() {
                     disabled={page === 1 || servicesQuery.isFetching}
                     onClick={() => setPage((prev) => Math.max(1, prev - 1))}
                   >
-                    Anterior
+                    {t('orders.pagination.prev', { defaultValue: 'Anterior' })}
                   </Button>
                   <Button
                     variant="outline"
@@ -390,7 +390,7 @@ export default function Ordens() {
                     }
                     onClick={() => setPage((prev) => prev + 1)}
                   >
-                    Próxima
+                    {t('orders.pagination.next', { defaultValue: 'Próxima' })}
                   </Button>
                 </div>
               </div>
@@ -407,27 +407,26 @@ export default function Ordens() {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirmar alteração de status</AlertDialogTitle>
+            <AlertDialogTitle>{t('orders.dialogs.updateStatusTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
               {statusDialogPayload ? (
                 <>
-                  A ordem <span className="font-semibold">{statusDialogPayload.serviceId}</span> do cliente{' '}
-                  <span className="font-semibold">{statusDialogPayload.clientName}</span> será atualizada de{' '}
-                  <span className="font-semibold">{statusDialogPayload.currentStatus}</span> para{' '}
-                  <span className="font-semibold">{statusDialogPayload.nextStatus}</span>. Deseja continuar?
+                  {t('orders.dialogs.updateStatusDescription')}{' '}
+                  <span className="font-semibold">{statusDialogPayload.serviceId}</span> →{' '}
+                  <span className="font-semibold">{statusDialogPayload.nextStatus}</span>
                 </>
               ) : (
-                'Deseja alterar o status desta ordem de serviço?'
+                t('orders.dialogs.updateStatusDescription')
               )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.actions.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmStatusChange}
               className="bg-emerald-500 hover:bg-emerald-500/90"
             >
-              Confirmar alteração
+              {t('common.actions.confirm')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

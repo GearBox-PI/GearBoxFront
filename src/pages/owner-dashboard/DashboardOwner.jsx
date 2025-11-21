@@ -13,6 +13,7 @@ import { Loader2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { KpiCards } from "./components/KpiCards";
 import { MechanicsComparisonChart } from "./components/MechanicsComparisonChart";
 import { BudgetStatusChart } from "./components/BudgetStatusChart";
@@ -40,6 +41,7 @@ export default function DashboardOwner() {
   const [deletingUserId, setDeletingUserId] = useState(null);
   const { toast } = useToast();
   const isOwner = user?.role === "dono";
+  const { t } = useTranslation();
 
   const usersQuery = useQuery({
     queryKey: ["users", token],
@@ -105,12 +107,12 @@ export default function DashboardOwner() {
       (service) => service.status === "Concluído"
     ).length;
     return [
-      { label: "Total de Mecânicos", value: mechanics.length },
-      { label: "Budgets Gerados", value: totalBudgets },
-      { label: "% Médio de Aceites", value: `${acceptanceRate}%` },
-      { label: "Serviços Concluídos", value: concludedServices },
+      { label: t("owner.kpis.mechanics"), value: mechanics.length },
+      { label: t("owner.kpis.budgets"), value: totalBudgets },
+      { label: t("owner.kpis.acceptance"), value: `${acceptanceRate}%` },
+      { label: t("owner.kpis.services"), value: concludedServices },
     ];
-  }, [mechanics, budgetsInPeriod, servicesInPeriod]);
+  }, [mechanics, budgetsInPeriod, servicesInPeriod, t]);
 
   const mechanicRows = useMemo(() => {
     const servicesByMechanic = servicesInPeriod.reduce((acc, service) => {
@@ -258,34 +260,34 @@ export default function DashboardOwner() {
       (service) => service.status === "Concluído"
     ).length;
     const bestConversionLabel = bestMechanic
-      ? `${bestMechanic.nome ?? bestMechanic.name} (${
-          bestMechanic.acceptRate
-        }% de aceitação)`
+      ? `${bestMechanic.nome ?? bestMechanic.name} (${bestMechanic.acceptRate}% ${t(
+          "owner.kpis.generalAcceptance"
+        )})`
       : "—";
     const averageTicket = calculateTicketAverage(budgetsInPeriod);
 
     return [
-      { label: "Budgets no período", value: totalBudgets },
-      { label: "Taxa geral de aceitação", value: `${acceptanceRate}%` },
-      { label: "Serviços concluídos", value: totalServices },
-      { label: "Melhor conversão", value: bestConversionLabel },
+      { label: t("owner.kpis.periodBudgets"), value: totalBudgets },
+      { label: t("owner.kpis.generalAcceptance"), value: `${acceptanceRate}%` },
+      { label: t("owner.kpis.services"), value: totalServices },
+      { label: t("owner.kpis.bestConversion"), value: bestConversionLabel },
       ...(averageTicket
         ? [
             {
-              label: "Ticket médio geral",
+              label: t("owner.kpis.averageTicket"),
               value: formatCurrency(averageTicket),
             },
           ]
         : []),
     ];
-  }, [bestMechanic, budgetsInPeriod, servicesInPeriod]);
+  }, [bestMechanic, budgetsInPeriod, servicesInPeriod, t]);
 
   const statusData = useMemo(() => {
     const descriptors = [
-      { key: "aberto", label: "Open" },
-      { key: "aceito", label: "Accepted" },
-      { key: "cancelado", label: "Cancelled" },
-      { key: "concluido", label: "Completed" },
+      { key: "aberto", label: t("common.status.open") },
+      { key: "aceito", label: t("common.status.accepted") },
+      { key: "cancelado", label: t("common.status.cancelled") },
+      { key: "concluido", label: t("common.status.completed") },
     ];
 
     const buildTotals = (items) =>
@@ -330,7 +332,7 @@ export default function DashboardOwner() {
         change,
       };
     });
-  }, [budgetsInPeriod, budgetsPreviousPeriod]);
+  }, [budgetsInPeriod, budgetsPreviousPeriod, t]);
 
   const statusKpis = useMemo(() => {
     const totals = statusData.reduce(
@@ -352,12 +354,12 @@ export default function DashboardOwner() {
       : "0";
 
     return [
-      { label: "Budgets no período", value: totalBudgets },
-      { label: "Taxa de aceitação", value: `${acceptanceRate}%` },
-      { label: "Taxa de cancelamento", value: `${cancellationRate}%` },
-      { label: "Orçamentos concluídos", value: totals.completed },
+      { label: t("owner.kpis.periodBudgets"), value: totalBudgets },
+      { label: t("owner.kpis.generalAcceptance"), value: `${acceptanceRate}%` },
+      { label: t("owner.kpis.generalCancellation"), value: `${cancellationRate}%` },
+      { label: t("owner.kpis.completedBudgets"), value: totals.completed },
     ];
-  }, [budgetsInPeriod.length, statusData]);
+  }, [budgetsInPeriod.length, statusData, t]);
 
   const selectedMechanic =
     mechanics.find((mechanic) => mechanic.id === selectedMechanicId) ?? null;
@@ -487,8 +489,8 @@ export default function DashboardOwner() {
     return (
       <div className="page-container bg-gradient-hero rounded-2xl border border-border shadow-lg p-8">
         <EmptyState
-          title="Acesso restrito"
-          description="Somente o perfil administrador pode visualizar este painel."
+          title={t("common.actions.viewDetails", { defaultValue: "Acesso restrito" })}
+          description={t("owner.header.subtitle")}
         />
       </div>
     );
@@ -500,15 +502,15 @@ export default function DashboardOwner() {
     usersQuery.isError || budgetsQuery.isError || servicesQuery.isError;
 
   return (
-    <div className="page-container bg-gradient-hero rounded-2xl border border-border shadow-lg p-6 md:p-8 space-y-8">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <PageHeader
-          eyebrow="Painel Executivo"
-          title="Dashboard do Administrador"
-          subtitle="Visão consolidada de budgets, serviços e performance dos mecânicos."
-          align="start"
-          className="gap-2"
-        />
+      <div className="page-container bg-gradient-hero rounded-2xl border border-border shadow-lg p-6 md:p-8 space-y-8">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <PageHeader
+            eyebrow={t("owner.header.eyebrow")}
+            title={t("owner.header.title")}
+            subtitle={t("owner.header.subtitle")}
+            align="start"
+            className="gap-2"
+          />
         <CreateUserModal onSubmit={handleCreateUser} />
       </div>
 

@@ -12,6 +12,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
+import { useTranslation } from 'react-i18next';
 
 type ClientFormValues = {
   nome: string;
@@ -44,6 +45,7 @@ export function ClientFormDialog({
   const [isSaving, setIsSaving] = useState(false);
   const [form, setForm] = useState<ClientFormValues>(() => normalizeInitialValues(initialValues));
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   useEffect(() => {
     setForm(normalizeInitialValues(initialValues));
@@ -60,17 +62,14 @@ export function ClientFormDialog({
         email: form.email.trim() ? form.email.trim() : undefined,
       });
       toast({
-        title: mode === 'edit' ? 'Cliente atualizado' : 'Cliente registrado',
-        description:
-          mode === 'edit'
-            ? 'As informações foram atualizadas com sucesso.'
-            : 'Novo cliente cadastrado e disponível na lista.',
+        title: mode === 'edit' ? t('common.actions.edit') : t('clients.title'),
+        description: t('clients.subtitle'),
       });
       setOpen(false);
     } catch (error: unknown) {
       toast({
-        title: 'Não foi possível salvar o cliente',
-        description: error instanceof Error ? error.message : 'Tente novamente em instantes.',
+        title: t('orders.toasts.updateError'),
+        description: error instanceof Error ? error.message : t('budgets.toasts.defaultError'),
         variant: 'destructive',
       });
     } finally {
@@ -83,7 +82,7 @@ export function ClientFormDialog({
   ) : (
     <DialogTrigger asChild>
       <Button className="bg-gradient-accent hover:opacity-90" disabled={isSaving}>
-        {triggerLabel}
+        {t('common.actions.save')}
       </Button>
     </DialogTrigger>
   );
@@ -101,42 +100,42 @@ export function ClientFormDialog({
       {dialogTrigger}
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>{mode === 'edit' ? 'Editar cliente' : 'Novo cliente'}</DialogTitle>
+          <DialogTitle>{mode === 'edit' ? t('common.actions.edit') : t('clients.title')}</DialogTitle>
         </DialogHeader>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-2">
-            <Label htmlFor="client-name">Nome completo</Label>
+            <Label htmlFor="client-name">{t('clients.table.name')}</Label>
             <Input
               id="client-name"
               value={form.nome}
               onChange={(event) => setForm((state) => ({ ...state, nome: event.target.value }))}
-              placeholder="Ex: João da Silva"
+              placeholder={t('clients.table.name')}
               required
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="client-phone">Telefone</Label>
+            <Label htmlFor="client-phone">{t('clients.table.phone')}</Label>
             <Input
               id="client-phone"
               value={form.telefone}
               onChange={(event) => setForm((state) => ({ ...state, telefone: event.target.value }))}
-              placeholder="(11) 99999-9999"
+              placeholder="(00) 00000-0000"
               required
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="client-email">E-mail (opcional)</Label>
+            <Label htmlFor="client-email">{t('clients.table.email')}</Label>
             <Input
               id="client-email"
               type="email"
               value={form.email}
               onChange={(event) => setForm((state) => ({ ...state, email: event.target.value }))}
-              placeholder="cliente@email.com"
+              placeholder="email@cliente.com"
             />
           </div>
           <DialogFooter>
             <Button type="submit" disabled={isSaving || !form.nome.trim() || !form.telefone.trim()}>
-              {isSaving ? 'Salvando...' : mode === 'edit' ? 'Salvar alterações' : 'Registrar cliente'}
+              {isSaving ? t('charts.placeholder.loading') : mode === 'edit' ? t('common.actions.save') : t('common.actions.save')}
             </Button>
           </DialogFooter>
         </form>

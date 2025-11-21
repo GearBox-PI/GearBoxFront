@@ -1,0 +1,312 @@
+{
+  "common": {
+    "appName": "Gear Box",
+    "language": {
+      "ptBR": "Portuguese (Brazil)",
+      "enUS": "English (US)"
+    },
+    "actions": {
+      "login": "Sign in",
+      "loggingIn": "Signing in...",
+      "logout": "Sign out",
+      "save": "Save",
+      "cancel": "Cancel",
+      "edit": "Edit",
+      "delete": "Delete",
+      "confirm": "Confirm",
+      "close": "Close",
+      "viewDetails": "View details",
+      "expandMenu": "Expand menu",
+      "collapseMenu": "Collapse menu"
+    },
+    "status": {
+      "open": "Open",
+      "accepted": "Accepted",
+      "cancelled": "Cancelled",
+      "completed": "Completed"
+    },
+    "roles": {
+      "owner": "Administrator",
+      "mechanic": "Mechanic"
+    },
+    "empty": {
+      "noData": "No data available",
+      "loading": "Loading..."
+    },
+    "totalLabel": "Total"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "orders": "Work Orders",
+    "budgets": "Budgets",
+    "clients": "Clients",
+    "vehicles": "Vehicles",
+    "ownerPanel": "Owner Panel"
+  },
+  "auth": {
+    "welcomeTitle": "Welcome to Gear Box",
+    "welcomeSubtitle": "Sign in to manage orders, clients, and vehicles",
+    "email": "Email",
+    "password": "Password",
+    "loginSuccessTitle": "Signed in successfully",
+    "loginSuccessSubtitle": "Welcome back!",
+    "loginErrorTitle": "Login error",
+    "loginErrorDescription": "Check your credentials"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Consolidated indicators for Gear Box",
+    "loading": "Refreshing indicators...",
+    "stats": {
+      "orders": "Registered orders",
+      "ordersChange": "{{count}} in progress",
+      "clients": "Clients",
+      "clientsChange": "Total registered",
+      "vehicles": "Vehicles",
+      "vehiclesChange": "Total registered",
+      "revenue": "Estimated revenue",
+      "revenueChange": "Sum of listed orders"
+    },
+    "recentOrders": {
+      "title": "Recent Work Orders",
+      "loading": "Fetching orders...",
+      "error": "Error listing orders"
+    }
+  },
+  "owner": {
+    "header": {
+      "eyebrow": "Executive Panel",
+      "title": "Administrator Dashboard",
+      "subtitle": "Consolidated view of budgets, services, and mechanics performance."
+    },
+    "kpis": {
+      "mechanics": "Total Mechanics",
+      "budgets": "Budgets Created",
+      "acceptance": "Avg acceptance %",
+      "services": "Services Completed",
+      "periodBudgets": "Budgets in period",
+      "generalAcceptance": "Overall acceptance rate",
+      "generalCancellation": "Cancellation rate",
+      "completedBudgets": "Completed budgets",
+      "bestConversion": "Best conversion",
+      "averageTicket": "Average ticket"
+    },
+    "charts": {
+      "mechanicsComparison": {
+        "title": "Mechanics Comparison",
+        "subtitle": "Budgets, services, and conversion by professional",
+        "noData": "No comparison yet",
+        "noDataDesc": "Add active mechanics and generate budgets to unlock the chart.",
+        "loading": "Loading data...",
+        "tooltips": {
+          "budgets": "Budgets received",
+          "accepted": "Approvals",
+          "services": "Services completed",
+          "cancelled": "Cancellations",
+          "acceptRate": "Acceptance rate",
+          "cancelRate": "Cancellation rate",
+          "ticket": "Average ticket"
+        }
+      },
+      "status": {
+        "title": "Budget Status",
+        "subtitle": "Distribution by status with absolute values and percentages",
+        "noData": "No status recorded",
+        "noDataDesc": "As soon as budgets appear, the consolidated status will be shown here.",
+        "table": {
+          "status": "Status",
+          "quantity": "Quantity",
+          "percent": "Percentage",
+          "change": "Change"
+        }
+      },
+      "mechanicDetail": {
+        "title": "Trend by Mechanic",
+        "loading": "Loading data...",
+        "select": "Select a mechanic to view",
+        "selectDesc": "Choose a professional in the table below to load this view.",
+        "empty": "No history yet",
+        "emptyDesc": "When this mechanic generates budgets or services, the evolution will appear."
+      }
+    },
+    "users": {
+      "title": "System users",
+      "searchPlaceholder": "Search by name or email...",
+      "empty": "No users found.",
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "deleteTitle": "Confirm deletion",
+      "deleteDescription": "Are you sure you want to remove {{name}}? This action cannot be undone.",
+      "ownerInstruction": "To remove your own admin account type {{phrase}} below."
+    },
+    "table": {
+      "mechanicSummary": "Mechanic breakdown"
+    }
+  },
+  "charts": {
+    "placeholder": {
+      "loading": "Loading data..."
+    }
+  },
+  "language": {
+    "label": "Language",
+    "portuguese": "Portuguese (Brazil)",
+    "english": "English (US)"
+  },
+  "emptyState": {
+    "restrictedTitle": "Restricted access",
+    "restrictedDescription": "Only the admin profile can view this panel.",
+    "error": "Error loading data",
+    "tryAgain": "Check your connection and try again."
+  },
+  "pageHeader": {
+    "defaultSubtitle": "Consolidated view"
+  },
+  "login": {
+    "title": "Welcome to Gear Box",
+    "subtitle": "Sign in to manage orders, clients, and vehicles",
+    "email": "Email",
+    "password": "Password",
+    "placeholderEmail": "you@email.com",
+    "placeholderPassword": "••••••••",
+    "button": "Sign in",
+    "buttonLoading": "Signing in...",
+    "successTitle": "Signed in successfully",
+    "successDesc": "Welcome back!",
+    "errorTitle": "Login error",
+    "errorDesc": "Check your credentials"
+  },
+  "orders": {
+    "title": "Work Orders",
+    "subtitle": "Track orders, status, and deadlines",
+    "search": "Search",
+    "filters": {
+      "status": "Status",
+      "all": "All",
+      "dateFrom": "Start date",
+      "dateTo": "End date"
+    },
+    "status": {
+      "pending": "Pending",
+      "inProgress": "In progress",
+      "done": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "table": {
+    "order": "Order",
+    "client": "Client",
+    "vehicle": "Vehicle",
+    "status": "Status",
+    "createdAt": "Created at",
+    "actions": "Actions",
+    "empty": "No orders found."
+  },
+    "dialogs": {
+      "updateStatusTitle": "Update status",
+      "updateStatusDescription": "Confirm changing this order status.",
+      "confirm": "Confirm"
+    },
+    "toasts": {
+      "statusUpdated": "Status updated",
+      "statusSynced": "Service status synced with the database.",
+      "updateError": "Failed to update status",
+      "updateErrorDesc": "Please try again."
+    },
+    "pagination": {
+      "page": "Page",
+      "prev": "Previous",
+      "next": "Next"
+    }
+  },
+  "budgets": {
+    "title": "Budgets",
+    "subtitle": "Manage budgets by client and vehicle",
+    "search": "Search by client, plate or budget code...",
+    "filters": {
+      "status": "Status",
+      "all": "All",
+      "dateFrom": "Created from",
+      "dateTo": "Created to"
+    },
+    "status": {
+      "aberto": "Open",
+      "aceito": "Accepted",
+      "recusado": "Declined",
+      "cancelado": "Cancelled"
+    },
+    "table": {
+      "code": "Budget",
+      "client": "Client",
+      "vehicle": "Vehicle",
+      "amount": "Amount",
+      "status": "Status",
+      "createdAt": "Created at",
+      "actions": "Actions",
+      "empty": "No budgets found."
+    },
+    "toasts": {
+      "approveTitle": "Budget approved",
+      "approveDescription": "Service {{id}} created automatically.",
+      "approveError": "Could not approve budget",
+      "rejectTitle": "Budget declined",
+      "rejectDescription": "Status updated to declined.",
+      "rejectError": "Could not decline budget",
+      "defaultError": "Please try again."
+    },
+    "pagination": {
+      "page": "Page",
+      "prev": "Previous",
+      "next": "Next"
+    },
+    "messages": {
+      "noPermission": "You do not have permission to edit this budget. Only the owner or admin can update this record."
+    }
+  },
+  "clients": {
+    "title": "Clients",
+    "subtitle": "Register and search clients",
+    "search": "Search by name, email or phone...",
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "createdAt": "Created at",
+      "actions": "Actions",
+      "empty": "No clients found."
+    }
+  },
+  "vehicles": {
+    "title": "Vehicles",
+    "subtitle": "Register and search vehicles",
+    "search": "Search by plate, model or client...",
+    "table": {
+      "plate": "Plate",
+      "model": "Model",
+      "brand": "Brand",
+      "year": "Year",
+      "client": "Client",
+      "actions": "Actions",
+      "empty": "No vehicles found."
+    }
+  },
+  "dashboardGeneral": {
+    "title": "Dashboard",
+    "subtitle": "Consolidated indicators for Gear Box",
+    "loading": "Refreshing indicators...",
+    "recentOrdersTitle": "Recent Work Orders",
+    "recentOrdersLoading": "Fetching orders...",
+    "recentOrdersError": "Error listing orders",
+    "stats": {
+      "orders": "Registered orders",
+      "ordersChange": "{{count}} in progress",
+      "clients": "Clients",
+      "clientsChange": "Total registered",
+      "vehicles": "Vehicles",
+      "vehiclesChange": "Total registered",
+      "revenue": "Estimated revenue",
+      "revenueChange": "Sum of listed orders"
+    }
+  }
+}

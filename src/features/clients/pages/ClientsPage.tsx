@@ -31,6 +31,7 @@ import {
 import type { Client, Car as CarType } from '@/types/api';
 import { ClientFormDialog } from '@/features/clients/components/ClientFormDialog';
 import { ClientCarDialog } from '@/features/clients/components/ClientCarDialog';
+import { useTranslation } from 'react-i18next';
 
 export default function ClientsPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -38,6 +39,7 @@ export default function ClientsPage() {
   const { token, isOwner } = useAuth();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const clientsQuery = useQuery({
     queryKey: ['clients', token, page],
@@ -73,14 +75,14 @@ export default function ClientsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
       toast({
-        title: 'Cliente removido',
-        description: 'O cadastro foi excluído com sucesso.',
+        title: t('common.actions.delete'),
+        description: t('common.empty.noData'),
       });
     },
     onError: (error: unknown) => {
       toast({
-        title: 'Não foi possível remover o cliente',
-        description: error instanceof Error ? error.message : 'Tente novamente em instantes.',
+        title: t('orders.toasts.updateError'),
+        description: error instanceof Error ? error.message : t('budgets.toasts.defaultError'),
         variant: 'destructive',
       });
     },
@@ -130,15 +132,15 @@ export default function ClientsPage() {
   return (
     <div className="page-container bg-gradient-hero rounded-2xl border border-border shadow-lg p-6 md:p-8">
       <PageHeader
-        eyebrow="Relacionamento"
-        title="Clientes"
-        subtitle="Cadastre clientes, edite dados e associe veículos direto deste painel."
+        eyebrow={t('owner.header.eyebrow')}
+        title={t('clients.title')}
+        subtitle={t('clients.subtitle')}
         actions={
           <ClientFormDialog
             onSubmit={handleCreateClient}
             renderTrigger={({ open, disabled }) => (
               <Button className="bg-gradient-accent hover:opacity-90" onClick={open} disabled={disabled}>
-                Registrar novo cliente
+                {t('common.actions.save')}
               </Button>
             )}
           />
@@ -147,7 +149,7 @@ export default function ClientsPage() {
 
       <div className="mt-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <SearchInput
-          placeholder="Buscar por cliente, e-mail, telefone ou veículo..."
+          placeholder={t('clients.search')}
           value={searchTerm}
           onChange={(event) => {
             setSearchTerm(event.target.value);
@@ -155,13 +157,15 @@ export default function ClientsPage() {
           }}
           wrapperClassName="max-w-xl"
         />
-        <p className="text-xs text-muted-foreground">{clientsQuery.data?.meta?.total ?? 0} clientes ativos</p>
+        <p className="text-xs text-muted-foreground">
+          {clientsQuery.data?.meta?.total ?? 0} {t('clients.title').toLowerCase()}
+        </p>
       </div>
 
       {isLoading ? (
         <div className="mt-10 flex items-center gap-3 text-muted-foreground">
           <Loader2 className="w-4 h-4 animate-spin" />
-          Carregando clientes...
+          {t('charts.placeholder.loading')}
         </div>
       ) : isError ? (
         <p className="mt-10 text-destructive">
@@ -169,13 +173,13 @@ export default function ClientsPage() {
             ? clientsQuery.error.message
             : carsQuery.error instanceof Error
             ? carsQuery.error.message
-            : 'Erro ao carregar clientes'}
+            : t('emptyState.error')}
         </p>
       ) : filteredClients.length === 0 ? (
         <div className="mt-10">
           <EmptyState
-            title="Nenhum cliente encontrado"
-            description="Cadastre um novo cliente ou ajuste o termo de busca."
+            title={t('clients.table.empty')}
+            description={t('clients.subtitle')}
           />
         </div>
       ) : (
@@ -197,7 +201,7 @@ export default function ClientsPage() {
                 <Card key={client.id} className="border-border shadow-md hover:shadow-lg transition-shadow">
                   <CardContent className="space-y-5 p-6">
                     <div className="flex flex-col gap-2">
-                      <p className="text-xs uppercase tracking-wide text-muted-foreground">Cliente</p>
+                      <p className="text-xs uppercase tracking-wide text-muted-foreground">{t('clients.table.name')}</p>
                       <h3 className="text-xl font-semibold text-foreground">{client.nome}</h3>
                       <p className="text-xs text-muted-foreground">ID: {client.id}</p>
                     </div>
@@ -206,14 +210,14 @@ export default function ClientsPage() {
                       <div className="flex items-start gap-3">
                         <Mail className="w-4 h-4 text-muted-foreground mt-0.5" />
                         <div>
-                          <p className="text-xs text-muted-foreground">E-mail</p>
-                          <p className="text-sm text-foreground">{client.email ?? 'Não informado'}</p>
+                          <p className="text-xs text-muted-foreground">{t('clients.table.email')}</p>
+                          <p className="text-sm text-foreground">{client.email ?? t('common.empty.noData')}</p>
                         </div>
                       </div>
                       <div className="flex items-start gap-3">
                         <Phone className="w-4 h-4 text-muted-foreground mt-0.5" />
                         <div>
-                          <p className="text-xs text-muted-foreground">Telefone</p>
+                          <p className="text-xs text-muted-foreground">{t('clients.table.phone')}</p>
                           <p className="text-sm text-foreground">{client.telefone}</p>
                         </div>
                       </div>
@@ -222,8 +226,8 @@ export default function ClientsPage() {
                     <div className="rounded-lg border border-border/60 bg-background/40 p-4">
                       <div className="flex items-center justify-between gap-2">
                         <div>
-                          <p className="text-xs text-muted-foreground">Veículos vinculados</p>
-                          <p className="text-sm font-semibold text-foreground">{clientCars.length || 'Nenhum'}</p>
+                          <p className="text-xs text-muted-foreground">{t('vehicles.title')}</p>
+                          <p className="text-sm font-semibold text-foreground">{clientCars.length || t('common.empty.noData')}</p>
                         </div>
                         <ClientCarDialog
                           clientId={client.id}
@@ -238,7 +242,7 @@ export default function ClientsPage() {
                               disabled={disabled || createCarMutation.isPending}
                             >
                               <Car className="mr-1 h-3.5 w-3.5" />
-                              Adicionar carro
+                              {t('common.actions.save')}
                             </Button>
                           )}
                         />
@@ -253,7 +257,7 @@ export default function ClientsPage() {
                         </div>
                       ) : (
                         <p className="mt-3 text-xs text-muted-foreground">
-                          Nenhum veículo cadastrado para este cliente.
+                          {t('vehicles.table.empty')}
                         </p>
                       )}
                     </div>

@@ -8,6 +8,7 @@ import VehicleFormDialog from '@/components/VehicleFormDialog';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { listCars, listClients } from '@/services/gearbox';
+import { useTranslation } from 'react-i18next';
 
 export default function Veiculos() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -15,6 +16,7 @@ export default function Veiculos() {
   const [page, setPage] = useState(1);
   const { token } = useAuth();
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   const carsQuery = useQuery({
     queryKey: ['cars', token, page],
@@ -60,12 +62,12 @@ export default function Veiculos() {
     <div className="page-container bg-gradient-hero rounded-2xl border border-border shadow-lg p-6 md:p-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="heading-accent text-3xl font-bold text-foreground mb-2">Veículos</h1>
-          <p className="text-muted-foreground">Lista sincronizada com a Gear Box API</p>
+          <h1 className="heading-accent text-3xl font-bold text-foreground mb-2">{t('vehicles.title')}</h1>
+          <p className="text-muted-foreground">{t('vehicles.subtitle')}</p>
         </div>
         <Button className="gap-2 bg-gradient-accent hover:opacity-90" onClick={() => setDialogOpen(true)}>
           <Plus className="w-4 h-4" />
-          Novo Veículo
+          {t('common.actions.save')}
         </Button>
       </div>
 
@@ -74,7 +76,7 @@ export default function Veiculos() {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             type="text"
-            placeholder="Buscar por marca, modelo, placa ou cliente..."
+            placeholder={t('vehicles.search')}
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value);
@@ -88,11 +90,11 @@ export default function Veiculos() {
       {isLoading ? (
           <div className="flex items-center gap-3 text-muted-foreground">
             <Loader2 className="w-4 h-4 animate-spin" />
-            Carregando veículos...
+            {t('charts.placeholder.loading')}
           </div>
         ) : isError ? (
           <p className="text-destructive">
-            {error instanceof Error ? error.message : 'Erro ao carregar veículos'}
+            {error instanceof Error ? error.message : t('emptyState.error')}
           </p>
         ) : (
           <>
@@ -101,23 +103,24 @@ export default function Veiculos() {
                 <Card key={vehicle.id} className="border-border shadow-md hover:shadow-lg transition-shadow">
                   <CardContent className="p-6 space-y-4">
                     <div>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wide">Modelo</p>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wide">{t('vehicles.table.model')}</p>
                       <h3 className="text-lg font-bold text-foreground">
                         {vehicle.marca} {vehicle.modelo}
                       </h3>
-                      <p className="text-sm text-muted-foreground">Ano {vehicle.ano}</p>
+                      <p className="text-sm text-muted-foreground">{t('vehicles.table.year')} {vehicle.ano}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <Badge variant="secondary" className="font-mono">
                         {vehicle.placa}
                       </Badge>
                       <Badge variant="outline" className="text-xs">
-                        Cliente: {clientMap.get(vehicle.clientId) ?? '—'}
+                        {t('vehicles.table.client')}: {clientMap.get(vehicle.clientId) ?? '—'}
                       </Badge>
                     </div>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Calendar className="w-4 h-4" />
-                      Cadastrado em {vehicle.createdAt ? new Date(vehicle.createdAt).toLocaleDateString('pt-BR') : '—'}
+                      {t('vehicles.table.createdAt')}{' '}
+                      {vehicle.createdAt ? new Date(vehicle.createdAt).toLocaleDateString('pt-BR') : '—'}
                     </div>
                   </CardContent>
                 </Card>
@@ -127,7 +130,7 @@ export default function Veiculos() {
             {carsQuery.data?.meta && (
               <div className="flex items-center justify-between mt-6">
                 <p className="text-sm text-muted-foreground">
-                  Página {carsQuery.data.meta.currentPage} de {carsQuery.data.meta.lastPage}
+                  {t('budgets.pagination.page')} {carsQuery.data.meta.currentPage} / {carsQuery.data.meta.lastPage}
                 </p>
                 <div className="flex gap-2">
                   <Button
@@ -136,7 +139,7 @@ export default function Veiculos() {
                     disabled={page === 1 || carsQuery.isFetching}
                     onClick={() => setPage((prev) => Math.max(1, prev - 1))}
                   >
-                    Anterior
+                    {t('budgets.pagination.prev')}
                   </Button>
                   <Button
                     variant="outline"
@@ -144,7 +147,7 @@ export default function Veiculos() {
                     disabled={page === carsQuery.data.meta.lastPage || carsQuery.isFetching}
                     onClick={() => setPage((prev) => prev + 1)}
                   >
-                    Próxima
+                    {t('budgets.pagination.next')}
                   </Button>
                 </div>
               </div>

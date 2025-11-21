@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import type { Car, Client } from '@/types/api';
 import { useToast } from '@/components/ui/use-toast';
+import { useTranslation } from 'react-i18next';
 
 type BudgetFormValues = {
   clientId: string;
@@ -45,7 +46,7 @@ export function BudgetFormDialog({
   clients,
   cars,
   initialValues,
-  triggerLabel = 'Registrar novo orçamento',
+  triggerLabel = 'common.actions.save',
   renderTrigger,
   onSubmit,
 }: BudgetFormDialogProps) {
@@ -53,6 +54,7 @@ export function BudgetFormDialog({
   const [isSaving, setIsSaving] = useState(false);
   const [form, setForm] = useState<BudgetFormValues>(() => normalizeInitialValues(initialValues));
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const availableCars = useMemo(() => {
     if (!form.clientId) return [];
@@ -89,17 +91,17 @@ export function BudgetFormDialog({
         amount: Number(form.amount),
       });
       toast({
-        title: mode === 'edit' ? 'Orçamento atualizado' : 'Orçamento registrado',
+        title: mode === 'edit' ? t('budgets.toasts.approveTitle') : t('budgets.title'),
         description:
           mode === 'edit'
-            ? 'As informações do orçamento foram atualizadas com sucesso.'
-            : 'Novo orçamento registrado. Você pode acompanhar pela lista.',
+            ? t('budgets.subtitle')
+            : t('budgets.subtitle'),
       });
       closeAndReset();
     } catch (error: unknown) {
       toast({
-        title: 'Não foi possível salvar o orçamento',
-        description: error instanceof Error ? error.message : 'Tente novamente em instantes.',
+        title: t('budgets.toasts.approveError'),
+        description: error instanceof Error ? error.message : t('budgets.toasts.defaultError'),
         variant: 'destructive',
       });
     } finally {
@@ -122,18 +124,18 @@ export function BudgetFormDialog({
       ) : (
         <DialogTrigger asChild>
           <Button className="bg-gradient-accent hover:opacity-90" disabled={isSaving}>
-            {triggerLabel}
+            {t(triggerLabel)}
           </Button>
         </DialogTrigger>
       )}
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>{mode === 'edit' ? 'Editar orçamento' : 'Registrar novo orçamento'}</DialogTitle>
+          <DialogTitle>{mode === 'edit' ? t('common.actions.edit') : t(triggerLabel)}</DialogTitle>
         </DialogHeader>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="clientId">Cliente</Label>
+              <Label htmlFor="clientId">{t('budgets.table.client')}</Label>
               <Select
                 value={form.clientId}
                 onValueChange={(value) => setForm((current) => ({ ...current, clientId: value }))}
@@ -141,7 +143,7 @@ export function BudgetFormDialog({
                 disabled={clients.length === 0}
               >
                 <SelectTrigger id="clientId">
-                  <SelectValue placeholder="Selecione o cliente" />
+                  <SelectValue placeholder={t('clients.table.name')} />
                 </SelectTrigger>
                 <SelectContent>
                   {clients.map((client) => (
@@ -153,7 +155,7 @@ export function BudgetFormDialog({
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="carId">Veículo</Label>
+              <Label htmlFor="carId">{t('budgets.table.vehicle')}</Label>
               <Select
                 value={form.carId}
                 onValueChange={(value) => setForm((current) => ({ ...current, carId: value }))}
@@ -161,7 +163,7 @@ export function BudgetFormDialog({
                 disabled={!form.clientId || availableCars.length === 0}
               >
                 <SelectTrigger id="carId">
-                  <SelectValue placeholder={form.clientId ? 'Selecione o veículo' : 'Selecione um cliente primeiro'} />
+                  <SelectValue placeholder={form.clientId ? t('budgets.table.vehicle') : t('clients.table.name')} />
                 </SelectTrigger>
                 <SelectContent>
                   {availableCars.map((car) => (
@@ -175,12 +177,12 @@ export function BudgetFormDialog({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Descrição</Label>
+            <Label htmlFor="description">{t('orders.table.order')}</Label>
             <Textarea
               id="description"
               value={form.description}
               onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))}
-              placeholder="Detalhe o serviço, peças e prazo estimado"
+              placeholder={t('budgets.subtitle')}
               minLength={3}
               required
               rows={4}
@@ -188,7 +190,7 @@ export function BudgetFormDialog({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="amount">Valor estimado (R$)</Label>
+            <Label htmlFor="amount">{t('budgets.table.amount')}</Label>
             <Input
               id="amount"
               type="number"

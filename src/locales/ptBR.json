@@ -1,0 +1,312 @@
+{
+  "common": {
+    "appName": "Gear Box",
+    "language": {
+      "ptBR": "Português (Brasil)",
+      "enUS": "English (US)"
+    },
+    "actions": {
+      "login": "Entrar",
+      "loggingIn": "Entrando...",
+      "logout": "Sair",
+      "save": "Salvar",
+      "cancel": "Cancelar",
+      "edit": "Editar",
+      "delete": "Excluir",
+      "confirm": "Confirmar",
+      "close": "Fechar",
+      "viewDetails": "Ver detalhes",
+      "expandMenu": "Expandir menu",
+      "collapseMenu": "Recolher menu"
+    },
+    "status": {
+      "open": "Abertos",
+      "accepted": "Aceitos",
+      "cancelled": "Cancelados",
+      "completed": "Concluídos"
+    },
+    "roles": {
+      "owner": "Administrador",
+      "mechanic": "Mecânico"
+    },
+    "empty": {
+      "noData": "Nenhum dado disponível",
+      "loading": "Carregando..."
+    },
+    "totalLabel": "Total"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "orders": "Ordens de Serviço",
+    "budgets": "Orçamentos",
+    "clients": "Clientes",
+    "vehicles": "Veículos",
+    "ownerPanel": "Painel do Administrador"
+  },
+  "auth": {
+    "welcomeTitle": "Bem-vindo ao Gear Box",
+    "welcomeSubtitle": "Faça login para gerenciar ordens, clientes e veículos",
+    "email": "E-mail",
+    "password": "Senha",
+    "loginSuccessTitle": "Login realizado com sucesso",
+    "loginSuccessSubtitle": "Bem-vindo de volta!",
+    "loginErrorTitle": "Erro ao fazer login",
+    "loginErrorDescription": "Verifique suas credenciais"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Indicadores consolidados da Gear Box",
+    "loading": "Atualizando indicadores...",
+    "stats": {
+      "orders": "Ordens registradas",
+      "ordersChange": "{{count}} em andamento",
+      "clients": "Clientes",
+      "clientsChange": "Total cadastrados",
+      "vehicles": "Veículos",
+      "vehiclesChange": "Total cadastrados",
+      "revenue": "Receita estimada",
+      "revenueChange": "Somatório das ordens listadas"
+    },
+    "recentOrders": {
+      "title": "Ordens de Serviço Recentes",
+      "loading": "Buscando ordens...",
+      "error": "Erro ao listar ordens"
+    }
+  },
+  "owner": {
+    "header": {
+      "eyebrow": "Painel Executivo",
+      "title": "Dashboard do Administrador",
+      "subtitle": "Visão consolidada de budgets, serviços e performance dos mecânicos."
+    },
+    "kpis": {
+      "mechanics": "Total de Mecânicos",
+      "budgets": "Budgets Gerados",
+      "acceptance": "% Médio de Aceites",
+      "services": "Serviços Concluídos",
+      "periodBudgets": "Budgets no período",
+      "generalAcceptance": "Taxa geral de aceitação",
+      "generalCancellation": "Taxa de cancelamento",
+      "completedBudgets": "Orçamentos concluídos",
+      "bestConversion": "Melhor conversão",
+      "averageTicket": "Ticket médio geral"
+    },
+    "charts": {
+      "mechanicsComparison": {
+        "title": "Comparativo de Mecânicos",
+        "subtitle": "Budgets, serviços e conversão por profissional",
+        "noData": "Ainda sem comparativos",
+        "noDataDesc": "Cadastre mecânicos ativos e gere budgets para liberar o gráfico.",
+        "loading": "Carregando dados...",
+        "tooltips": {
+          "budgets": "Orçamentos recebidos",
+          "accepted": "Aprovações",
+          "services": "Serviços concluídos",
+          "cancelled": "Cancelamentos",
+          "acceptRate": "Taxa de aceitação",
+          "cancelRate": "Taxa de cancelamento",
+          "ticket": "Ticket médio"
+        }
+      },
+      "status": {
+        "title": "Status dos Budgets",
+        "subtitle": "Distribuição por status com valores absolutos e porcentagens",
+        "noData": "Nenhum status registrado",
+        "noDataDesc": "Assim que surgirem budgets, o status consolidado aparecerá aqui.",
+        "table": {
+          "status": "Status",
+          "quantity": "Quantidade",
+          "percent": "Percentual",
+          "change": "Variação"
+        }
+      },
+      "mechanicDetail": {
+        "title": "Evolução por Mecânico",
+        "loading": "Carregando dados...",
+        "select": "Selecione um mecânico para visualizar",
+        "selectDesc": "Escolha um profissional na tabela abaixo para carregar esta visão.",
+        "empty": "Sem histórico por aqui",
+        "emptyDesc": "Quando este mecânico gerar budgets ou serviços, a evolução aparecerá."
+      }
+    },
+    "users": {
+      "title": "Usuários do sistema",
+      "searchPlaceholder": "Buscar por nome ou e-mail...",
+      "empty": "Nenhum usuário encontrado.",
+      "status": {
+        "active": "Ativo",
+        "inactive": "Inativo"
+      },
+      "deleteTitle": "Confirmar exclusão",
+      "deleteDescription": "Tem certeza que deseja remover {{name}}? Essa ação não poderá ser desfeita.",
+      "ownerInstruction": "Para remover sua própria conta de administrador digite {{phrase}} abaixo."
+    },
+    "table": {
+      "mechanicSummary": "Detalhamento por Mecânico"
+    }
+  },
+  "charts": {
+    "placeholder": {
+      "loading": "Carregando dados..."
+    }
+  },
+  "language": {
+    "label": "Idioma",
+    "portuguese": "Português (Brasil)",
+    "english": "English (US)"
+  },
+  "emptyState": {
+    "restrictedTitle": "Acesso restrito",
+    "restrictedDescription": "Somente o perfil administrador pode visualizar este painel.",
+    "error": "Erro ao carregar dados",
+    "tryAgain": "Verifique sua conexão e tente novamente."
+  },
+  "pageHeader": {
+    "defaultSubtitle": "Visão consolidada"
+  },
+  "login": {
+    "title": "Bem-vindo ao Gear Box",
+    "subtitle": "Faça login para gerenciar ordens, clientes e veículos",
+    "email": "E-mail",
+    "password": "Senha",
+    "placeholderEmail": "seu@email.com",
+    "placeholderPassword": "••••••••",
+    "button": "Entrar",
+    "buttonLoading": "Entrando...",
+    "successTitle": "Login realizado com sucesso",
+    "successDesc": "Bem-vindo de volta!",
+    "errorTitle": "Erro ao fazer login",
+    "errorDesc": "Verifique suas credenciais"
+  },
+  "orders": {
+    "title": "Ordens de Serviço",
+    "subtitle": "Acompanhe ordens, status e prazos",
+    "search": "Buscar",
+    "filters": {
+      "status": "Status",
+      "all": "Todos",
+      "dateFrom": "Data inicial",
+      "dateTo": "Data final"
+    },
+    "status": {
+      "pending": "Pendente",
+      "inProgress": "Em andamento",
+      "done": "Concluído",
+      "cancelled": "Cancelado"
+    },
+    "table": {
+    "order": "Ordem",
+    "client": "Cliente",
+    "vehicle": "Veículo",
+    "status": "Status",
+    "createdAt": "Criado em",
+    "actions": "Ações",
+    "empty": "Nenhuma ordem encontrada."
+  },
+    "dialogs": {
+      "updateStatusTitle": "Atualizar status",
+      "updateStatusDescription": "Confirme a mudança de status desta ordem.",
+      "confirm": "Confirmar"
+    },
+    "toasts": {
+      "statusUpdated": "Status atualizado",
+      "statusSynced": "O status do serviço foi sincronizado com o banco.",
+      "updateError": "Falha ao atualizar status",
+      "updateErrorDesc": "Tente novamente."
+    },
+    "pagination": {
+      "page": "Página",
+      "prev": "Anterior",
+      "next": "Próxima"
+    }
+  },
+  "budgets": {
+    "title": "Orçamentos",
+    "subtitle": "Gestão de orçamentos por cliente e veículo",
+    "search": "Buscar por cliente, placa ou código do orçamento...",
+    "filters": {
+      "status": "Status",
+      "all": "Todos",
+      "dateFrom": "Cadastro a partir",
+      "dateTo": "Cadastro até"
+    },
+    "status": {
+      "aberto": "Aberto",
+      "aceito": "Aceito",
+      "recusado": "Negado",
+      "cancelado": "Cancelado"
+    },
+    "table": {
+      "code": "Orçamento",
+      "client": "Cliente",
+      "vehicle": "Veículo",
+      "amount": "Valor",
+      "status": "Status",
+      "createdAt": "Criado em",
+      "actions": "Ações",
+      "empty": "Nenhum orçamento encontrado."
+    },
+    "toasts": {
+      "approveTitle": "Orçamento aprovado",
+      "approveDescription": "Serviço {{id}} criado automaticamente.",
+      "approveError": "Não foi possível aprovar o orçamento",
+      "rejectTitle": "Orçamento negado",
+      "rejectDescription": "O status foi atualizado para negado.",
+      "rejectError": "Não foi possível negar o orçamento",
+      "defaultError": "Tente novamente."
+    },
+    "pagination": {
+      "page": "Página",
+      "prev": "Anterior",
+      "next": "Próxima"
+    },
+    "messages": {
+      "noPermission": "Você não tem permissão para editar este orçamento. Somente o responsável ou o perfil administrador podem alterar este registro."
+    }
+  },
+  "clients": {
+    "title": "Clientes",
+    "subtitle": "Cadastro e consulta de clientes",
+    "search": "Buscar por nome, e-mail ou telefone...",
+    "table": {
+      "name": "Nome",
+      "email": "E-mail",
+      "phone": "Telefone",
+      "createdAt": "Criado em",
+      "actions": "Ações",
+      "empty": "Nenhum cliente encontrado."
+    }
+  },
+  "vehicles": {
+    "title": "Veículos",
+    "subtitle": "Cadastro e consulta de veículos",
+    "search": "Buscar por placa, modelo ou cliente...",
+    "table": {
+      "plate": "Placa",
+      "model": "Modelo",
+      "brand": "Marca",
+      "year": "Ano",
+      "client": "Cliente",
+      "actions": "Ações",
+      "empty": "Nenhum veículo encontrado."
+    }
+  },
+  "dashboardGeneral": {
+    "title": "Dashboard",
+    "subtitle": "Indicadores consolidados da Gear Box",
+    "loading": "Atualizando indicadores...",
+    "recentOrdersTitle": "Ordens de Serviço Recentes",
+    "recentOrdersLoading": "Buscando ordens...",
+    "recentOrdersError": "Erro ao listar ordens",
+    "stats": {
+      "orders": "Ordens registradas",
+      "ordersChange": "{{count}} em andamento",
+      "clients": "Clientes",
+      "clientsChange": "Total cadastrados",
+      "vehicles": "Veículos",
+      "vehiclesChange": "Total cadastrados",
+      "revenue": "Receita estimada",
+      "revenueChange": "Somatório das ordens listadas"
+    }
+  }
+}

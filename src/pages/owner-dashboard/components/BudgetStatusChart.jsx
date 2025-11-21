@@ -19,6 +19,8 @@ import {
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { ChartPlaceholder } from "./ChartPlaceholder";
 import { KpiCards } from "./KpiCards";
+import { useTranslation } from "react-i18next";
+import { useTheme } from "next-themes";
 
 const STATUS_COLORS = {
   aberto: "#f5a300",
@@ -26,8 +28,6 @@ const STATUS_COLORS = {
   cancelado: "#F43F5E",
   concluido: "#F472B6",
 };
-
-const TEXT_COLOR = "#e2e8f0";
 
 const formatPercentLabel = (value) =>
   typeof value === "number" ? `${value.toFixed(1)}%` : "0%";
@@ -38,6 +38,11 @@ export function BudgetStatusChart({
   loading = false,
   period,
 }) {
+  const { t } = useTranslation();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+  const textColor = isDark ? "#e2e8f0" : "#0f172a";
+
   const total = useMemo(
     () => data.reduce((sum, item) => sum + (item.value ?? 0), 0),
     [data]
@@ -61,24 +66,30 @@ export function BudgetStatusChart({
           const percent = params.data.percent ?? 0;
           return `<div class="text-xs font-semibold mb-1">${params.name}</div>
             <div class="text-xs leading-relaxed">
-              <div>${params.value} budgets</div>
-              <div>${percent}% do total no período</div>
+              <div>${params.value} ${t(
+            "navigation.budgets"
+          ).toLowerCase()}</div>
+              <div>${percent}% ${t("common.totalLabel").toLowerCase()}</div>
             </div>`;
         },
         borderWidth: 0,
         backgroundColor: "rgba(15,23,42,0.95)",
-        textStyle: { color: TEXT_COLOR },
+        textStyle: { color: "#e2e8f0" },
       },
       grid: { left: 10, right: 10, bottom: 16, top: 28, containLabel: true },
       xAxis: {
         type: "value",
-        axisLabel: { color: TEXT_COLOR, fontSize: 12 },
-        splitLine: { lineStyle: { color: "rgba(148,163,184,0.25)" } },
+        axisLabel: { color: textColor, fontSize: 12 },
+        splitLine: {
+          lineStyle: {
+            color: isDark ? "rgba(148,163,184,0.25)" : "rgba(148,163,184,0.4)",
+          },
+        },
       },
       yAxis: {
         type: "category",
         data: data.map((item) => item.label),
-        axisLabel: { color: TEXT_COLOR, fontSize: 12 },
+        axisLabel: { color: textColor, fontSize: 12 },
       },
       series: [
         {
@@ -88,7 +99,7 @@ export function BudgetStatusChart({
           label: {
             show: true,
             position: "right",
-            color: TEXT_COLOR,
+            color: textColor,
             formatter: ({ data }) =>
               `${data.value} (${formatPercentLabel(data.percent)})`,
             fontSize: 11,
@@ -107,7 +118,9 @@ export function BudgetStatusChart({
         <div key={item.key} className="flex items-center gap-2">
           <span
             className="h-3 w-3 rounded-full"
-            style={{ background: STATUS_COLORS[item.key] || STATUS_COLORS.aberto }}
+            style={{
+              background: STATUS_COLORS[item.key] || STATUS_COLORS.aberto,
+            }}
             aria-hidden
           />
           <span>{item.label}</span>
@@ -123,16 +136,18 @@ export function BudgetStatusChart({
         <Table className="min-w-[720px] text-sm">
           <TableHeader>
             <TableRow>
-              <TableHead>Status</TableHead>
-              <TableHead>Quantidade</TableHead>
-              <TableHead>Percentual</TableHead>
-              <TableHead>Variação</TableHead>
+              <TableHead>{t("owner.charts.status.table.status")}</TableHead>
+              <TableHead>{t("owner.charts.status.table.quantity")}</TableHead>
+              <TableHead>{t("owner.charts.status.table.percent")}</TableHead>
+              <TableHead>{t("owner.charts.status.table.change")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {data.map((row) => {
-              const changePositive = typeof row.change === "number" && row.change > 0;
-              const changeNegative = typeof row.change === "number" && row.change < 0;
+              const changePositive =
+                typeof row.change === "number" && row.change > 0;
+              const changeNegative =
+                typeof row.change === "number" && row.change < 0;
               return (
                 <TableRow key={row.key}>
                   <TableCell className="font-medium">{row.label}</TableCell>
@@ -177,10 +192,12 @@ export function BudgetStatusChart({
       <CardHeader className="space-y-4 pb-2">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <CardTitle className="text-lg">Status dos Budgets</CardTitle>
+            <CardTitle className="text-lg">
+              {t("owner.charts.status.title")}
+            </CardTitle>
             <p className="text-xs text-muted-foreground">
-              Distribuição por status com valores absolutos e porcentagens{" "}
-              {period?.label ? `(${period.label})` : ""}.
+              {t("owner.charts.status.subtitle")}{" "}
+              {period?.label ? `(${period.label})` : ""}
             </p>
           </div>
           {period?.options && (

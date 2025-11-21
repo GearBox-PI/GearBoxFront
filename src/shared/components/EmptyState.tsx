@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
 
 type EmptyStateProps = {
   title: string
@@ -10,6 +11,7 @@ type EmptyStateProps = {
 }
 
 export function EmptyState({ title, description, icon, actions, className }: EmptyStateProps) {
+  const { t } = useTranslation()
   return (
     <div
       className={cn(

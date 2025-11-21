@@ -1,7 +1,10 @@
 import { FileBarChart2, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
 
 export function ChartPlaceholder({ title, description, className, loading = false }) {
+  const { t } = useTranslation()
+
   return (
     <div
       className={cn(
@@ -10,7 +13,11 @@ export function ChartPlaceholder({ title, description, className, loading = fals
       )}
     >
       {loading ? (
-        <Loader2 className="mb-3 h-6 w-6 animate-spin text-muted-foreground" aria-hidden />
+        <Loader2
+          className="mb-3 h-6 w-6 animate-spin text-muted-foreground"
+          aria-hidden
+          title={t('charts.placeholder.loading')}
+        />
       ) : (
         <FileBarChart2 className="mb-3 h-7 w-7 text-muted-foreground" aria-hidden />
       )}
