@@ -199,16 +199,7 @@ export default function Ordens() {
 
   return (
     <div className="page-container bg-gradient-hero rounded-2xl border border-border shadow-lg p-6 md:p-8">
-      <PageHeader
-        title={t('orders.title')}
-        subtitle={t('orders.subtitle')}
-        actions={
-          <Button className="gap-2 bg-gradient-accent hover:opacity-90" disabled>
-            <Plus className="w-4 h-4" />
-            {t('common.actions.viewDetails')}
-          </Button>
-        }
-      />
+      <PageHeader title={t('orders.title')} subtitle={t('orders.subtitle')} />
 
       <div className="mb-6">
         <SearchInput
