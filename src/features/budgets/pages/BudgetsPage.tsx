@@ -47,6 +47,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/shared/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useTranslation } from "react-i18next";
 import { useBudgets } from "@/hooks/useBudgets";
 import { useClients } from "@/hooks/useClients";
@@ -357,7 +362,8 @@ export default function BudgetsPage() {
     const toDate = createdTo ? new Date(createdTo) : null;
 
     const filtered = budgetList.filter((budget) => {
-      if (statusFilter !== "todos" && budget.status !== statusFilter) return false;
+      if (statusFilter !== "todos" && budget.status !== statusFilter)
+        return false;
       if (fromDate || toDate) {
         const createdAt = budget.createdAt ? new Date(budget.createdAt) : null;
         if (!createdAt) return false;
@@ -601,7 +607,7 @@ export default function BudgetsPage() {
             return (
               <Card
                 key={budget.id}
-                className="border-border bg-card/80 shadow-md transition hover:shadow-lg"
+                className="border-border/50 bg-card/50 backdrop-blur-sm shadow-sm hover:shadow-md transition-all"
               >
                 <CardContent className="space-y-5 p-6">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -640,12 +646,17 @@ export default function BudgetsPage() {
                       <p className="text-xs text-muted-foreground uppercase tracking-wide">
                         Orçamento
                       </p>
-                      <p
-                        className="font-medium text-foreground truncate"
-                        title={budget.id}
-                      >
-                        #{budget.id.slice(0, 8)}
-                      </p>
+                      <Tooltip delayDuration={0}>
+                        <TooltipTrigger asChild>
+                          <p
+                            className="font-medium text-foreground truncate"
+                            aria-label={budget.id}
+                          >
+                            #{budget.id.slice(0, 8)}
+                          </p>
+                        </TooltipTrigger>
+                        <TooltipContent side="top">#{budget.id}</TooltipContent>
+                      </Tooltip>
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground uppercase tracking-wide">
@@ -714,15 +725,27 @@ export default function BudgetsPage() {
                             )
                           }
                           renderTrigger={({ open, disabled }) => (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="border-warning/30 bg-warning-light text-warning hover:bg-warning-light/80"
-                              onClick={open}
-                              disabled={disabled}
-                            >
-                              {t("common.actions.edit")}
-                            </Button>
+                            <Tooltip delayDuration={0}>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="border-warning/30 bg-warning-light text-warning hover:bg-warning-light/80"
+                                  onClick={open}
+                                  disabled={disabled}
+                                  aria-label={t("common.actions.edit", {
+                                    defaultValue: "Editar orçamento",
+                                  })}
+                                >
+                                  {t("common.actions.edit")}
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent side="top">
+                                {t("common.actions.edit", {
+                                  defaultValue: "Editar orçamento",
+                                })}
+                              </TooltipContent>
+                            </Tooltip>
                           )}
                         />
                       ) : (
@@ -737,38 +760,62 @@ export default function BudgetsPage() {
                       )}
                       {canManageBudget && (
                         <>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="border-success/30 bg-success-light text-success hover:bg-success-light/80"
-                            disabled={approveDisabled}
-                            onClick={() =>
-                              requestConfirm("approve", () =>
-                                handleApproveBudget(budget)
-                              )
-                            }
-                          >
-                            {approving
-                              ? t("budgets.toasts.approveTitle")
-                              : t("common.actions.confirm")}
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="border-destructive/30 bg-destructive-light text-destructive hover:bg-destructive-light/80"
-                            disabled={budget.status !== "aberto" || denying}
-                            onClick={() =>
-                              requestConfirm("cancel", () =>
-                                handleDenyBudget(budget.id)
-                              )
-                            }
-                          >
-                            {denying
-                              ? t("budgets.toasts.rejectTitle")
-                              : t("budgets.status.cancelar", {
-                                  defaultValue: "Cancelar",
+                          <Tooltip delayDuration={0}>
+                            <TooltipTrigger asChild>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="border-success/30 bg-success-light text-success hover:bg-success-light/80"
+                                disabled={approveDisabled}
+                                onClick={() =>
+                                  requestConfirm("approve", () =>
+                                    handleApproveBudget(budget)
+                                  )
+                                }
+                                aria-label={t("common.actions.confirm", {
+                                  defaultValue: "Confirmar orçamento",
                                 })}
-                          </Button>
+                              >
+                                {approving
+                                  ? t("budgets.toasts.approveTitle")
+                                  : t("common.actions.confirm")}
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent side="top">
+                              {t("common.actions.confirm", {
+                                defaultValue: "Confirmar orçamento",
+                              })}
+                            </TooltipContent>
+                          </Tooltip>
+                          <Tooltip delayDuration={0}>
+                            <TooltipTrigger asChild>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="border-destructive/30 bg-destructive-light text-destructive hover:bg-destructive-light/80"
+                                disabled={budget.status !== "aberto" || denying}
+                                onClick={() =>
+                                  requestConfirm("cancel", () =>
+                                    handleDenyBudget(budget.id)
+                                  )
+                                }
+                                aria-label={t("budgets.status.cancelar", {
+                                  defaultValue: "Cancelar orçamento",
+                                })}
+                              >
+                                {denying
+                                  ? t("budgets.toasts.rejectTitle")
+                                  : t("budgets.status.cancelar", {
+                                      defaultValue: "Cancelar",
+                                    })}
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent side="top">
+                              {t("budgets.status.cancelar", {
+                                defaultValue: "Cancelar orçamento",
+                              })}
+                            </TooltipContent>
+                          </Tooltip>
                         </>
                       )}
                     </div>
@@ -787,25 +834,49 @@ export default function BudgetsPage() {
               {budgetsQuery.data.meta.lastPage}
             </p>
             <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={page === 1 || budgetsQuery.isFetching}
-                onClick={() => setPage((prev) => Math.max(1, prev - 1))}
-              >
-                {t("budgets.pagination.prev")}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={
-                  page === budgetsQuery.data.meta.lastPage ||
-                  budgetsQuery.isFetching
-                }
-                onClick={() => setPage((prev) => prev + 1)}
-              >
-                {t("budgets.pagination.next")}
-              </Button>
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={page === 1 || budgetsQuery.isFetching}
+                    onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+                    aria-label={t("budgets.pagination.prev", {
+                      defaultValue: "Página anterior",
+                    })}
+                  >
+                    {t("budgets.pagination.prev")}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                  {t("budgets.pagination.prev", {
+                    defaultValue: "Página anterior",
+                  })}
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={
+                      page === budgetsQuery.data.meta.lastPage ||
+                      budgetsQuery.isFetching
+                    }
+                    onClick={() => setPage((prev) => prev + 1)}
+                    aria-label={t("budgets.pagination.next", {
+                      defaultValue: "Próxima página",
+                    })}
+                  >
+                    {t("budgets.pagination.next")}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                  {t("budgets.pagination.next", {
+                    defaultValue: "Próxima página",
+                  })}
+                </TooltipContent>
+              </Tooltip>
             </div>
           </div>
         )}
@@ -851,7 +922,7 @@ export default function BudgetsPage() {
 
   return (
     <>
-      <div className="page-container bg-gradient-hero rounded-2xl border border-border shadow-lg p-6 md:p-8">
+      <div className="page-container space-y-8">
         <PageHeader
           eyebrow={t("owner.header.eyebrow")}
           title={t("budgets.title")}
@@ -862,14 +933,26 @@ export default function BudgetsPage() {
               cars={safeCars}
               onSubmit={handleCreateBudget}
               renderTrigger={({ open, disabled }) => (
-                <Button
-                  className="gap-2 bg-gradient-accent hover:opacity-90"
-                  onClick={open}
-                  disabled={createDisabled || disabled}
-                >
-                  <Plus className="w-4 h-4" />
-                  {t("common.actions.createBudget")}
-                </Button>
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <Button
+                      className="gap-2 bg-gradient-accent hover:opacity-90"
+                      onClick={open}
+                      disabled={createDisabled || disabled}
+                      aria-label={t("common.actions.createBudget", {
+                        defaultValue: "Criar orçamento",
+                      })}
+                    >
+                      <Plus className="w-4 h-4" />
+                      {t("common.actions.createBudget")}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="right">
+                    {t("common.actions.createBudget", {
+                      defaultValue: "Criar orçamento",
+                    })}
+                  </TooltipContent>
+                </Tooltip>
               )}
             />
           }
@@ -918,21 +1001,37 @@ export default function BudgetsPage() {
             <p className="text-muted-foreground uppercase tracking-wide">
               {t("budgets.filters.dateFrom")}
             </p>
-            <Input
-              type="date"
-              value={createdFrom}
-              onChange={(event) => setCreatedFrom(event.target.value)}
-            />
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <Input
+                  type="date"
+                  value={createdFrom}
+                  aria-label={t("budgets.filters.dateFrom")}
+                  onChange={(event) => setCreatedFrom(event.target.value)}
+                />
+              </TooltipTrigger>
+              <TooltipContent side="top">
+                {t("budgets.filters.dateFrom")}
+              </TooltipContent>
+            </Tooltip>
           </div>
           <div className="space-y-1 text-xs">
             <p className="text-muted-foreground uppercase tracking-wide">
               {t("budgets.filters.dateTo")}
             </p>
-            <Input
-              type="date"
-              value={createdTo}
-              onChange={(event) => setCreatedTo(event.target.value)}
-            />
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <Input
+                  type="date"
+                  value={createdTo}
+                  aria-label={t("budgets.filters.dateTo")}
+                  onChange={(event) => setCreatedTo(event.target.value)}
+                />
+              </TooltipTrigger>
+              <TooltipContent side="top">
+                {t("budgets.filters.dateTo")}
+              </TooltipContent>
+            </Tooltip>
           </div>
         </div>
 
@@ -1038,45 +1137,43 @@ export default function BudgetsPage() {
                 : t("common.actions.confirm")}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              {confirmDialog
-                ? confirmDialogMessage[confirmDialog.action]
-                : ""}
+              {confirmDialog ? confirmDialogMessage[confirmDialog.action] : ""}
             </AlertDialogDescription>
           </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel
-                onClick={() => {
-                  if (!confirmDialog) return;
-                  confirmDialogActionRef.current = "cancel";
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              onClick={() => {
+                if (!confirmDialog) return;
+                confirmDialogActionRef.current = "cancel";
+                confirmDialogSettledRef.current = true;
+                confirmDialog.reject?.(new Error("cancelled"));
+                setConfirmDialog(null);
+                confirmDialogActionRef.current = null;
+              }}
+            >
+              {t("common.actions.cancel")}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={async () => {
+                if (!confirmDialog) return;
+                confirmDialogActionRef.current = "confirm";
+                try {
+                  await confirmDialog.proceed();
+                  confirmDialog.resolve?.();
                   confirmDialogSettledRef.current = true;
-                  confirmDialog.reject?.(new Error("cancelled"));
-                  setConfirmDialog(null);
+                } catch (error) {
+                  confirmDialog.reject?.(error);
                   confirmDialogActionRef.current = null;
-                }}
-              >
-                {t("common.actions.cancel")}
-              </AlertDialogCancel>
-              <AlertDialogAction
-                onClick={async () => {
-                  if (!confirmDialog) return;
-                  confirmDialogActionRef.current = "confirm";
-                  try {
-                    await confirmDialog.proceed();
-                    confirmDialog.resolve?.();
-                    confirmDialogSettledRef.current = true;
-                  } catch (error) {
-                    confirmDialog.reject?.(error);
-                    confirmDialogActionRef.current = null;
-                    confirmDialogSettledRef.current = true;
-                    return;
-                  }
-                  setConfirmDialog(null);
-                  confirmDialogActionRef.current = null;
-                }}
-              >
-                {t("common.actions.confirm")}
-              </AlertDialogAction>
-            </AlertDialogFooter>
+                  confirmDialogSettledRef.current = true;
+                  return;
+                }
+                setConfirmDialog(null);
+                confirmDialogActionRef.current = null;
+              }}
+            >
+              {t("common.actions.confirm")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </>

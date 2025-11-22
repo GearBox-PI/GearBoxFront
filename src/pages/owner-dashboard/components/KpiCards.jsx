@@ -8,7 +8,9 @@ export function KpiCards({ metrics = [] }) {
       {metrics.map((metric) => (
         <Card
           key={metric.label}
-          className={cn("border-border bg-card/80 shadow-sm")}
+          className={cn(
+            "border-border/50 bg-card/50 backdrop-blur-sm shadow-sm"
+          )}
         >
           <CardContent className="flex min-h-[110px] flex-col items-center justify-center gap-2 p-4 text-center">
             <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">

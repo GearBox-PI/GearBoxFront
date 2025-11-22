@@ -10,13 +10,15 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    /* Light Mode Background #f4f6fa */
+    --background: 220 27% 97%;
     --foreground: 222.2 84% 4.9%;
 
+    /* Card White #ffffff */
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
 
-    --popover: 0 0% 100%;
+    --popover: 210 40% 98%;
     --popover-foreground: 222.2 84% 4.9%;
 
     --primary: 39.92 100% 48.04%;
@@ -45,90 +47,105 @@ All colors MUST be HSL.
     --warning: 39.92 100% 45%;
     --warning-light: 39.92 100% 95%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
+    /* Border gray-200 #e5e7eb */
+    --border: 220 13% 91%;
+    /* Input gray-100 #f3f4f6 */
+    --input: 210 40% 96.1%;
     --ring: 39.92 100% 48.04%;
 
     --radius: 0.75rem;
     --logo-fill: #2e3a45;
     --logo-accent: #f5a300;
 
-    --sidebar-bg: #f5f7f8;
-    --sidebar-text: #1b1f23;
-    --sidebar-hover-bg: #ededed;
-    --sidebar-icon-active: #2e3a45;
-    --sidebar-icon-inactive: #5c6b73;
-    --sidebar-border-color: #f5a300;
-    --sidebar-user-name: #1b1f23;
-    --sidebar-user-role: #5c6b73;
-    --sidebar-logout-bg: #f2f3f4;
-    --sidebar-logout-hover: #e5e7e9;
-    --sidebar-logout-icon: #2e3a45;
-    --sidebar-active-bg: #e5e7eb;
+    /* Sidebar Light Mode */
+    --sidebar-bg: #f9fafb; /* gray-50 */
+    --sidebar-text: #111827; /* gray-900 */
+    --sidebar-hover-bg: #f3f4f6; /* gray-100 */
+    --sidebar-icon-active: #f5a300;
+    --sidebar-icon-inactive: #6b7280; /* gray-500 */
+    --sidebar-border-color: #e5e7eb; /* gray-200 */
+    --sidebar-user-name: #111827;
+    --sidebar-user-role: #6b7280;
+    --sidebar-logout-bg: #f3f4f6;
+    --sidebar-logout-hover: #e5e7eb;
+    --sidebar-logout-icon: #4b5563;
+    --sidebar-active-bg: #f3f4f6;
+
+    --gradient-primary: linear-gradient(135deg, #1a1f23, #0f1417);
+    --gradient-accent: linear-gradient(135deg, #f5a300, #ffcc33);
+    --gradient-hero: linear-gradient(180deg, #0f1417, #1a2024);
+
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1),
+      0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+      0 4px 6px -4px rgb(0 0 0 / 0.1);
   }
 
   .dark {
-    --background: 202.5 21.05% 7.45%;
-    --foreground: 216 12.2% 91.96%;
+    /* Dark Mode Background - Base color, gradient applied in Layout */
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
 
-    --card: 204 16.13% 12.16%;
-    --card-foreground: 216 12.2% 91.96%;
+    /* Card Dark #0d1117 */
+    --card: 216 28% 7%;
+    --card-foreground: 210 40% 98%;
 
-    --popover: 204 16.13% 12.16%;
-    --popover-foreground: 216 12.2% 91.96%;
+    --popover: 216 28% 7%;
+    --popover-foreground: 210 40% 98%;
 
     --primary: 45 100% 51.37%;
     --primary-foreground: 202.5 21.05% 7.45%;
 
     --primary-glow: 39.92 100% 60%;
 
-    --secondary: 205.26 10.38% 64.12%;
-    --secondary-foreground: 202.5 21.05% 7.45%;
+    --secondary: 217 19% 27%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 200 12% 14.71%;
-    --muted-foreground: 207.27 5.82% 62.94%;
+    --muted: 217 19% 27%;
+    --muted-foreground: 215 20.2% 65.1%;
 
     --accent: 39.92 100% 48.04%;
-    --accent-foreground: 202.5 21.05% 7.45%;
+    --accent-foreground: 210 40% 98%;
 
-    --accent-light: 39.92 100% 35%;
+    --accent-light: 39.92 100% 15%;
 
-    --destructive: 0 90% 75%;
-    --destructive-foreground: 202.5 21.05% 7.45%;
-    --destructive-light: 0 90% 15%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --destructive-light: 0 62.8% 20%;
 
-    --success: 140 70% 70%;
-    --success-light: 140 70% 15%;
+    --success: 142.1 70.6% 45.3%;
+    --success-light: 142.1 70.6% 15%;
 
-    --warning: 45 100% 51.37%;
-    --warning-light: 45 100% 15%;
-
-    --border: 200 12% 14.71%;
-    --input: 200 12% 14.71%;
-    --ring: 45 100% 51.37%;
-
-    --gradient-primary: linear-gradient(135deg, #1a1f23, #0f1417);
-    --gradient-accent: linear-gradient(135deg, #f5a300, #ffcc33);
-    --gradient-hero: linear-gradient(180deg, #0f1417, #1a2024);
+    --warning: 48 96% 53%;
+    --warning-light: 48 96% 15%;
 
     --shadow-sm: 0 2px 8px -2px hsl(0 0% 0% / 0.35);
     --shadow-md: 0 8px 20px -4px hsl(0 0% 0% / 0.45);
     --shadow-lg: 0 16px 40px -8px hsl(0 0% 0% / 0.55);
 
-    --sidebar-bg: #1a2024;
-    --sidebar-text: #e8eaed;
-    --sidebar-hover-bg: #21272a;
-    --sidebar-icon-active: #ffc107;
-    --sidebar-icon-inactive: #9ba1a6;
-    --sidebar-border-color: #f5a300;
-    --sidebar-active-bg: rgba(245, 163, 0, 0.15);
-    --logo-fill: #e8eaed;
-    --logo-accent: #ffc107;
-    --sidebar-user-name: #e8eaed;
-    --sidebar-user-role: #9ba1a6;
-    --sidebar-logout-bg: #21272a;
-    --sidebar-logout-hover: #2c2f33;
-    --sidebar-logout-icon: #e8eaed;
+    /* Border Dark #1a1f27 */
+    --border: 217 20% 13%;
+    /* Input Dark #111827 */
+    --input: 222 47% 11%;
+    --ring: 45 100% 51.37%;
+
+    --logo-fill: #ffffff;
+    --logo-accent: #f5a300;
+
+    /* Sidebar Dark Mode */
+    --sidebar-bg: #0d1117;
+    --sidebar-text: #f9fafb;
+    --sidebar-hover-bg: #161b22;
+    --sidebar-icon-active: #f5a300;
+    --sidebar-icon-inactive: #8b949e;
+    --sidebar-border-color: #1a1f27;
+    --sidebar-user-name: #f9fafb;
+    --sidebar-user-role: #8b949e;
+    --sidebar-logout-bg: #161b22;
+    --sidebar-logout-hover: #21262d;
+    --sidebar-logout-icon: #8b949e;
+    --sidebar-active-bg: #161b22;
   }
 }
 

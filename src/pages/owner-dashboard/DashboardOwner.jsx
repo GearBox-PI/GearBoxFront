@@ -91,7 +91,8 @@ export default function DashboardOwner() {
     [services, periodRange]
   );
   const budgetsPreviousPeriod = useMemo(
-    () => filterByPeriod(budgets, (item) => item.createdAt, previousPeriodRange),
+    () =>
+      filterByPeriod(budgets, (item) => item.createdAt, previousPeriodRange),
     [budgets, previousPeriodRange]
   );
 
@@ -260,9 +261,9 @@ export default function DashboardOwner() {
       (service) => service.status === "Concluído"
     ).length;
     const bestConversionLabel = bestMechanic
-      ? `${bestMechanic.nome ?? bestMechanic.name} (${bestMechanic.acceptRate}% ${t(
-          "owner.kpis.generalAcceptance"
-        )})`
+      ? `${bestMechanic.nome ?? bestMechanic.name} (${
+          bestMechanic.acceptRate
+        }% ${t("owner.kpis.generalAcceptance")})`
       : "—";
     const averageTicket = calculateTicketAverage(budgetsInPeriod);
 
@@ -356,7 +357,10 @@ export default function DashboardOwner() {
     return [
       { label: t("owner.kpis.periodBudgets"), value: totalBudgets },
       { label: t("owner.kpis.generalAcceptance"), value: `${acceptanceRate}%` },
-      { label: t("owner.kpis.generalCancellation"), value: `${cancellationRate}%` },
+      {
+        label: t("owner.kpis.generalCancellation"),
+        value: `${cancellationRate}%`,
+      },
       { label: t("owner.kpis.completedBudgets"), value: totals.completed },
     ];
   }, [budgetsInPeriod.length, statusData, t]);
@@ -487,9 +491,11 @@ export default function DashboardOwner() {
 
   if (!isOwner) {
     return (
-      <div className="page-container bg-gradient-hero rounded-2xl border border-border shadow-lg p-8">
+      <div className="page-container">
         <EmptyState
-          title={t("common.actions.viewDetails", { defaultValue: "Acesso restrito" })}
+          title={t("common.actions.viewDetails", {
+            defaultValue: "Acesso restrito",
+          })}
           description={t("owner.header.subtitle")}
         />
       </div>
@@ -502,15 +508,15 @@ export default function DashboardOwner() {
     usersQuery.isError || budgetsQuery.isError || servicesQuery.isError;
 
   return (
-      <div className="page-container bg-gradient-hero rounded-2xl border border-border shadow-lg p-6 md:p-8 space-y-8">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <PageHeader
-            eyebrow={t("owner.header.eyebrow")}
-            title={t("owner.header.title")}
-            subtitle={t("owner.header.subtitle")}
-            align="start"
-            className="gap-2"
-          />
+    <div className="page-container space-y-8">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <PageHeader
+          eyebrow={t("owner.header.eyebrow")}
+          title={t("owner.header.title")}
+          subtitle={t("owner.header.subtitle")}
+          align="start"
+          className="gap-2"
+        />
         <CreateUserModal onSubmit={handleCreateUser} />
       </div>
 

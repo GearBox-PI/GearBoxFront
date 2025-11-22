@@ -28,6 +28,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/shared/components/ui/dialog";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useServices } from "@/hooks/useServices";
 import { useClients } from "@/hooks/useClients";
 import { useCars } from "@/hooks/useCars";
@@ -206,7 +207,7 @@ const RecentOrderItem = ({
   const shouldTruncate = description && description.length > 150;
 
   return (
-    <div className="flex items-center justify-between gap-4 p-4 rounded-lg bg-muted/50 hover:bg-muted transition-colors">
+    <div className="flex items-center justify-between gap-4 p-4 rounded-lg bg-card/40 border border-border/50 hover:bg-card/60 transition-colors">
       <div className="flex-1 space-y-1">
         <div className="flex items-center gap-2 flex-wrap">
           <span className="font-semibold text-foreground">{order.id}</span>
@@ -249,13 +250,25 @@ const RecentOrderItem = ({
         </p>
         {shouldTruncate && (
           <>
-            <Button
-              variant="link"
-              className="h-auto p-0 text-xs mt-1 text-primary font-semibold"
-              onClick={() => setIsDescriptionOpen(true)}
-            >
-              Ver mais
-            </Button>
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="link"
+                  className="h-auto p-0 text-xs mt-1 text-primary font-semibold"
+                  onClick={() => setIsDescriptionOpen(true)}
+                  aria-label={t("dashboardGeneral.detailModal.open", {
+                    defaultValue: "Ver descrição completa",
+                  })}
+                >
+                  Ver mais
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top">
+                {t("dashboardGeneral.detailModal.open", {
+                  defaultValue: "Ver descrição completa",
+                })}
+              </TooltipContent>
+            </Tooltip>
             <Dialog
               open={isDescriptionOpen}
               onOpenChange={setIsDescriptionOpen}
@@ -272,7 +285,10 @@ const RecentOrderItem = ({
                   </p>
                 </div>
                 <DialogFooter>
-                  <Button onClick={() => setIsDescriptionOpen(false)}>
+                  <Button
+                    onClick={() => setIsDescriptionOpen(false)}
+                    aria-label={t("common.actions.close", { defaultValue: "Fechar" })}
+                  >
                     {t("common.actions.close") || "Fechar"}
                   </Button>
                 </DialogFooter>
@@ -552,7 +568,7 @@ export default function Dashboard() {
     budgetsQuery.isLoading;
 
   return (
-    <div className="page-container bg-gradient-hero rounded-2xl border border-border shadow-lg p-6 md:p-8">
+    <div className="page-container">
       <div className="mb-8">
         <h1 className="heading-accent text-3xl font-bold text-foreground mb-2">
           {t("dashboardGeneral.title")}
@@ -602,7 +618,7 @@ export default function Dashboard() {
       )}
 
       <div className="grid grid-cols-1 gap-6 mb-8">
-        <Card className="border-border shadow-md">
+        <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0">
             <CardTitle className="heading-accent text-xl flex items-center gap-2">
               <Bell className="w-4 h-4 text-warning" />
@@ -643,7 +659,7 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-border shadow-md">
+        <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0">
             <CardTitle className="heading-accent text-xl flex items-center gap-2">
               <CalendarCheck2 className="w-4 h-4 text-primary" />
@@ -667,29 +683,43 @@ export default function Dashboard() {
                 {group.items.length ? (
                   <div className="space-y-2">
                     {group.items.slice(0, 4).map((task) => (
-                      <button
-                        key={task.id}
-                        type="button"
-                        onClick={() => {
-                          setSelectedService(task);
-                          setDetailDialogOpen(true);
-                        }}
-                        className="flex w-full items-center justify-between text-xs text-muted-foreground rounded-md border border-transparent hover:border-border/80 hover:bg-background px-2 py-2 transition-colors"
-                      >
-                        <div className="flex items-center gap-2">
-                          <ListChecks className="w-3 h-3 text-primary" />
-                          <span
-                            className="text-foreground font-semibold"
-                            title={task.id}
+                      <Tooltip delayDuration={0}>
+                        <TooltipTrigger asChild>
+                          <button
+                            key={task.id}
+                            type="button"
+                            onClick={() => {
+                              setSelectedService(task);
+                              setDetailDialogOpen(true);
+                            }}
+                            className="flex w-full items-center justify-between text-xs text-muted-foreground rounded-md border border-transparent hover:border-border/80 hover:bg-background px-2 py-2 transition-colors"
+                            aria-label={t("dashboardGeneral.todayTasks.openDetails", {
+                              defaultValue: "Abrir detalhes do serviço",
+                            })}
                           >
-                            #{task.id.substring(0, 8)}
-                          </span>
-                        </div>
-                        <span className="truncate">
-                          {clientMap.get(task.clientId) ??
-                            t("dashboardGeneral.recentOrders.unknownClient")}
-                        </span>
-                      </button>
+                            <div className="flex items-center gap-2">
+                              <ListChecks className="w-3 h-3 text-primary" />
+                              <Tooltip delayDuration={0}>
+                                <TooltipTrigger asChild>
+                                  <span className="text-foreground font-semibold">
+                                    #{task.id.substring(0, 8)}
+                                  </span>
+                                </TooltipTrigger>
+                                <TooltipContent side="top">#{task.id}</TooltipContent>
+                              </Tooltip>
+                            </div>
+                            <span className="truncate">
+                              {clientMap.get(task.clientId) ??
+                                t("dashboardGeneral.recentOrders.unknownClient")}
+                            </span>
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top">
+                          {t("dashboardGeneral.todayTasks.openDetails", {
+                            defaultValue: "Abrir detalhes do serviço",
+                          })}
+                        </TooltipContent>
+                      </Tooltip>
                     ))}
                   </div>
                 ) : (
@@ -703,7 +733,7 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      <Card className="border-border shadow-md">
+      <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-sm">
         <CardHeader>
           <CardTitle className="heading-accent text-xl">
             {t("dashboardGeneral.recentOrdersTitle")}

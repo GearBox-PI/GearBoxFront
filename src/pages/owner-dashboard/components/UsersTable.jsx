@@ -49,7 +49,7 @@ export function UsersTable({
   );
 
   return (
-    <Card className="border-border shadow-sm bg-card/80">
+    <Card className="border-border/50 shadow-sm bg-card/50 backdrop-blur-sm">
       <CardHeader className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <CardTitle className="text-lg">Usuários do sistema</CardTitle>
         <SearchInput

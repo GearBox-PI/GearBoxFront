@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { listCars, listClients } from "@/services/gearbox";
 import { useTranslation } from "react-i18next";
+import { PageHeader } from "@/components/PageHeader";
 
 export default function Veiculos() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -60,22 +61,20 @@ export default function Veiculos() {
   };
 
   return (
-    <div className="page-container bg-gradient-hero rounded-2xl border border-border shadow-lg p-6 md:p-8">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="heading-accent text-3xl font-bold text-foreground mb-2">
-            {t("vehicles.title")}
-          </h1>
-          <p className="text-muted-foreground">{t("vehicles.subtitle")}</p>
-        </div>
-        <Button
-          className="gap-2 bg-gradient-accent hover:opacity-90"
-          onClick={() => setDialogOpen(true)}
-        >
-          <Plus className="w-4 h-4" />
-          {t("common.actions.createVehicle")}
-        </Button>
-      </div>
+    <div className="page-container space-y-8">
+      <PageHeader
+        title={t("vehicles.title")}
+        subtitle={t("vehicles.subtitle")}
+        actions={
+          <Button
+            className="gap-2 bg-gradient-accent hover:opacity-90"
+            onClick={() => setDialogOpen(true)}
+          >
+            <Plus className="w-4 h-4" />
+            {t("common.actions.createVehicle")}
+          </Button>
+        }
+      />
 
       <div className="mb-6">
         <div className="relative max-w-md">
@@ -108,7 +107,7 @@ export default function Veiculos() {
             {filteredCars.map((vehicle) => (
               <Card
                 key={vehicle.id}
-                className="border-border shadow-md hover:shadow-lg transition-shadow"
+                className="border-border/50 bg-card/50 backdrop-blur-sm shadow-sm hover:shadow-md transition-all"
               >
                 <CardContent className="p-6 space-y-4">
                   <div>

@@ -16,6 +16,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Logo } from "@/components/Logo";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const navigationItems = (t: (key: string) => string) => [
   {
@@ -59,7 +64,7 @@ const navigationItems = (t: (key: string) => string) => [
 export default function Layout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => window.innerWidth < 768);
   const { t } = useTranslation();
   const SIDEBAR_WIDTH = {
     expanded: 260,
@@ -82,6 +87,7 @@ export default function Layout() {
   const ariaLabel = collapsed
     ? t("common.actions.expandMenu", { defaultValue: "Expandir menu" })
     : t("common.actions.collapseMenu", { defaultValue: "Recolher menu" });
+  const logoutLabel = t("common.actions.logout");
 
   const handleLogout = async () => {
     await logout();
@@ -96,9 +102,13 @@ export default function Layout() {
 
   return (
     <div
-      className="min-h-screen bg-background transition-[padding-left] duration-300 ease-in-out"
+      className="min-h-screen bg-background transition-[padding-left] duration-300 ease-in-out relative isolate"
       style={{ paddingLeft: `${contentOffset}px` }}
     >
+      {/* Background Effects */}
+      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/40 via-transparent to-transparent dark:from-slate-900 dark:via-slate-950 dark:to-black -z-20 pointer-events-none" />
+      <div className="fixed inset-0 bg-[linear-gradient(to_right,#e5e7eb_1px,transparent_1px),linear-gradient(to_bottom,#e5e7eb_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-30 dark:opacity-100 -z-20 pointer-events-none" />
+
       <aside
         className="sidebar-shell"
         style={{ width: `${sidebarPixelWidth}px` }}
@@ -130,32 +140,40 @@ export default function Layout() {
             {navigation.map((item) => (
               <NavLink key={item.name} to={item.href} end={item.href === "/"}>
                 {({ isActive }) => (
-                  <div
-                    className={cn(
-                      "flex items-center rounded-lg transition-all font-medium",
-                      collapsed
-                        ? "justify-center px-2 py-3"
-                        : "justify-start gap-3 px-4 py-3",
-                      isActive
-                        ? "bg-[var(--sidebar-active-bg)] text-[var(--sidebar-icon-active)] shadow-sm"
-                        : "text-[var(--sidebar-icon-inactive)] hover:bg-[var(--sidebar-hover-bg)] hover:text-[var(--sidebar-text)]"
+                  <Tooltip delayDuration={0}>
+                    <TooltipTrigger asChild>
+                      <div
+                        className={cn(
+                          "flex items-center rounded-lg transition-all font-medium",
+                          collapsed
+                            ? "justify-center px-2 py-3"
+                            : "justify-start gap-3 px-4 py-3",
+                          isActive
+                            ? "bg-[var(--sidebar-active-bg)] text-[var(--sidebar-icon-active)] shadow-sm"
+                            : "text-[var(--sidebar-icon-inactive)] hover:bg-[var(--sidebar-hover-bg)] hover:text-[var(--sidebar-text)]"
+                        )}
+                        aria-label={item.name}
+                      >
+                        <item.icon
+                          className={cn(
+                            "w-5 h-5 transition-colors",
+                            collapsed && "mx-auto",
+                            isActive
+                              ? "text-[var(--sidebar-icon-active)]"
+                              : "text-[var(--sidebar-icon-inactive)]"
+                          )}
+                        />
+                        {!collapsed && (
+                          <span className="ml-2 text-[var(--sidebar-text)]">
+                            {item.name}
+                          </span>
+                        )}
+                      </div>
+                    </TooltipTrigger>
+                    {collapsed && (
+                      <TooltipContent side="right">{item.name}</TooltipContent>
                     )}
-                  >
-                    <item.icon
-                      className={cn(
-                        "w-5 h-5 transition-colors",
-                        collapsed && "mx-auto",
-                        isActive
-                          ? "text-[var(--sidebar-icon-active)]"
-                          : "text-[var(--sidebar-icon-inactive)]"
-                      )}
-                    />
-                    {!collapsed && (
-                      <span className="ml-2 text-[var(--sidebar-text)]">
-                        {item.name}
-                      </span>
-                    )}
-                  </div>
+                  </Tooltip>
                 )}
               </NavLink>
             ))}
@@ -193,37 +211,52 @@ export default function Layout() {
               </div>
             )}
           </div>
-          <button
-            type="button"
-            className={cn(
-              "sidebar-logout",
-              collapsed && "sidebar-logout--collapsed"
+          <Tooltip delayDuration={0}>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                className={cn(
+                  "sidebar-logout",
+                  collapsed && "sidebar-logout--collapsed"
+                )}
+                aria-label={logoutLabel}
+                onClick={handleLogout}
+              >
+                <LogOut className="w-4 h-4 text-[var(--sidebar-logout-icon)]" />
+                {!collapsed && <span>{logoutLabel}</span>}
+              </button>
+            </TooltipTrigger>
+            {collapsed && (
+              <TooltipContent side="right">
+                {logoutLabel}
+              </TooltipContent>
             )}
-            onClick={handleLogout}
-          >
-            <LogOut className="w-4 h-4 text-[var(--sidebar-logout-icon)]" />
-            {!collapsed && <span>{t("common.actions.logout")}</span>}
-          </button>
+          </Tooltip>
         </div>
       </aside>
 
-      <button
-        type="button"
-        className="sidebar-toggle"
-        style={{
-          left: `${sidebarPixelWidth + 10}px`,
-          top: "40px",
-        }}
-        aria-label={ariaLabel}
-        aria-pressed={!collapsed}
-        onClick={() => setCollapsed((prev) => !prev)}
-      >
-        {collapsed ? (
-          <PanelLeftOpen className="w-4 h-4" />
-        ) : (
-          <PanelLeftClose className="w-4 h-4" />
-        )}
-      </button>
+      <Tooltip delayDuration={0}>
+        <TooltipTrigger asChild>
+          <button
+            type="button"
+            className={cn("sidebar-toggle", "hidden md:flex")}
+            style={{
+              left: `${sidebarPixelWidth + 10}px`,
+              top: "40px",
+            }}
+            aria-label={ariaLabel}
+            aria-pressed={!collapsed}
+            onClick={() => setCollapsed((prev) => !prev)}
+          >
+            {collapsed ? (
+              <PanelLeftOpen className="w-4 h-4" />
+            ) : (
+              <PanelLeftClose className="w-4 h-4" />
+            )}
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="right">{ariaLabel}</TooltipContent>
+      </Tooltip>
 
       <main className="min-h-screen px-6 py-6">
         <Outlet />

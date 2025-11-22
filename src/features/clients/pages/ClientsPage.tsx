@@ -160,7 +160,7 @@ export default function ClientsPage() {
   }) => createCarMutation.mutateAsync(values);
 
   return (
-    <div className="page-container bg-gradient-hero rounded-2xl border border-border shadow-lg p-6 md:p-8">
+    <div className="page-container space-y-8">
       <PageHeader
         eyebrow={t("owner.header.eyebrow")}
         title={t("clients.title")}
@@ -238,7 +238,7 @@ export default function ClientsPage() {
               return (
                 <Card
                   key={client.id}
-                  className="border-border shadow-md hover:shadow-lg transition-shadow"
+                  className="border-border/50 bg-card/50 backdrop-blur-sm shadow-sm hover:shadow-md transition-all"
                 >
                   <CardContent className="space-y-5 p-6">
                     <div className="flex flex-col gap-2">
@@ -278,7 +278,7 @@ export default function ClientsPage() {
                       </div>
                     </div>
 
-                    <div className="rounded-lg border border-border/60 bg-background/40 p-4">
+                    <div className="rounded-lg border border-border/60 bg-muted/30 p-4">
                       <div className="flex items-center justify-between gap-2">
                         <div>
                           <p className="text-xs text-muted-foreground">
@@ -325,7 +325,7 @@ export default function ClientsPage() {
                       )}
                     </div>
 
-                    <div className="grid gap-2 rounded-lg border border-border/60 bg-background/30 p-4 text-sm text-muted-foreground">
+                    <div className="grid gap-2 rounded-lg border border-border/60 bg-muted/30 p-4 text-sm text-muted-foreground">
                       <p>
                         Cadastrado por{" "}
                         <span className="font-semibold text-foreground">

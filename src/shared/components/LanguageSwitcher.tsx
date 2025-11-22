@@ -15,6 +15,7 @@ interface LanguageSwitcherProps {
 export function LanguageSwitcher({ collapsed }: LanguageSwitcherProps) {
   const { t } = useTranslation();
   const current = getLanguage();
+  const label = t("language.label");
 
   const handleChange = (value: string) => {
     setLanguage(value);
@@ -42,6 +43,7 @@ export function LanguageSwitcher({ collapsed }: LanguageSwitcherProps) {
         style={{
           color: "var(--sidebar-text)",
         }}
+        aria-label={label}
       >
         <div className="flex items-center gap-2.5 overflow-hidden">
           <span className="text-base leading-none shrink-0 grayscale-[0.2] hover:grayscale-0 transition-all">

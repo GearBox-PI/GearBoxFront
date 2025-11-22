@@ -47,6 +47,7 @@ import {
 } from "@/shared/components/ui/dialog";
 import { useOrders } from "@/hooks/useOrders";
 import { gearboxKeys } from "@/lib/queryKeys";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const statusConfig = (
   t: (key: string) => string
@@ -178,10 +179,11 @@ export default function Ordens() {
   const { t } = useTranslation();
   const statusLabels = statusConfig(t);
 
-  const { servicesQuery, clientsQuery, carsQuery, clientMap, carMap } = useOrders({
-    page,
-    perPage: 10,
-  });
+  const { servicesQuery, clientsQuery, carsQuery, clientMap, carMap } =
+    useOrders({
+      page,
+      perPage: 10,
+    });
 
   const updateStatusMutation = useMutation({
     mutationFn: ({
@@ -322,7 +324,8 @@ export default function Ordens() {
     const mechanicId = user?.id;
     if (!mechanicId) return [];
     return services.filter(
-      (service) => service.userId === mechanicId || service.assignedToId === mechanicId
+      (service) =>
+        service.userId === mechanicId || service.assignedToId === mechanicId
     );
   }, [isOwner, services, user?.id]);
 
@@ -384,7 +387,7 @@ export default function Ordens() {
   };
 
   return (
-    <div className="page-container bg-gradient-hero rounded-2xl border border-border shadow-lg p-6 md:p-8">
+    <div className="page-container space-y-8">
       <PageHeader title={t("orders.title")} subtitle={t("orders.subtitle")} />
 
       <div className="mb-6">
@@ -426,21 +429,37 @@ export default function Ordens() {
           <p className="text-muted-foreground uppercase tracking-wide">
             {t("orders.filters.dateFrom")}
           </p>
-          <Input
-            type="date"
-            value={createdFrom}
-            onChange={(event) => setCreatedFrom(event.target.value)}
-          />
+          <Tooltip delayDuration={0}>
+            <TooltipTrigger asChild>
+              <Input
+                type="date"
+                value={createdFrom}
+                aria-label={t("orders.filters.dateFrom")}
+                onChange={(event) => setCreatedFrom(event.target.value)}
+              />
+            </TooltipTrigger>
+            <TooltipContent side="top">
+              {t("orders.filters.dateFrom")}
+            </TooltipContent>
+          </Tooltip>
         </div>
         <div className="space-y-1 text-xs">
           <p className="text-muted-foreground uppercase tracking-wide">
             {t("orders.filters.dateTo")}
           </p>
-          <Input
-            type="date"
-            value={createdTo}
-            onChange={(event) => setCreatedTo(event.target.value)}
-          />
+          <Tooltip delayDuration={0}>
+            <TooltipTrigger asChild>
+              <Input
+                type="date"
+                value={createdTo}
+                aria-label={t("orders.filters.dateTo")}
+                onChange={(event) => setCreatedTo(event.target.value)}
+              />
+            </TooltipTrigger>
+            <TooltipContent side="top">
+              {t("orders.filters.dateTo")}
+            </TooltipContent>
+          </Tooltip>
         </div>
       </div>
 
@@ -483,7 +502,7 @@ export default function Ordens() {
               return (
                 <Card
                   key={service.id}
-                  className="border-border shadow-md hover:shadow-lg transition-shadow"
+                  className="border-border/50 bg-card/50 backdrop-blur-sm shadow-sm hover:shadow-md transition-all"
                 >
                   <CardContent className="space-y-5 p-6">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -525,12 +544,17 @@ export default function Ordens() {
                         <p className="text-xs text-muted-foreground uppercase tracking-wide">
                           Ordem
                         </p>
-                        <p
-                          className="font-medium text-foreground truncate"
-                          title={service.id}
-                        >
-                          #{service.id.slice(0, 8)}
-                        </p>
+                        <Tooltip delayDuration={0}>
+                          <TooltipTrigger asChild>
+                            <p
+                              className="font-medium text-foreground truncate"
+                              aria-label={service.id}
+                            >
+                              #{service.id.slice(0, 8)}
+                            </p>
+                          </TooltipTrigger>
+                          <TooltipContent side="top">#{service.id}</TooltipContent>
+                        </Tooltip>
                       </div>
                       <div>
                         <p className="text-xs text-muted-foreground uppercase tracking-wide">
@@ -593,36 +617,36 @@ export default function Ordens() {
                           );
                         })()}
                       </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground uppercase tracking-wide">
-                      {t("orders.deadline.remaining")}
-                    </p>
-                    <p className="text-sm font-medium text-foreground">
-                      {(() => {
-                        const remaining = getDaysRemaining(service);
-                        if (remaining === null)
-                          return t("orders.deadline.noForecast");
-                        return remaining >= 0
-                          ? t("orders.deadline.remainingDays", {
-                              count: remaining,
-                            })
-                          : t("orders.deadline.overdueDays", {
-                              count: Math.abs(remaining),
-                            });
-                      })()}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground uppercase tracking-wide">
-                      {t("orders.deadline.extended")}
-                    </p>
-                    <p className="text-sm font-medium text-foreground">
-                      {isExtended(service)
-                        ? t("orders.deadline.extendedYes")
-                        : t("orders.deadline.extendedNo")}
-                    </p>
-                  </div>
-                </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                          {t("orders.deadline.remaining")}
+                        </p>
+                        <p className="text-sm font-medium text-foreground">
+                          {(() => {
+                            const remaining = getDaysRemaining(service);
+                            if (remaining === null)
+                              return t("orders.deadline.noForecast");
+                            return remaining >= 0
+                              ? t("orders.deadline.remainingDays", {
+                                  count: remaining,
+                                })
+                              : t("orders.deadline.overdueDays", {
+                                  count: Math.abs(remaining),
+                                });
+                          })()}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                          {t("orders.deadline.extended")}
+                        </p>
+                        <p className="text-sm font-medium text-foreground">
+                          {isExtended(service)
+                            ? t("orders.deadline.extendedYes")
+                            : t("orders.deadline.extendedNo")}
+                        </p>
+                      </div>
+                    </div>
 
                     <ServiceDescription
                       description={service.description ?? ""}
