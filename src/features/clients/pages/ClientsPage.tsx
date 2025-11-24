@@ -296,15 +296,15 @@ export default function ClientsPage() {
                             <Button
                               size="sm"
                               variant="outline"
-                              className="border-sky-200 dark:border-sky-400/60 bg-sky-100 dark:bg-sky-500/10 text-sky-700 dark:text-sky-200 hover:bg-sky-200 dark:hover:bg-sky-500/20"
-                              onClick={open}
-                              disabled={disabled || createCarMutation.isPending}
-                            >
-                              <Car className="mr-1 h-3.5 w-3.5" />
-                              {t("common.actions.save")}
-                            </Button>
-                          )}
-                        />
+                          className="border-sky-200 dark:border-sky-400/60 bg-sky-100 dark:bg-sky-500/10 text-sky-700 dark:text-sky-200 hover:bg-sky-200 dark:hover:bg-sky-500/20"
+                          onClick={open}
+                          disabled={disabled || createCarMutation.isPending}
+                        >
+                          <Car className="mr-1 h-3.5 w-3.5" />
+                          {t("clients.actions.addCar", { defaultValue: "Adicionar carro" })}
+                        </Button>
+                      )}
+                    />
                       </div>
                       {clientCars.length > 0 ? (
                         <div className="mt-3 flex flex-wrap gap-2">

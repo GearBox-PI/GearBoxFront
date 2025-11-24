@@ -313,6 +313,9 @@
       "createdAt": "Created at",
       "actions": "Actions",
       "empty": "No clients found."
+    },
+    "actions": {
+      "addCar": "Add car"
     }
   },
   "vehicles": {

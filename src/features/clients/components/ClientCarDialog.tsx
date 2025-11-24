@@ -115,7 +115,7 @@ export function ClientCarDialog({ clientId, clientName, renderTrigger, onSubmit 
   ) : (
     <DialogTrigger asChild>
       <Button variant="outline" size="sm" disabled={submitting}>
-        {t('common.actions.save')}
+        {t('clients.actions.addCar', { defaultValue: 'Adicionar carro' })}
       </Button>
     </DialogTrigger>
   );
