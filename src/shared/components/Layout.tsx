@@ -14,6 +14,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { Logo } from "@/components/Logo";
+import Footer from "@/components/Footer";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import {
@@ -258,9 +259,12 @@ export default function Layout() {
         <TooltipContent side="right">{ariaLabel}</TooltipContent>
       </Tooltip>
 
-      <main className="min-h-screen px-6 py-6">
-        <Outlet />
-      </main>
+      <div className="flex flex-col min-h-screen">
+        <main className="flex-1 px-6 py-6">
+          <Outlet />
+        </main>
+        <Footer />
+      </div>
     </div>
   );
 }

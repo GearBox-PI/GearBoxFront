@@ -10,9 +10,13 @@ import { cn } from "@/lib/utils";
 
 interface LanguageSwitcherProps {
   collapsed?: boolean;
+  className?: string;
 }
 
-export function LanguageSwitcher({ collapsed }: LanguageSwitcherProps) {
+export function LanguageSwitcher({
+  collapsed,
+  className,
+}: LanguageSwitcherProps) {
   const { t } = useTranslation();
   const current = getLanguage();
   const label = t("language.label");
@@ -38,7 +42,8 @@ export function LanguageSwitcher({ collapsed }: LanguageSwitcherProps) {
           "w-full transition-all duration-200 border border-[var(--sidebar-border-color)] bg-transparent hover:bg-[var(--sidebar-hover-bg)]",
           collapsed
             ? "justify-center px-0 border-none h-10 w-10 mx-auto [&>svg]:hidden"
-            : "justify-between px-3"
+            : "justify-between px-3",
+          className
         )}
         style={{
           color: "var(--sidebar-text)",
