@@ -323,7 +323,7 @@ export function ClientCarDialog({
               <Button type="submit" disabled={submitting}>
                 {submitting
                   ? t("charts.placeholder.loading")
-                  : t("vehicles.title")}
+                  : t("common.actions.save")}
               </Button>
             </DialogFooter>
           </form>

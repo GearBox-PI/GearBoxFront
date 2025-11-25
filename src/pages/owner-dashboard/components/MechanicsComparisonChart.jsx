@@ -119,8 +119,8 @@ export function MechanicsComparisonChart({
 }) {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
-  const { theme } = useTheme();
-  const isDark = theme === "dark";
+  const { theme, resolvedTheme } = useTheme();
+  const isDark = theme === "dark" || resolvedTheme === "dark";
   const textColor = isDark ? COLORS.text : COLORS.textDark;
   const hasData = data.length > 0;
 

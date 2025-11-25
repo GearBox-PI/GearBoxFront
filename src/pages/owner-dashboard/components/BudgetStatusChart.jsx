@@ -60,8 +60,8 @@ export function BudgetStatusChart({
 }) {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
-  const { theme } = useTheme();
-  const isDark = theme === "dark";
+  const { theme, resolvedTheme } = useTheme();
+  const isDark = theme === "dark" || resolvedTheme === "dark";
   const textColor = isDark ? "#e2e8f0" : "#0f172a";
 
   const total = useMemo(
