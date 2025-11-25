@@ -127,3 +127,16 @@ O front consome a API AdonisJS (pasta `gear-box-api`) via client central (`src/s
 - Implementar os formulários de criação de clientes e ordens (botões hoje estão desabilitados até a API suportar todo o fluxo).
 - Adicionar tratamento de expiração de token (logout automático ao receber 401).
 - Expandir seeds/testes conforme novos cenários forem necessários para demonstrações.
+
+## 📄 Licença
+
+Este projeto é licenciado sob os termos da **GNU Affero General Public License v3.0 (AGPL-3.0)**.
+
+Isso significa que:
+- qualquer modificação ou derivação deve permanecer como software livre;
+- melhorias feitas por terceiros precisam ser disponibilizadas publicamente
+  caso o software seja utilizado via rede (como serviço web);
+- cópias, redistribuições ou forks devem manter a mesma licença.
+
+Para consultar o texto completo da licença, acesse o arquivo [LICENSE](./LICENSE)
+ou visite https://www.gnu.org/licenses/agpl-3.0.html.
