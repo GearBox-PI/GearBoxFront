@@ -1,7 +1,7 @@
-# ⚙️ MechanicMate MVP
+# ⚙️ Gear Box
 
 ## 🚀 Sobre o Projeto
-O **MechanicMate MVP** é uma solução moderna e completa para gestão de oficinas mecânicas, desenvolvida com as tecnologias mais atuais do mercado. O sistema oferece uma interface intuitiva e responsiva para controlar todos os aspectos do seu negócio automotivo.
+O **Gear Box** é uma solução moderna e completa para gestão de oficinas mecânicas, desenvolvida com as tecnologias mais atuais do mercado. O sistema oferece uma interface intuitiva e responsiva para controlar todos os aspectos do seu negócio automotivo.
 
 ## ✨ Principais Funcionalidades
 - **🏠 Dashboard Inteligente:** Visão geral completa com métricas em tempo real.
