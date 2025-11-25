@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -9,8 +9,6 @@ import {
   updateUser,
   deleteUser,
 } from "@/services/gearbox";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 import { Loader2, FileDown } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,6 +17,7 @@ import { useTranslation } from "react-i18next";
 import { KpiCards } from "./components/KpiCards";
 import { MechanicsComparisonChart } from "./components/MechanicsComparisonChart";
 import { BudgetStatusChart } from "./components/BudgetStatusChart";
+import { generateExecutiveReport } from "./components/GenerateExecutiveReport";
 import { CreateUserModal } from "./components/CreateUserModal";
 import { UsersTable } from "./components/UsersTable";
 import { PageHeader } from "@/components/PageHeader";
@@ -46,9 +45,6 @@ export default function DashboardOwner() {
   const { toast } = useToast();
   const isOwner = user?.role === "dono";
   const { t } = useTranslation();
-  const summaryRef = useRef(null);
-  const comparisonCardRef = useRef(null);
-  const statusCardRef = useRef(null);
 
   const usersQuery = useQuery({
     queryKey: ["users", token],
@@ -78,6 +74,7 @@ export default function DashboardOwner() {
   );
   const budgets = budgetsQuery.data?.data ?? [];
   const services = servicesQuery.data?.data ?? [];
+  const mechanicsCount = mechanics.length;
 
   const earliestRecordDate = useMemo(() => {
     const dateValues = [...budgets, ...services]
@@ -133,7 +130,7 @@ export default function DashboardOwner() {
       (service) => service.status === "Concluído"
     ).length;
     return [
-      { label: t("owner.kpis.mechanics"), value: mechanics.length },
+      { label: t("owner.kpis.mechanics"), value: mechanicsCount },
       { label: t("owner.kpis.budgets"), value: totalBudgets },
       { label: t("owner.kpis.acceptance"), value: `${acceptanceRate}%` },
       { label: t("owner.kpis.services"), value: concludedServices },
@@ -391,91 +388,99 @@ export default function DashboardOwner() {
   }, [budgetsInPeriod.length, statusData, t]);
 
   const handleExportPdf = useCallback(async () => {
-    const sections = [
-      { ref: summaryRef, title: t("owner.report.sections.summary") },
-      { ref: comparisonCardRef, title: t("owner.report.sections.radar") },
-      { ref: statusCardRef, title: t("owner.report.sections.status") },
+    const totalBudgets = budgetsInPeriod.length;
+    const totalAccepted = budgetsInPeriod.filter(
+      (budget) => budget.status === "aceito"
+    ).length;
+    const concludedServices = servicesInPeriod.filter(
+      (service) => service.status === "Concluído"
+    ).length;
+    const averageTicketValue = calculateTicketAverage(budgetsInPeriod);
+
+    const generalAcceptanceLabel = t("owner.kpis.generalAcceptance");
+    const summaryCards = [
+      {
+        label: t("owner.report.cards.mechanics"),
+        value: String(mechanicsCount),
+      },
+      {
+        label: t("owner.report.cards.budgets"),
+        value: String(totalBudgets),
+      },
+      {
+        label: t("owner.report.cards.accepted"),
+        value: String(totalAccepted),
+      },
+      {
+        label: t("owner.report.cards.services"),
+        value: String(concludedServices),
+      },
+      {
+        label: t("owner.report.cards.ticketAverage"),
+        value: averageTicketValue ? formatCurrency(averageTicketValue) : "—",
+      },
     ];
 
-    if (sections.every((section) => !section.ref.current)) {
-      toast({
-        title: t("owner.report.errorTitle"),
-        description: t("owner.report.errors.noContent"),
-        variant: "destructive",
-      });
-      return;
-    }
+    const comparisonCards = [
+      {
+        label: t("owner.report.comparison.budgets"),
+        value: String(totalBudgets),
+      },
+      {
+        label: t("owner.report.comparison.acceptance"),
+        value:
+          statusKpis.find((item) => item.label === generalAcceptanceLabel)
+            ?.value ??
+          `${
+            totalBudgets
+              ? ((totalAccepted / totalBudgets) * 100).toFixed(1)
+              : "0"
+          }%`,
+      },
+      {
+        label: t("owner.report.comparison.services"),
+        value: String(concludedServices),
+      },
+      {
+        label: t("owner.report.comparison.ticketAverage"),
+        value: averageTicketValue ? formatCurrency(averageTicketValue) : "—",
+      },
+    ];
+
+    const reportTexts = {
+      reportTitle: t("owner.report.title"),
+      periodLabel: t("owner.report.periodLabel"),
+      generatedAt: t("owner.report.generatedAt"),
+      summaryTitle: t("owner.report.sections.summary"),
+      comparisonTitle: t("owner.report.sections.comparison"),
+      comparisonSubtitle: t("owner.report.sections.comparisonSubtitle"),
+      mechanicsTitle: t("owner.report.sections.mechanics"),
+      mechanicsTableHeaders: {
+        mechanic: t("owner.report.mechanicsTable.mechanic"),
+        budgets: t("owner.report.mechanicsTable.budgets"),
+        accepted: t("owner.report.mechanicsTable.accepted"),
+        services: t("owner.report.mechanicsTable.services"),
+        ticket: t("owner.report.mechanicsTable.ticket"),
+        acceptance: t("owner.report.mechanicsTable.acceptance"),
+        cancellation: t("owner.report.mechanicsTable.cancellation"),
+      },
+    };
 
     setIsExportingPdf(true);
     try {
-      const pdf = new jsPDF("p", "mm", "a4");
-      const margin = 14;
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      const contentWidth = pageWidth - margin * 2;
-      let cursorY = margin;
-      const periodText =
-        periodLabel ?? t("owner.report.periodFallback", { value: selectedPeriod });
-      const emissionDate = new Intl.DateTimeFormat("pt-BR", {
-        dateStyle: "long",
-        timeStyle: "short",
-      }).format(new Date());
-
-      const logoDataUrl = await new Promise((resolve) => {
-        const img = new Image();
-        img.crossOrigin = "anonymous";
-        img.onload = () => {
-          const size = 128;
-          const canvas = document.createElement("canvas");
-          canvas.width = size;
-          canvas.height = size;
-          const ctx = canvas.getContext("2d");
-          if (ctx) ctx.drawImage(img, 0, 0, size, size);
-          resolve(canvas.toDataURL("image/png"));
-        };
-        img.onerror = () => resolve(null);
-        img.src = "/logo.svg";
+      await generateExecutiveReport({
+        filename: `gearbox-relatorio-${selectedPeriod}-${Date.now()}.pdf`,
+        periodLabel:
+          periodLabel ??
+          t("owner.report.periodFallback", { value: selectedPeriod }),
+        emissionDate: new Date(),
+        summaryCards,
+        comparisonCards,
+        radarData: comparisonData,
+        statusData,
+        mechanicRows,
+        texts: reportTexts,
       });
-
-      if (logoDataUrl) {
-        pdf.addImage(logoDataUrl, "PNG", margin, cursorY, 20, 20);
-      }
-
-      pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(16);
-      pdf.text("Gear Box", margin + 24, cursorY + 8);
-      pdf.setFontSize(13);
-      pdf.text(t("owner.report.title"), margin + 24, cursorY + 18);
-
-      cursorY += 30;
-      pdf.setFontSize(11);
-      pdf.setFont("helvetica", "normal");
-      pdf.text(`${t("owner.report.periodLabel")}: ${periodText}`, margin, cursorY);
-      cursorY += 7;
-      pdf.text(`${t("owner.report.generatedAt")}: ${emissionDate}`, margin, cursorY);
-      cursorY += 12;
-
-      for (const section of sections) {
-        if (!section.ref.current) continue;
-        const canvas = await html2canvas(section.ref.current, {
-          backgroundColor: "#f8fafc",
-          scale: 2,
-        });
-        const imgHeight = (canvas.height * contentWidth) / canvas.width;
-        if (cursorY + imgHeight > pageHeight - margin) {
-          pdf.addPage();
-          cursorY = margin;
-        }
-        pdf.setFont("helvetica", "bold");
-        pdf.setFontSize(12);
-        pdf.text(section.title, margin, cursorY + 6);
-        cursorY += 10;
-        const imgData = canvas.toDataURL("image/png", 0.98);
-        pdf.addImage(imgData, "PNG", margin, cursorY, contentWidth, imgHeight);
-        cursorY += imgHeight + 10;
-      }
-
-      pdf.save(`gearbox-relatorio-${selectedPeriod}-${Date.now()}.pdf`);
       toast({
         title: t("owner.report.successTitle"),
         description: t("owner.report.successMessage"),
@@ -493,11 +498,13 @@ export default function DashboardOwner() {
       setIsExportingPdf(false);
     }
   }, [
-    comparisonCardRef,
+    budgetsInPeriod,
+    comparisonData,
+    mechanicRows,
+    mechanicsCount,
     periodLabel,
     selectedPeriod,
-    statusCardRef,
-    summaryRef,
+    servicesInPeriod,
     t,
     toast,
   ]);
@@ -688,41 +695,35 @@ export default function DashboardOwner() {
         />
       ) : (
         <>
-          <div ref={summaryRef}>
-            <KpiCards metrics={metrics} />
-          </div>
+          <KpiCards metrics={metrics} />
 
           <div className="grid grid-cols-1 gap-6">
-            <div ref={comparisonCardRef}>
-              <MechanicsComparisonChart
-                data={comparisonData}
-                loading={isLoading}
-                kpis={performanceKpis}
-                averageProfile={mechanicAverageProfile}
-                topPerformer={bestMechanic}
-                selectedId={selectedMechanicId}
-                onSelect={setSelectedMechanicId}
-                period={{
-                  value: selectedPeriod,
-                  label: periodLabel,
-                  options: PERIOD_OPTIONS,
-                  onChange: setSelectedPeriod,
-                }}
-              />
-            </div>
-            <div ref={statusCardRef}>
-              <BudgetStatusChart
-                data={statusData}
-                kpis={statusKpis}
-                loading={isLoading}
-                period={{
-                  value: selectedPeriod,
-                  label: periodLabel,
-                  options: PERIOD_OPTIONS,
-                  onChange: setSelectedPeriod,
-                }}
-              />
-            </div>
+            <MechanicsComparisonChart
+              data={comparisonData}
+              loading={isLoading}
+              kpis={performanceKpis}
+              averageProfile={mechanicAverageProfile}
+              topPerformer={bestMechanic}
+              selectedId={selectedMechanicId}
+              onSelect={setSelectedMechanicId}
+              period={{
+                value: selectedPeriod,
+                label: periodLabel,
+                options: PERIOD_OPTIONS,
+                onChange: setSelectedPeriod,
+              }}
+            />
+            <BudgetStatusChart
+              data={statusData}
+              kpis={statusKpis}
+              loading={isLoading}
+              period={{
+                value: selectedPeriod,
+                label: periodLabel,
+                options: PERIOD_OPTIONS,
+                onChange: setSelectedPeriod,
+              }}
+            />
           </div>
 
           <UsersTable
@@ -894,4 +895,4 @@ function filterUsers(users, term) {
   );
 }
 
-// Atualizações neste arquivo: novos períodos (5 anos/Sempre) com base na primeira data registrada e botão de exportação em PDF que captura cards, gráficos e tabela do painel executivo.
+// Atualizações neste arquivo: novos períodos (5 anos/Sempre) com base na primeira data registrada e exportação em PDF usando template dedicado (jsPDF/autoTable) com dados do painel executivo.

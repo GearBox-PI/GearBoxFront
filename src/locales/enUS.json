@@ -166,8 +166,31 @@
       },
       "sections": {
         "summary": "Performance cards",
-        "radar": "Mechanics comparison",
-        "status": "Budget status"
+        "comparison": "Mechanics comparison",
+        "comparisonSubtitle": "Numeric overview of budgets, rates, and services in the selected period.",
+        "mechanics": "Mechanic performance table"
+      },
+      "cards": {
+        "mechanics": "Active mechanics",
+        "budgets": "Budgets generated",
+        "accepted": "Approved budgets",
+        "services": "Services completed",
+        "ticketAverage": "Average ticket"
+      },
+      "comparison": {
+        "budgets": "Budgets in period",
+        "acceptance": "Overall acceptance rate",
+        "services": "Services completed",
+        "ticketAverage": "Average ticket"
+      },
+      "mechanicsTable": {
+        "mechanic": "Mechanic",
+        "budgets": "Budgets",
+        "accepted": "Accepted",
+        "services": "Services",
+        "ticket": "Average ticket",
+        "acceptance": "Acceptance rate",
+        "cancellation": "Cancellation rate"
       }
     }
   },

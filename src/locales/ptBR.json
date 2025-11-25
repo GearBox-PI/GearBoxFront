@@ -166,8 +166,31 @@
       },
       "sections": {
         "summary": "Cards de desempenho",
-        "radar": "Comparativo de mecânicos",
-        "status": "Status dos orçamentos"
+        "comparison": "Comparativo de mecânicos",
+        "comparisonSubtitle": "Resumo numérico de budgets, taxas e serviços no período.",
+        "mechanics": "Tabela consolidada por mecânico"
+      },
+      "cards": {
+        "mechanics": "Mecânicos ativos",
+        "budgets": "Orçamentos gerados",
+        "accepted": "Aceites",
+        "services": "Serviços concluídos",
+        "ticketAverage": "Ticket médio"
+      },
+      "comparison": {
+        "budgets": "Orçamentos no período",
+        "acceptance": "Taxa geral de aceitação",
+        "services": "Serviços concluídos",
+        "ticketAverage": "Ticket médio geral"
+      },
+      "mechanicsTable": {
+        "mechanic": "Mecânico",
+        "budgets": "Orçamentos",
+        "accepted": "Aceitos",
+        "services": "Serviços",
+        "ticket": "Ticket médio",
+        "acceptance": "Taxa de aceitação",
+        "cancellation": "Taxa de cancelamento"
       }
     }
   },
