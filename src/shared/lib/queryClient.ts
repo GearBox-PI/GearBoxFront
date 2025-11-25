@@ -33,7 +33,7 @@ export const queryClient = new QueryClient({
           typeof window !== "undefined"
         ) {
           window.dispatchEvent(
-            new CustomEvent(UNAUTHORIZED_EVENT, { detail: { status: 401 } })
+            new CustomEvent(UNAUTHORIZED_EVENT, { detail: { status: 401 } }),
           );
         }
       },

@@ -28,6 +28,7 @@ import {
   LogOut,
   PanelLeftClose,
   PanelLeftOpen,
+  Menu,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
@@ -40,6 +41,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
 
 const navigationItems = (t: (key: string) => string) => [
   {
@@ -84,6 +86,7 @@ export default function Layout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(() => window.innerWidth < 768);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const { t } = useTranslation();
   const SIDEBAR_WIDTH = {
     expanded: 260,
@@ -93,9 +96,9 @@ export default function Layout() {
   const navigation = useMemo(
     () =>
       navigationItems(t).filter((item) =>
-        item.roles.includes(user?.role ?? "mecanico")
+        item.roles.includes(user?.role ?? "mecanico"),
       ),
-    [t, user?.role]
+    [t, user?.role],
   );
 
   const roleLabel: Record<"dono" | "mecanico", string> = {
@@ -122,15 +125,50 @@ export default function Layout() {
   return (
     <div
       className="min-h-screen bg-background transition-[padding-left] duration-300 ease-in-out relative isolate"
-      style={{ paddingLeft: `${contentOffset}px` }}
+      style={{
+        paddingLeft: window.innerWidth >= 768 ? `${contentOffset}px` : "0px",
+      }}
     >
       {/* Background Effects */}
       <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/40 via-transparent to-transparent dark:from-slate-900 dark:via-slate-950 dark:to-black -z-20 pointer-events-none" />
       <div className="fixed inset-0 bg-[linear-gradient(to_right,#e5e7eb_1px,transparent_1px),linear-gradient(to_bottom,#e5e7eb_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-30 dark:opacity-100 -z-20 pointer-events-none" />
 
+      {/* Mobile Header */}
+      <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-background/80 backdrop-blur-md border-b border-border z-40 flex items-center px-4 justify-between">
+        <div className="flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setMobileOpen(true)}
+            aria-label="Abrir menu"
+          >
+            <Menu className="w-6 h-6" />
+          </Button>
+          <Logo size="sm" />
+        </div>
+      </div>
+
+      {/* Mobile Overlay */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden backdrop-blur-sm"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
       <aside
-        className="sidebar-shell"
-        style={{ width: `${sidebarPixelWidth}px` }}
+        className={cn(
+          "sidebar-shell z-50 transition-transform duration-300 ease-in-out",
+          // Mobile behavior
+          "fixed inset-y-0 left-0 w-[260px]",
+          !mobileOpen && "-translate-x-full md:translate-x-0",
+          // Desktop behavior
+          "md:translate-x-0",
+          collapsed ? "md:w-[80px]" : "md:w-[260px]",
+        )}
+        style={{
+          width: undefined, // Let classes handle width
+        }}
         aria-label={t("navigation.dashboard")}
       >
         <div className="flex flex-col flex-1">
@@ -140,15 +178,20 @@ export default function Layout() {
                 size="md"
                 className={cn(
                   "sidebar-logo",
-                  collapsed
-                    ? "sidebar-logo--collapsed"
-                    : "sidebar-logo--expanded"
+                  collapsed && "md:h-[28px]", // Only apply collapsed height on desktop
                 )}
               />
-              {!collapsed && (
+              {(!collapsed || mobileOpen) && (
                 <span className="sidebar-brand-title">{appName}</span>
               )}
             </div>
+            {/* Close button for mobile */}
+            <button
+              className="absolute top-4 right-4 md:hidden text-muted-foreground"
+              onClick={() => setMobileOpen(false)}
+            >
+              <PanelLeftClose className="w-6 h-6" />
+            </button>
           </div>
 
           <nav
@@ -157,39 +200,44 @@ export default function Layout() {
             aria-label={t("navigation.dashboard")}
           >
             {navigation.map((item) => (
-              <NavLink key={item.name} to={item.href} end={item.href === "/"}>
+              <NavLink
+                key={item.name}
+                to={item.href}
+                end={item.href === "/"}
+                onClick={() => setMobileOpen(false)} // Close on navigate
+              >
                 {({ isActive }) => (
                   <Tooltip delayDuration={0}>
                     <TooltipTrigger asChild>
                       <div
                         className={cn(
                           "flex items-center rounded-lg transition-all font-medium",
-                          collapsed
+                          collapsed && !mobileOpen
                             ? "justify-center px-2 py-3"
                             : "justify-start gap-3 px-4 py-3",
                           isActive
                             ? "bg-[var(--sidebar-active-bg)] text-[var(--sidebar-icon-active)] shadow-sm"
-                            : "text-[var(--sidebar-icon-inactive)] hover:bg-[var(--sidebar-hover-bg)] hover:text-[var(--sidebar-text)]"
+                            : "text-[var(--sidebar-icon-inactive)] hover:bg-[var(--sidebar-hover-bg)] hover:text-[var(--sidebar-text)]",
                         )}
                         aria-label={item.name}
                       >
                         <item.icon
                           className={cn(
                             "w-5 h-5 transition-colors",
-                            collapsed && "mx-auto",
+                            collapsed && !mobileOpen && "mx-auto",
                             isActive
                               ? "text-[var(--sidebar-icon-active)]"
-                              : "text-[var(--sidebar-icon-inactive)]"
+                              : "text-[var(--sidebar-icon-inactive)]",
                           )}
                         />
-                        {!collapsed && (
+                        {(!collapsed || mobileOpen) && (
                           <span className="ml-2 text-[var(--sidebar-text)]">
                             {item.name}
                           </span>
                         )}
                       </div>
                     </TooltipTrigger>
-                    {collapsed && (
+                    {collapsed && !mobileOpen && (
                       <TooltipContent side="right">{item.name}</TooltipContent>
                     )}
                   </Tooltip>
@@ -201,17 +249,17 @@ export default function Layout() {
 
         <div className="sidebar-footer">
           <div className="mb-3">
-            {!collapsed && (
+            {(!collapsed || mobileOpen) && (
               <p className="text-xs text-muted-foreground mb-1.5 px-1">
                 {t("language.label")}
               </p>
             )}
-            <LanguageSwitcher collapsed={collapsed} />
+            <LanguageSwitcher collapsed={collapsed && !mobileOpen} />
           </div>
           <div
             className={cn(
               "sidebar-user",
-              collapsed && "sidebar-user--collapsed"
+              collapsed && !mobileOpen && "sidebar-user--collapsed",
             )}
           >
             <div className="sidebar-user-avatar">
@@ -219,7 +267,7 @@ export default function Layout() {
                 {user?.name?.charAt(0)?.toUpperCase() ?? "?"}
               </span>
             </div>
-            {!collapsed && (
+            {(!collapsed || mobileOpen) && (
               <div className="min-w-0">
                 <p className="sidebar-user-name truncate">
                   {user?.name ?? t("common.empty.noData")}
@@ -236,19 +284,17 @@ export default function Layout() {
                 type="button"
                 className={cn(
                   "sidebar-logout",
-                  collapsed && "sidebar-logout--collapsed"
+                  collapsed && !mobileOpen && "sidebar-logout--collapsed",
                 )}
                 aria-label={logoutLabel}
                 onClick={handleLogout}
               >
                 <LogOut className="w-4 h-4 text-[var(--sidebar-logout-icon)]" />
-                {!collapsed && <span>{logoutLabel}</span>}
+                {(!collapsed || mobileOpen) && <span>{logoutLabel}</span>}
               </button>
             </TooltipTrigger>
-            {collapsed && (
-              <TooltipContent side="right">
-                {logoutLabel}
-              </TooltipContent>
+            {collapsed && !mobileOpen && (
+              <TooltipContent side="right">{logoutLabel}</TooltipContent>
             )}
           </Tooltip>
         </div>
@@ -277,8 +323,8 @@ export default function Layout() {
         <TooltipContent side="right">{ariaLabel}</TooltipContent>
       </Tooltip>
 
-      <div className="flex flex-col min-h-screen">
-        <main className="flex-1 px-6 py-6">
+      <div className="flex flex-col min-h-screen pt-16 md:pt-0">
+        <main className="flex-1 px-4 py-6 md:px-6">
           <Outlet />
         </main>
         <Footer />

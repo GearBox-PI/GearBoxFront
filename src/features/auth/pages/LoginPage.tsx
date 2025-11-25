@@ -79,22 +79,22 @@ export default function Login() {
           <LanguageSwitcher />
         </div>
 
-        <div className="relative z-10 flex flex-col items-center gap-8 w-full max-w-md mx-4">
+        <div className="relative z-10 flex flex-col items-center gap-4 md:gap-8 w-full max-w-md mx-4">
           <div className="transform hover:scale-105 transition-transform duration-500">
-            <Logo className="h-52 w-auto" />
+            <Logo className="h-32 md:h-52 w-auto" />
           </div>
 
           {/* Login Card */}
           <Card className="w-full border border-gray-200/60 dark:border-slate-800 bg-gray-50/80 dark:bg-slate-900/60 backdrop-blur-xl shadow-xl dark:shadow-2xl">
-            <CardHeader className="space-y-2 text-center pb-2 pt-8">
-              <CardTitle className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+            <CardHeader className="space-y-2 text-center pb-2 pt-6 md:pt-8">
+              <CardTitle className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
                 {t("login.title")}
               </CardTitle>
               <CardDescription className="text-gray-500 dark:text-slate-400 text-base">
                 {t("login.subtitle")}
               </CardDescription>
             </CardHeader>
-            <CardContent className="pt-6 pb-8 px-8">
+            <CardContent className="pt-4 pb-6 px-4 md:pt-6 md:pb-8 md:px-8">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
                   <Label

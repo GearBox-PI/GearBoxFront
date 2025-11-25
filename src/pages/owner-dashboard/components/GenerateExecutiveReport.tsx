@@ -93,8 +93,19 @@ export async function generateExecutiveReport(options: ExecutiveReportOptions) {
       emissionDate,
     })) + SECTION_SPACING;
 
-  cursorY = renderPerformanceCards(doc, cursorY, summaryCards, texts.summaryTitle);
-  cursorY = renderMechanicsComparison(doc, cursorY, comparisonCards, texts.comparisonTitle, texts.comparisonSubtitle);
+  cursorY = renderPerformanceCards(
+    doc,
+    cursorY,
+    summaryCards,
+    texts.summaryTitle,
+  );
+  cursorY = renderMechanicsComparison(
+    doc,
+    cursorY,
+    comparisonCards,
+    texts.comparisonTitle,
+    texts.comparisonSubtitle,
+  );
   renderMechanicsTable(doc, cursorY, mechanicRows, texts);
 
   doc.save(filename);
@@ -102,7 +113,13 @@ export async function generateExecutiveReport(options: ExecutiveReportOptions) {
 
 async function renderHeader(
   doc: jsPDF,
-  params: { logoUrl: string; cursorY: number; texts: ReportTexts; periodLabel: string; emissionDate: Date }
+  params: {
+    logoUrl: string;
+    cursorY: number;
+    texts: ReportTexts;
+    periodLabel: string;
+    emissionDate: Date;
+  },
 ): Promise<number> {
   const { logoUrl, cursorY, texts, periodLabel, emissionDate } = params;
   const logoDataUrl = await loadLogo(logoUrl);
@@ -128,7 +145,12 @@ async function renderHeader(
   return cursorY + 90;
 }
 
-function renderPerformanceCards(doc: jsPDF, startY: number, cards: ReportCard[], title?: string) {
+function renderPerformanceCards(
+  doc: jsPDF,
+  startY: number,
+  cards: ReportCard[],
+  title?: string,
+) {
   let cursorY = startY;
   if (title) {
     doc.setFont("helvetica", "bold");
@@ -176,7 +198,7 @@ function renderMechanicsComparison(
   startY: number,
   cards: ReportCard[],
   title: string,
-  subtitle: string
+  subtitle: string,
 ) {
   let cursorY = startY;
   doc.setFont("helvetica", "bold");
@@ -193,7 +215,12 @@ function renderMechanicsComparison(
   return renderPerformanceCards(doc, cursorY, cards);
 }
 
-function renderMechanicsTable(doc: jsPDF, startY: number, mechanicRows: MechanicRow[], texts: ReportTexts) {
+function renderMechanicsTable(
+  doc: jsPDF,
+  startY: number,
+  mechanicRows: MechanicRow[],
+  texts: ReportTexts,
+) {
   let cursorY = startY;
   doc.setFont("helvetica", "bold");
   doc.setFontSize(14);

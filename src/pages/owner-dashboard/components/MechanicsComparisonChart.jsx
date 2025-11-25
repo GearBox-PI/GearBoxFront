@@ -19,6 +19,7 @@
 import { useMemo } from "react";
 import ReactECharts from "echarts-for-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -37,6 +38,7 @@ import {
 import { ChartPlaceholder } from "./ChartPlaceholder";
 import { KpiCards } from "./KpiCards";
 import { useTranslation } from "react-i18next";
+import { useIsMobile } from "@/shared/hooks/use-mobile";
 
 const COLORS = {
   text: "#e2e8f0",
@@ -116,6 +118,7 @@ export function MechanicsComparisonChart({
   onSelect,
 }) {
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const textColor = isDark ? COLORS.text : COLORS.textDark;
@@ -126,19 +129,19 @@ export function MechanicsComparisonChart({
       1,
       ...data.map((item) => item.budgets ?? 0),
       averageProfile?.budgets ?? 0,
-      topPerformer?.budgets ?? 0
+      topPerformer?.budgets ?? 0,
     );
     const servicesMax = Math.max(
       1,
       ...data.map((item) => item.services ?? 0),
       averageProfile?.services ?? 0,
-      topPerformer?.services ?? 0
+      topPerformer?.services ?? 0,
     );
     const ticketMax = Math.max(
       1,
       ...data.map((item) => item.ticketAverage ?? 0),
       averageProfile?.ticketAverage ?? 0,
-      topPerformer?.ticketAverage ?? 0
+      topPerformer?.ticketAverage ?? 0,
     );
 
     const buildSeriesEntry = (item, index, customName) => {
@@ -181,16 +184,16 @@ export function MechanicsComparisonChart({
     };
 
     const seriesEntries = data.map((item, index) =>
-      buildSeriesEntry(item, index)
+      buildSeriesEntry(item, index),
     );
     if (averageProfile) {
       seriesEntries.push(
-        buildSeriesEntry(averageProfile, seriesEntries.length, "Média geral")
+        buildSeriesEntry(averageProfile, seriesEntries.length, "Média geral"),
       );
     }
     if (topPerformer) {
       seriesEntries.push(
-        buildSeriesEntry(topPerformer, seriesEntries.length, "Top performer")
+        buildSeriesEntry(topPerformer, seriesEntries.length, "Top performer"),
       );
     }
 
@@ -230,7 +233,7 @@ export function MechanicsComparisonChart({
           ]
             .map(
               (metric) =>
-                `<div>${metric.label}: <span class="font-semibold">${metric.value}</span></div>`
+                `<div>${metric.label}: <span class="font-semibold">${metric.value}</span></div>`,
             )
             .join("");
 
@@ -296,6 +299,46 @@ export function MechanicsComparisonChart({
 
   const renderTable = () => {
     if (!hasData) return null;
+
+    if (isMobile) {
+      return (
+        <div className="mt-4 flex flex-col gap-4">
+          {data.map((row) => (
+            <Card
+              key={row.id ?? row.name}
+              className={cn(
+                "p-4 border border-border/50",
+                selectedId && row.id === selectedId ? "bg-muted/30" : "",
+              )}
+              onClick={() => row.id && onSelect?.(row.id)}
+            >
+              <div className="flex flex-col gap-3">
+                <div className="font-medium text-lg">{row.name}</div>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="space-y-1">
+                    <div className="text-muted-foreground text-xs uppercase">
+                      Métricas
+                    </div>
+                    <div>Orçamentos: {formatNumber(row.budgets ?? 0)}</div>
+                    <div>Aprovações: {formatNumber(row.accepted ?? 0)}</div>
+                    <div>Concluídos: {formatNumber(row.services ?? 0)}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-muted-foreground text-xs uppercase">
+                      Performance
+                    </div>
+                    <div>Aceitação: {row.acceptRate ?? 0}%</div>
+                    <div>Cancelamento: {row.cancelRate ?? 0}%</div>
+                    <div>Ticket: {formatCurrency(row.ticketAverage)}</div>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      );
+    }
+
     return (
       <div className="mt-4 overflow-x-auto">
         <Table className="min-w-[860px] text-sm">

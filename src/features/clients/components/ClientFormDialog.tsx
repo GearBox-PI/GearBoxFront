@@ -16,9 +16,9 @@
  * Caso contrário, veja <https://www.gnu.org/licenses/>.
  */
 
-import { useEffect, useState } from 'react';
-import type { FormEvent, ReactNode } from 'react';
-import { Button } from '@/components/ui/button';
+import { useEffect, useState } from "react";
+import type { FormEvent, ReactNode } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -26,11 +26,11 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useToast } from '@/components/ui/use-toast';
-import { useTranslation } from 'react-i18next';
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/components/ui/use-toast";
+import { useTranslation } from "react-i18next";
 
 type ClientFormValues = {
   nome: string;
@@ -39,29 +39,35 @@ type ClientFormValues = {
 };
 
 type ClientFormDialogProps = {
-  mode?: 'create' | 'edit';
+  mode?: "create" | "edit";
   initialValues?: Partial<ClientFormValues>;
   triggerLabel?: string;
   renderTrigger?: (props: { open: () => void; disabled: boolean }) => ReactNode;
-  onSubmit?: (values: { nome: string; telefone: string; email?: string }) => Promise<void>;
+  onSubmit?: (values: {
+    nome: string;
+    telefone: string;
+    email?: string;
+  }) => Promise<void>;
 };
 
 const DEFAULT_VALUES: ClientFormValues = {
-  nome: '',
-  telefone: '',
-  email: '',
+  nome: "",
+  telefone: "",
+  email: "",
 };
 
 export function ClientFormDialog({
-  mode = 'create',
+  mode = "create",
   initialValues,
-  triggerLabel = 'Registrar cliente',
+  triggerLabel = "Registrar cliente",
   renderTrigger,
   onSubmit,
 }: ClientFormDialogProps) {
   const [open, setOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [form, setForm] = useState<ClientFormValues>(() => normalizeInitialValues(initialValues));
+  const [form, setForm] = useState<ClientFormValues>(() =>
+    normalizeInitialValues(initialValues),
+  );
   const { toast } = useToast();
   const { t } = useTranslation();
 
@@ -80,15 +86,18 @@ export function ClientFormDialog({
         email: form.email.trim() ? form.email.trim() : undefined,
       });
       toast({
-        title: mode === 'edit' ? t('common.actions.edit') : t('clients.title'),
-        description: t('clients.subtitle'),
+        title: mode === "edit" ? t("common.actions.edit") : t("clients.title"),
+        description: t("clients.subtitle"),
       });
       setOpen(false);
     } catch (error: unknown) {
       toast({
-        title: t('orders.toasts.updateError'),
-        description: error instanceof Error ? error.message : t('budgets.toasts.defaultError'),
-        variant: 'destructive',
+        title: t("orders.toasts.updateError"),
+        description:
+          error instanceof Error
+            ? error.message
+            : t("budgets.toasts.defaultError"),
+        variant: "destructive",
       });
     } finally {
       setIsSaving(false);
@@ -99,8 +108,11 @@ export function ClientFormDialog({
     renderTrigger({ open: () => setOpen(true), disabled: isSaving })
   ) : (
     <DialogTrigger asChild>
-      <Button className="bg-gradient-accent hover:opacity-90" disabled={isSaving}>
-        {t('common.actions.save')}
+      <Button
+        className="bg-gradient-accent hover:opacity-90"
+        disabled={isSaving}
+      >
+        {t("common.actions.save")}
       </Button>
     </DialogTrigger>
   );
@@ -118,42 +130,57 @@ export function ClientFormDialog({
       {dialogTrigger}
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>{mode === 'edit' ? t('common.actions.edit') : t('clients.title')}</DialogTitle>
+          <DialogTitle>
+            {mode === "edit" ? t("common.actions.edit") : t("clients.title")}
+          </DialogTitle>
         </DialogHeader>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-2">
-            <Label htmlFor="client-name">{t('clients.table.name')}</Label>
+            <Label htmlFor="client-name">{t("clients.table.name")}</Label>
             <Input
               id="client-name"
               value={form.nome}
-              onChange={(event) => setForm((state) => ({ ...state, nome: event.target.value }))}
-              placeholder={t('clients.table.name')}
+              onChange={(event) =>
+                setForm((state) => ({ ...state, nome: event.target.value }))
+              }
+              placeholder={t("clients.table.name")}
               required
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="client-phone">{t('clients.table.phone')}</Label>
+            <Label htmlFor="client-phone">{t("clients.table.phone")}</Label>
             <Input
               id="client-phone"
               value={form.telefone}
-              onChange={(event) => setForm((state) => ({ ...state, telefone: event.target.value }))}
+              onChange={(event) =>
+                setForm((state) => ({ ...state, telefone: event.target.value }))
+              }
               placeholder="(00) 00000-0000"
               required
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="client-email">{t('clients.table.email')}</Label>
+            <Label htmlFor="client-email">{t("clients.table.email")}</Label>
             <Input
               id="client-email"
               type="email"
               value={form.email}
-              onChange={(event) => setForm((state) => ({ ...state, email: event.target.value }))}
+              onChange={(event) =>
+                setForm((state) => ({ ...state, email: event.target.value }))
+              }
               placeholder="email@cliente.com"
             />
           </div>
           <DialogFooter>
-            <Button type="submit" disabled={isSaving || !form.nome.trim() || !form.telefone.trim()}>
-              {isSaving ? t('charts.placeholder.loading') : mode === 'edit' ? t('common.actions.save') : t('common.actions.save')}
+            <Button
+              type="submit"
+              disabled={isSaving || !form.nome.trim() || !form.telefone.trim()}
+            >
+              {isSaving
+                ? t("charts.placeholder.loading")
+                : mode === "edit"
+                  ? t("common.actions.save")
+                  : t("common.actions.save")}
             </Button>
           </DialogFooter>
         </form>
@@ -162,7 +189,9 @@ export function ClientFormDialog({
   );
 }
 
-function normalizeInitialValues(values?: Partial<ClientFormValues>): ClientFormValues {
+function normalizeInitialValues(
+  values?: Partial<ClientFormValues>,
+): ClientFormValues {
   return {
     nome: values?.nome ?? DEFAULT_VALUES.nome,
     telefone: values?.telefone ?? DEFAULT_VALUES.telefone,

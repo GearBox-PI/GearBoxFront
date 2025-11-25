@@ -30,7 +30,11 @@ type UseCarsParams = {
   enabled?: boolean;
 };
 
-export function useCars({ page = 1, perPage = 50, enabled = true }: UseCarsParams = {}) {
+export function useCars({
+  page = 1,
+  perPage = 50,
+  enabled = true,
+}: UseCarsParams = {}) {
   const { token } = useAuth();
 
   const query = useQuery({
@@ -45,8 +49,9 @@ export function useCars({ page = 1, perPage = 50, enabled = true }: UseCarsParam
   });
 
   const carMap = useMemo(() => {
-    const entries = query.data?.list?.map((car) => [car.id, car]) ?? [];
-    return new Map(entries);
+    const entries =
+      query.data?.list?.map((car): [string, Car] => [car.id, car]) ?? [];
+    return new Map<string, Car>(entries);
   }, [query.data?.list]);
 
   return { ...query, carMap };

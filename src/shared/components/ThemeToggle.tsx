@@ -41,20 +41,20 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
       className={cn(
         "relative rounded-full border-border bg-card/90 backdrop-blur-sm text-foreground",
         "hover:bg-muted transition-colors",
-        className
+        className,
       )}
       aria-label={isDark ? "Ativar tema claro" : "Ativar tema escuro"}
     >
       <Sun
         className={cn(
           "h-4 w-4 transition-all",
-          isDark ? "opacity-0 -rotate-90" : "opacity-100 rotate-0"
+          isDark ? "opacity-0 -rotate-90" : "opacity-100 rotate-0",
         )}
       />
       <Moon
         className={cn(
           "h-4 w-4 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-all",
-          isDark ? "opacity-100 rotate-0" : "opacity-0 rotate-90"
+          isDark ? "opacity-100 rotate-0" : "opacity-0 rotate-90",
         )}
       />
     </Button>

@@ -86,9 +86,9 @@ export default function DashboardOwner() {
   const mechanics = useMemo(
     () =>
       allUsers.filter(
-        (person) => person.tipo === "mecanico" && person.ativo !== false
+        (person) => person.tipo === "mecanico" && person.ativo !== false,
       ),
-    [allUsers]
+    [allUsers],
   );
   const budgets = budgetsQuery.data?.data ?? [];
   const services = servicesQuery.data?.data ?? [];
@@ -107,45 +107,45 @@ export default function DashboardOwner() {
     return new Date(
       Math.min.apply(
         null,
-        dateValues.map((date) => date.getTime())
-      )
+        dateValues.map((date) => date.getTime()),
+      ),
     );
   }, [budgets, services]);
 
   const periodRange = useMemo(
     () => getPeriodRange(selectedPeriod, earliestRecordDate),
-    [selectedPeriod, earliestRecordDate]
+    [selectedPeriod, earliestRecordDate],
   );
   const previousPeriodRange = useMemo(
     () => getPreviousPeriodRange(selectedPeriod, earliestRecordDate),
-    [selectedPeriod, earliestRecordDate]
+    [selectedPeriod, earliestRecordDate],
   );
 
   const budgetsInPeriod = useMemo(
     () => filterByPeriod(budgets, (item) => item.createdAt, periodRange),
-    [budgets, periodRange]
+    [budgets, periodRange],
   );
 
   const servicesInPeriod = useMemo(
     () => filterByPeriod(services, (item) => item.createdAt, periodRange),
-    [services, periodRange]
+    [services, periodRange],
   );
   const budgetsPreviousPeriod = useMemo(
     () =>
       filterByPeriod(budgets, (item) => item.createdAt, previousPeriodRange),
-    [budgets, previousPeriodRange]
+    [budgets, previousPeriodRange],
   );
 
   const metrics = useMemo(() => {
     const totalBudgets = budgetsInPeriod.length;
     const accepted = budgetsInPeriod.filter(
-      (budget) => budget.status === "aceito"
+      (budget) => budget.status === "aceito",
     ).length;
     const acceptanceRate = totalBudgets
       ? ((accepted / totalBudgets) * 100).toFixed(1)
       : "0";
     const concludedServices = servicesInPeriod.filter(
-      (service) => service.status === "Concluído"
+      (service) => service.status === "Concluído",
     ).length;
     return [
       { label: t("owner.kpis.mechanics"), value: mechanicsCount },
@@ -174,18 +174,18 @@ export default function DashboardOwner() {
       const mechanicBudgets = budgetsByMechanic[mechanic.id] ?? [];
       const mechanicServices = servicesByMechanic[mechanic.id] ?? [];
       const budgetsAccepted = mechanicBudgets.filter(
-        (budget) => budget.status === "aceito"
+        (budget) => budget.status === "aceito",
       ).length;
       const budgetsCancelled = mechanicBudgets.filter(
         (budget) =>
-          budget.status === "cancelado" || budget.status === "recusado"
+          budget.status === "cancelado" || budget.status === "recusado",
       ).length;
       const budgetsOpen = mechanicBudgets.filter(
-        (budget) => budget.status === "aberto"
+        (budget) => budget.status === "aberto",
       ).length;
       const budgetsTotal = mechanicBudgets.length;
       const servicesCompleted = mechanicServices.filter(
-        (service) => service.status === "Concluído"
+        (service) => service.status === "Concluído",
       ).length;
       const acceptRate = budgetsTotal
         ? Math.round((budgetsAccepted / budgetsTotal) * 100)
@@ -222,11 +222,11 @@ export default function DashboardOwner() {
         cancelled: row.budgetsCancelled,
         ticketAverage: row.ticketAverage,
       })),
-    [mechanicRows]
+    [mechanicRows],
   );
 
   const periodLabel = PERIOD_OPTIONS.find(
-    (option) => option.value === selectedPeriod
+    (option) => option.value === selectedPeriod,
   )?.label;
 
   const mechanicAverageProfile = useMemo(() => {
@@ -252,7 +252,7 @@ export default function DashboardOwner() {
         acceptRate: 0,
         cancelRate: 0,
         tickets: [],
-      }
+      },
     );
     const count = mechanicRows.length || 1;
     const ticketAverage =
@@ -292,13 +292,13 @@ export default function DashboardOwner() {
   const performanceKpis = useMemo(() => {
     const totalBudgets = budgetsInPeriod.length;
     const totalAccepted = budgetsInPeriod.filter(
-      (budget) => budget.status === "aceito"
+      (budget) => budget.status === "aceito",
     ).length;
     const acceptanceRate = totalBudgets
       ? ((totalAccepted / totalBudgets) * 100).toFixed(1)
       : "0";
     const totalServices = servicesInPeriod.filter(
-      (service) => service.status === "Concluído"
+      (service) => service.status === "Concluído",
     ).length;
     const bestConversionLabel = bestMechanic
       ? `${bestMechanic.nome ?? bestMechanic.name} (${
@@ -340,7 +340,7 @@ export default function DashboardOwner() {
           }
           return acc;
         },
-        { aberto: 0, aceito: 0, cancelado: 0, concluido: 0 }
+        { aberto: 0, aceito: 0, cancelado: 0, concluido: 0 },
       );
 
     const currentTotals = buildTotals(budgetsInPeriod);
@@ -383,7 +383,7 @@ export default function DashboardOwner() {
         if (item.key === "concluido") acc.completed = item.value;
         return acc;
       },
-      { accepted: 0, cancelled: 0, completed: 0 }
+      { accepted: 0, cancelled: 0, completed: 0 },
     );
 
     const totalBudgets = budgetsInPeriod.length || 0;
@@ -408,10 +408,10 @@ export default function DashboardOwner() {
   const handleExportPdf = useCallback(async () => {
     const totalBudgets = budgetsInPeriod.length;
     const totalAccepted = budgetsInPeriod.filter(
-      (budget) => budget.status === "aceito"
+      (budget) => budget.status === "aceito",
     ).length;
     const concludedServices = servicesInPeriod.filter(
-      (service) => service.status === "Concluído"
+      (service) => service.status === "Concluído",
     ).length;
     const averageTicketValue = calculateTicketAverage(budgetsInPeriod);
 
@@ -557,7 +557,7 @@ export default function DashboardOwner() {
     });
 
     return Array.from(map.values()).sort(
-      (a, b) => new Date(a.period) - new Date(b.period)
+      (a, b) => new Date(a.period) - new Date(b.period),
     );
   }, [selectedMechanic, budgetsInPeriod, servicesInPeriod]);
 
@@ -580,7 +580,7 @@ export default function DashboardOwner() {
       deleteUser(
         token,
         id,
-        transferToUserId ? { transferToUserId } : undefined
+        transferToUserId ? { transferToUserId } : undefined,
       ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
@@ -789,7 +789,7 @@ function formatPeriod(dateInput) {
   const date = new Date(dateInput);
   return `${String(date.getMonth() + 1).padStart(
     2,
-    "0"
+    "0",
   )}/${date.getFullYear()}`;
 }
 
@@ -909,7 +909,7 @@ function filterUsers(users, term) {
   return users.filter(
     (user) =>
       user.nome?.toLowerCase().includes(normalized) ||
-      user.email?.toLowerCase().includes(normalized)
+      user.email?.toLowerCase().includes(normalized),
   );
 }
 

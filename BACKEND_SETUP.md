@@ -5,11 +5,13 @@ Este projeto está configurado para se conectar a um backend AdonisJS. Você pre
 ## Endpoints Necessários
 
 ### 1. Login (POST)
+
 ```
 POST http://localhost:3333/api/auth/login
 ```
 
 **Body:**
+
 ```json
 {
   "email": "usuario@exemplo.com",
@@ -18,6 +20,7 @@ POST http://localhost:3333/api/auth/login
 ```
 
 **Resposta esperada:**
+
 ```json
 {
   "token": "seu-jwt-token-aqui",
@@ -31,16 +34,19 @@ POST http://localhost:3333/api/auth/login
 ```
 
 ### 2. Criar Usuário (POST) - Apenas Admin
+
 ```
 POST http://localhost:3333/api/users
 ```
 
 **Headers:**
+
 ```
 Authorization: Bearer {token}
 ```
 
 **Body:**
+
 ```json
 {
   "name": "Novo Usuário",
@@ -51,6 +57,7 @@ Authorization: Bearer {token}
 ```
 
 **Resposta esperada:**
+
 ```json
 {
   "id": "uuid-ou-id",
@@ -74,6 +81,7 @@ Substitua `http://localhost:3333` pela URL do seu backend.
 ## Estrutura de Banco de Dados Sugerida
 
 ### Tabela: users
+
 ```sql
 - id (uuid/integer, primary key)
 - email (string, unique)

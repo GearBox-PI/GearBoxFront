@@ -244,14 +244,14 @@
       "cancelled": "Cancelled"
     },
     "table": {
-    "order": "Order",
-    "client": "Client",
-    "vehicle": "Vehicle",
-    "status": "Status",
-    "createdAt": "Created at",
-    "actions": "Actions",
-    "empty": "No orders found."
-  },
+      "order": "Order",
+      "client": "Client",
+      "vehicle": "Vehicle",
+      "status": "Status",
+      "createdAt": "Created at",
+      "actions": "Actions",
+      "empty": "No orders found."
+    },
     "dialogs": {
       "updateStatusTitle": "Update status",
       "updateStatusDescription": "Confirm changing this order status.",

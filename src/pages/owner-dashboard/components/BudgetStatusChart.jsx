@@ -19,6 +19,7 @@
 import { useMemo } from "react";
 import ReactECharts from "echarts-for-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -39,6 +40,7 @@ import { ChartPlaceholder } from "./ChartPlaceholder";
 import { KpiCards } from "./KpiCards";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "next-themes";
+import { useIsMobile } from "@/shared/hooks/use-mobile";
 
 const STATUS_COLORS = {
   aberto: "#f5a300",
@@ -57,13 +59,14 @@ export function BudgetStatusChart({
   period,
 }) {
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const textColor = isDark ? "#e2e8f0" : "#0f172a";
 
   const total = useMemo(
     () => data.reduce((sum, item) => sum + (item.value ?? 0), 0),
-    [data]
+    [data],
   );
   const hasData = total > 0;
 
@@ -85,8 +88,8 @@ export function BudgetStatusChart({
           return `<div class="text-xs font-semibold mb-1">${params.name}</div>
             <div class="text-xs leading-relaxed">
               <div>${params.value} ${t(
-            "navigation.budgets"
-          ).toLowerCase()}</div>
+                "navigation.budgets",
+              ).toLowerCase()}</div>
               <div>${percent}% ${t("common.totalLabel").toLowerCase()}</div>
             </div>`;
         },
@@ -149,6 +152,60 @@ export function BudgetStatusChart({
 
   const renderTable = () => {
     if (!hasData) return null;
+
+    if (isMobile) {
+      return (
+        <div className="flex flex-col gap-4">
+          {data.map((row) => {
+            const changePositive =
+              typeof row.change === "number" && row.change > 0;
+            const changeNegative =
+              typeof row.change === "number" && row.change < 0;
+            return (
+              <Card key={row.key} className="p-4 border border-border/50">
+                <div className="flex flex-col gap-3">
+                  <div className="flex justify-between items-center">
+                    <div className="font-medium">{row.label}</div>
+                    <div className="font-bold text-lg">{row.value ?? 0}</div>
+                  </div>
+                  <div className="flex justify-between items-center text-sm">
+                    <div className="text-muted-foreground">
+                      {formatPercentLabel(row.percent)} do total
+                    </div>
+                    <div className="flex items-center gap-1">
+                      {typeof row.change === "number" ? (
+                        <>
+                          {changePositive ? (
+                            <ArrowUpRight className="h-4 w-4 text-green-500" />
+                          ) : changeNegative ? (
+                            <ArrowDownRight className="h-4 w-4 text-red-500" />
+                          ) : null}
+                          <span
+                            className={
+                              changePositive
+                                ? "text-green-500"
+                                : changeNegative
+                                  ? "text-red-500"
+                                  : "text-muted-foreground"
+                            }
+                          >
+                            {row.change > 0 ? "+" : ""}
+                            {row.change} pp
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            );
+          })}
+        </div>
+      );
+    }
+
     return (
       <div className="overflow-x-auto">
         <Table className="min-w-[720px] text-sm">
@@ -184,8 +241,8 @@ export function BudgetStatusChart({
                             changePositive
                               ? "text-green-500"
                               : changeNegative
-                              ? "text-red-500"
-                              : "text-muted-foreground"
+                                ? "text-red-500"
+                                : "text-muted-foreground"
                           }
                         >
                           {row.change > 0 ? "+" : ""}

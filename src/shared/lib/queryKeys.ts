@@ -16,7 +16,10 @@
  * Caso contrário, veja <https://www.gnu.org/licenses/>.
  */
 
-type QueryKeyParams = Record<string, string | number | boolean | undefined | null>;
+type QueryKeyParams = Record<
+  string,
+  string | number | boolean | undefined | null
+>;
 
 const withParams = (base: string, params?: QueryKeyParams) =>
   params ? [base, { ...params }] : [base];
@@ -24,15 +27,24 @@ const withParams = (base: string, params?: QueryKeyParams) =>
 export const gearboxKeys = {
   services: {
     all: ["services"] as const,
-    list: (params?: QueryKeyParams) => ["services", ...withParams("list", params)],
+    list: (params?: QueryKeyParams) => [
+      "services",
+      ...withParams("list", params),
+    ],
   },
   budgets: {
     all: ["budgets"] as const,
-    list: (params?: QueryKeyParams) => ["budgets", ...withParams("list", params)],
+    list: (params?: QueryKeyParams) => [
+      "budgets",
+      ...withParams("list", params),
+    ],
   },
   clients: {
     all: ["clients"] as const,
-    list: (params?: QueryKeyParams) => ["clients", ...withParams("list", params)],
+    list: (params?: QueryKeyParams) => [
+      "clients",
+      ...withParams("list", params),
+    ],
   },
   cars: {
     all: ["cars"] as const,

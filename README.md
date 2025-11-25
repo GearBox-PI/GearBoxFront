@@ -1,9 +1,11 @@
 # ⚙️ Gear Box
 
 ## 🚀 Sobre o Projeto
+
 O **Gear Box** é uma solução moderna e completa para gestão de oficinas mecânicas, desenvolvida com as tecnologias mais atuais do mercado. O sistema oferece uma interface intuitiva e responsiva para controlar todos os aspectos do seu negócio automotivo.
 
 ## ✨ Principais Funcionalidades
+
 - **🏠 Dashboard Inteligente:** Visão geral completa com métricas em tempo real.
 - **🔧 Gestão de Ordens de Serviço:** Controle completo do fluxo de trabalho.
 - **👥 Cadastro de Clientes:** Gerenciamento detalhado de informações dos clientes.
@@ -13,18 +15,19 @@ O **Gear Box** é uma solução moderna e completa para gestão de oficinas mec�
 
 ## 🛠️ Stack Tecnológica
 
-| Categoria | Tecnologia | Detalhes |
-| :--- | :--- | :--- |
-| **Frontend** | `React 18` + `TypeScript` | Base da aplicação moderna. |
-| **Build Tool** | `Vite` | Desenvolvimento ultrarrápido. |
-| **Styling** | `TailwindCSS` + `shadcn/ui` | Componentes elegantes e customizáveis. |
-| **Roteamento** | `React Router DOM` | Navegação fluida entre páginas. |
-| **Formulários** | `React Hook Form` + `Zod` | Gestão e validação robusta de formulários. |
-| **Estado** | `TanStack Query` | Gerenciamento otimizado de estado servidor. |
-| **API Externa** | `API FIPE` | Para dados de veículos precisos. |
-| **Backend** | `AdonisJS` (Preparado) | Estrutura back-end robusta (documentação incluída). |
+| Categoria       | Tecnologia                  | Detalhes                                            |
+| :-------------- | :-------------------------- | :-------------------------------------------------- |
+| **Frontend**    | `React 18` + `TypeScript`   | Base da aplicação moderna.                          |
+| **Build Tool**  | `Vite`                      | Desenvolvimento ultrarrápido.                       |
+| **Styling**     | `TailwindCSS` + `shadcn/ui` | Componentes elegantes e customizáveis.              |
+| **Roteamento**  | `React Router DOM`          | Navegação fluida entre páginas.                     |
+| **Formulários** | `React Hook Form` + `Zod`   | Gestão e validação robusta de formulários.          |
+| **Estado**      | `TanStack Query`            | Gerenciamento otimizado de estado servidor.         |
+| **API Externa** | `API FIPE`                  | Para dados de veículos precisos.                    |
+| **Backend**     | `AdonisJS` (Preparado)      | Estrutura back-end robusta (documentação incluída). |
 
 ## 🎨 Design & UX
+
 O projeto foi construído com foco em uma experiência de usuário de alta qualidade:
 
 - Interface moderna e responsiva (Mobile-First).
@@ -36,34 +39,40 @@ O projeto foi construído com foco em uma experiência de usuário de alta quali
 ## 📱 Funcionalidades em Destaque
 
 ### 🏠 Dashboard
+
 - Métricas em tempo real (ordens ativas, clientes, receita).
 - Gráficos e estatísticas visuais.
 - Lista de ordens recentes para acompanhamento rápido.
 - Indicadores de status coloridos.
 
 ### 🔧 Ordens de Serviço
+
 - Status personalizáveis (Ex: `Em Andamento`, `Aguardando`, `Concluído`).
 - Busca avançada por cliente, veículo ou serviço.
-- Interface *card-based* para fácil visualização do fluxo.
+- Interface _card-based_ para fácil visualização do fluxo.
 
 ### 🚗 Gestão de Veículos
+
 - Integração completa com **API FIPE**.
 - Cadastro automático de marcas, modelos e anos.
 - Controle de quilometragem e histórico de serviços.
 - Paleta de cores para identificação visual.
 
 ### 👥 Clientes
+
 - Cadastro completo com informações de contato.
 - Histórico de veículos e ordens por cliente.
-- Interface organizada com *badges* informativos.
+- Interface organizada com _badges_ informativos.
 
 ## ⚙️ Como rodar o front-end
 
 ### 1. Pré-requisitos
+
 - Node.js 20+
 - bun ou npm (o projeto já traz `package-lock.json`, então usamos `npm` nos exemplos)
 
 ### 2. Variáveis de ambiente
+
 Copie o exemplo e defina a URL da API AdonisJS:
 
 ```bash
@@ -89,12 +98,12 @@ O Vite exibirá o link para acesso (por padrão `http://localhost:5173`).
 
 ### 4. Scripts úteis
 
-| Comando | Descrição |
-| --- | --- |
-| `npm run dev` | Inicia o Vite em modo desenvolvimento |
-| `npm run build` | Gera o bundle de produção |
-| `npm run preview` | Faz o serve do bundle gerado |
-| `npm run lint` | Executa o ESLint |
+| Comando           | Descrição                             |
+| ----------------- | ------------------------------------- |
+| `npm run dev`     | Inicia o Vite em modo desenvolvimento |
+| `npm run build`   | Gera o bundle de produção             |
+| `npm run preview` | Faz o serve do bundle gerado          |
+| `npm run lint`    | Executa o ESLint                      |
 
 ## 🔌 Integração com a Gear Box API
 
@@ -109,9 +118,9 @@ O front consome a API AdonisJS (pasta `gear-box-api`) via client central (`src/s
 
 ### Credenciais padrão após as seeds
 
-| Papel | E-mail | Senha |
-| --- | --- | --- |
-| Dono | `dono@gearbox.com` | `senha123` |
+| Papel    | E-mail             | Senha      |
+| -------- | ------------------ | ---------- |
+| Dono     | `dono@gearbox.com` | `senha123` |
 | Mecânico | `mec1@gearbox.com` | `senha123` |
 
 > Apenas usuários com papel **dono** acessam o cadastro de usuários e rotas administrativas.
@@ -124,6 +133,7 @@ O front consome a API AdonisJS (pasta `gear-box-api`) via client central (`src/s
 - `src/components/VehicleFormDialog.tsx` — modal que combina FIPE + cadastro via API.
 
 ## 🧪 Próximos passos sugeridos
+
 - Implementar os formulários de criação de clientes e ordens (botões hoje estão desabilitados até a API suportar todo o fluxo).
 - Adicionar tratamento de expiração de token (logout automático ao receber 401).
 - Expandir seeds/testes conforme novos cenários forem necessários para demonstrações.
@@ -133,6 +143,7 @@ O front consome a API AdonisJS (pasta `gear-box-api`) via client central (`src/s
 Este projeto é licenciado sob os termos da **GNU Affero General Public License v3.0 (AGPL-3.0)**.
 
 Isso significa que:
+
 - qualquer modificação ou derivação deve permanecer como software livre;
 - melhorias feitas por terceiros precisam ser disponibilizadas publicamente
   caso o software seja utilizado via rede (como serviço web);

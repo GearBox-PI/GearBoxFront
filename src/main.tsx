@@ -29,5 +29,5 @@ createRoot(document.getElementById("root")!).render(
     <ThemeProvider>
       <App />
     </ThemeProvider>
-  </I18nextProvider>
+  </I18nextProvider>,
 );

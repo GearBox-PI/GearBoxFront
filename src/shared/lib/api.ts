@@ -53,7 +53,7 @@ const parseJsonSafe = async (response: Response) => {
 
 export async function apiRequest<T>(
   path: string,
-  options: ApiRequestOptions = {}
+  options: ApiRequestOptions = {},
 ): Promise<T> {
   const { method = "GET", body = null, headers = {}, token, signal } = options;
   const finalHeaders = new Headers(headers);
@@ -90,13 +90,13 @@ export async function apiRequest<T>(
     const error = new ApiError(
       (responseBody as any)?.error ||
         (responseBody as any)?.message ||
-        "Erro ao comunicar com a API"
+        "Erro ao comunicar com a API",
     );
     error.status = response.status;
     error.payload = responseBody;
     if (response.status === 401 && typeof window !== "undefined") {
       window.dispatchEvent(
-        new CustomEvent(UNAUTHORIZED_EVENT, { detail: { status: 401 } })
+        new CustomEvent(UNAUTHORIZED_EVENT, { detail: { status: 401 } }),
       );
     }
     throw error;

@@ -44,7 +44,12 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useFipeBrands, useFipeModels, useFipeYears, getFipeVehicleDetails } from "@/hooks/useFipeApi";
+import {
+  useFipeBrands,
+  useFipeModels,
+  useFipeYears,
+  getFipeVehicleDetails,
+} from "@/hooks/useFipeApi";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -73,7 +78,12 @@ interface VehicleFormDialogProps {
   onCreated?: () => void;
 }
 
-export default function VehicleFormDialog({ open, onOpenChange, clients, onCreated }: VehicleFormDialogProps) {
+export default function VehicleFormDialog({
+  open,
+  onOpenChange,
+  clients,
+  onCreated,
+}: VehicleFormDialogProps) {
   const [brandCode, setBrandCode] = useState<string | null>(null);
   const [modelCode, setModelCode] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -105,14 +115,16 @@ export default function VehicleFormDialog({ open, onOpenChange, clients, onCreat
       const vehicleDetails = await getFipeVehicleDetails(
         values.brandCode,
         values.modelCode,
-        values.yearCode
+        values.yearCode,
       );
 
       if (!vehicleDetails) {
         throw new Error(t("vehicles.subtitle"));
       }
 
-      const sanitizedPlate = values.plate.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+      const sanitizedPlate = values.plate
+        .replace(/[^A-Za-z0-9]/g, "")
+        .toUpperCase();
 
       await createCar(token, {
         clientId: values.clientId,
@@ -129,7 +141,9 @@ export default function VehicleFormDialog({ open, onOpenChange, clients, onCreat
       onCreated?.();
       onOpenChange(false);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : t("emptyState.error"));
+      toast.error(
+        error instanceof Error ? error.message : t("emptyState.error"),
+      );
     } finally {
       setSubmitting(false);
     }
@@ -140,9 +154,7 @@ export default function VehicleFormDialog({ open, onOpenChange, clients, onCreat
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{t("vehicles.title")}</DialogTitle>
-          <DialogDescription>
-            {t("vehicles.subtitle")}
-          </DialogDescription>
+          <DialogDescription>{t("vehicles.subtitle")}</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
@@ -153,10 +165,20 @@ export default function VehicleFormDialog({ open, onOpenChange, clients, onCreat
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t("clients.table.name")}</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value} disabled={!clients.length}>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    disabled={!clients.length}
+                  >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder={clients.length ? t("clients.table.name") : t("common.empty.noData")} />
+                        <SelectValue
+                          placeholder={
+                            clients.length
+                              ? t("clients.table.name")
+                              : t("common.empty.noData")
+                          }
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -190,7 +212,13 @@ export default function VehicleFormDialog({ open, onOpenChange, clients, onCreat
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder={brandsLoading ? t("charts.placeholder.loading") : t("vehicles.table.brand")} />
+                        <SelectValue
+                          placeholder={
+                            brandsLoading
+                              ? t("charts.placeholder.loading")
+                              : t("vehicles.table.brand")
+                          }
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -223,20 +251,23 @@ export default function VehicleFormDialog({ open, onOpenChange, clients, onCreat
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue 
+                        <SelectValue
                           placeholder={
-                            !brandCode 
-                              ? t("vehicles.table.brand") 
-                              : modelsLoading 
-                              ? t("charts.placeholder.loading") 
-                              : t("vehicles.table.model")
-                          } 
+                            !brandCode
+                              ? t("vehicles.table.brand")
+                              : modelsLoading
+                                ? t("charts.placeholder.loading")
+                                : t("vehicles.table.model")
+                          }
                         />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       {models.map((model) => (
-                        <SelectItem key={model.codigo} value={String(model.codigo)}>
+                        <SelectItem
+                          key={model.codigo}
+                          value={String(model.codigo)}
+                        >
                           {model.nome}
                         </SelectItem>
                       ))}
@@ -260,14 +291,14 @@ export default function VehicleFormDialog({ open, onOpenChange, clients, onCreat
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue 
+                        <SelectValue
                           placeholder={
-                            !modelCode 
-                              ? t("vehicles.table.model") 
-                              : yearsLoading 
-                              ? t("charts.placeholder.loading") 
-                              : t("vehicles.table.year")
-                          } 
+                            !modelCode
+                              ? t("vehicles.table.model")
+                              : yearsLoading
+                                ? t("charts.placeholder.loading")
+                                : t("vehicles.table.year")
+                          }
                         />
                       </SelectTrigger>
                     </FormControl>
@@ -294,7 +325,9 @@ export default function VehicleFormDialog({ open, onOpenChange, clients, onCreat
                     <Input
                       placeholder="ABC1234"
                       {...field}
-                      onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                      onChange={(e) =>
+                        field.onChange(e.target.value.toUpperCase())
+                      }
                     />
                   </FormControl>
                   <FormMessage />
@@ -311,8 +344,14 @@ export default function VehicleFormDialog({ open, onOpenChange, clients, onCreat
               >
                 Cancelar
               </Button>
-              <Button type="submit" disabled={submitting || !clients.length} className="flex-1">
-                {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              <Button
+                type="submit"
+                disabled={submitting || !clients.length}
+                className="flex-1"
+              >
+                {submitting && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
                 Cadastrar Veículo
               </Button>
             </div>

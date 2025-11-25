@@ -46,6 +46,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useIsMobile } from "@/shared/hooks/use-mobile";
 
 const OWNER_CONFIRMATION_PHRASE = "excluir minha conta";
 const MECHANIC_DEACTIVATION_PHRASE = "desativar";
@@ -60,10 +61,11 @@ export function UsersTable({
   onDeactivateMechanic,
   onActivateMechanic,
 }) {
+  const isMobile = useIsMobile();
   const activeMechanics = useMemo(
     () =>
       users.filter((user) => user.tipo === "mecanico" && user.ativo !== false),
-    [users]
+    [users],
   );
 
   return (
@@ -77,69 +79,128 @@ export function UsersTable({
           wrapperClassName="w-full md:w-72"
         />
       </CardHeader>
-      <CardContent className="overflow-x-auto">
-        <Table className="min-w-[880px] text-sm">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nome</TableHead>
-              <TableHead>E-mail</TableHead>
-              <TableHead>Papel</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
+      <CardContent>
+        {isMobile ? (
+          <div className="flex flex-col gap-4">
             {users.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={5}
-                  className="py-10 text-center text-muted-foreground"
-                >
-                  Nenhum usuário encontrado.
-                </TableCell>
-              </TableRow>
+              <div className="py-10 text-center text-muted-foreground">
+                Nenhum usuário encontrado.
+              </div>
             ) : (
               users.map((user) => (
-                <TableRow key={user.id} className="align-middle">
-                  <TableCell className="align-middle font-medium">
-                    {user.nome}
-                  </TableCell>
-                  <TableCell className="align-middle">{user.email}</TableCell>
-                  <TableCell className="align-middle capitalize">
-                    {user.tipo}
-                  </TableCell>
-                  <TableCell className="align-middle">
-                    <Badge
-                      variant={user.ativo !== false ? "secondary" : "outline"}
-                    >
-                      {user.ativo !== false ? "Ativo" : "Inativo"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="align-middle text-right">
-                    <div className="flex flex-wrap items-center justify-end gap-2">
-                      {renderEdit?.(user)}
-                      {user.tipo === "mecanico" ? (
-                        <MechanicStatusButton
-                          user={user}
-                          deletingId={deletingId}
-                          mechanics={activeMechanics}
-                          onDeactivate={onDeactivateMechanic}
-                          onActivate={onActivateMechanic}
-                        />
-                      ) : (
-                        <DeleteUserButton
-                          user={user}
-                          deletingId={deletingId}
-                          onConfirm={onDelete}
-                        />
-                      )}
+                <Card key={user.id} className="p-4 border border-border/50">
+                  <div className="flex flex-col gap-3">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <div className="font-medium">{user.nome}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {user.email}
+                        </div>
+                      </div>
+                      <Badge
+                        variant={user.ativo !== false ? "secondary" : "outline"}
+                      >
+                        {user.ativo !== false ? "Ativo" : "Inativo"}
+                      </Badge>
                     </div>
-                  </TableCell>
-                </TableRow>
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm capitalize text-muted-foreground">
+                        {user.tipo}
+                      </div>
+                      <div className="flex gap-2">
+                        {renderEdit?.(user)}
+                        {user.tipo === "mecanico" ? (
+                          <MechanicStatusButton
+                            user={user}
+                            deletingId={deletingId}
+                            mechanics={activeMechanics}
+                            onDeactivate={onDeactivateMechanic}
+                            onActivate={onActivateMechanic}
+                          />
+                        ) : (
+                          <DeleteUserButton
+                            user={user}
+                            deletingId={deletingId}
+                            onConfirm={onDelete}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </Card>
               ))
             )}
-          </TableBody>
-        </Table>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <Table className="min-w-[880px] text-sm">
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nome</TableHead>
+                  <TableHead>E-mail</TableHead>
+                  <TableHead>Papel</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {users.length === 0 ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={5}
+                      className="py-10 text-center text-muted-foreground"
+                    >
+                      Nenhum usuário encontrado.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  users.map((user) => (
+                    <TableRow key={user.id} className="align-middle">
+                      <TableCell className="align-middle font-medium">
+                        {user.nome}
+                      </TableCell>
+                      <TableCell className="align-middle">
+                        {user.email}
+                      </TableCell>
+                      <TableCell className="align-middle capitalize">
+                        {user.tipo}
+                      </TableCell>
+                      <TableCell className="align-middle">
+                        <Badge
+                          variant={
+                            user.ativo !== false ? "secondary" : "outline"
+                          }
+                        >
+                          {user.ativo !== false ? "Ativo" : "Inativo"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="align-middle text-right">
+                        <div className="flex flex-wrap items-center justify-end gap-2">
+                          {renderEdit?.(user)}
+                          {user.tipo === "mecanico" ? (
+                            <MechanicStatusButton
+                              user={user}
+                              deletingId={deletingId}
+                              mechanics={activeMechanics}
+                              onDeactivate={onDeactivateMechanic}
+                              onActivate={onActivateMechanic}
+                            />
+                          ) : (
+                            <DeleteUserButton
+                              user={user}
+                              deletingId={deletingId}
+                              onConfirm={onDelete}
+                            />
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
@@ -234,12 +295,13 @@ function MechanicStatusButton({
   onActivate,
 }) {
   const [open, setOpen] = useState(false);
+  const [activateDialogOpen, setActivateDialogOpen] = useState(false);
   const [confirmation, setConfirmation] = useState("");
   const [transferTo, setTransferTo] = useState("");
   const isActive = user.ativo !== false;
   const isPending = deletingId === user.id;
   const transferOptions = mechanics.filter(
-    (mechanic) => mechanic.id !== user.id
+    (mechanic) => mechanic.id !== user.id,
   );
   const confirmationMatches =
     confirmation.trim().toLowerCase() ===
@@ -262,23 +324,50 @@ function MechanicStatusButton({
     resetState();
   };
 
+  const handleActivateOpenChange = (value) => {
+    setActivateDialogOpen(value);
+  };
+
   const handleActivate = () => {
     if (isPending) return;
-    if (window.confirm(`Reativar ${user.nome}?`)) {
-      onActivate?.(user);
-    }
+    onActivate?.(user);
+    handleActivateOpenChange(false);
   };
 
   if (!isActive) {
     return (
-      <Button
-        variant="secondary"
-        size="sm"
-        disabled={isPending}
-        onClick={handleActivate}
-      >
-        {isPending ? "Processando..." : "Ativar"}
-      </Button>
+      <Dialog open={activateDialogOpen} onOpenChange={handleActivateOpenChange}>
+        <DialogTrigger asChild>
+          <Button variant="secondary" size="sm" disabled={isPending}>
+            {isPending ? "Processando..." : "Ativar"}
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reativar mecânico</DialogTitle>
+            <DialogDescription>
+              Confirme a reativação de {user.nome}. O mecânico voltará a ter
+              acesso ao sistema imediatamente.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => handleActivateOpenChange(false)}
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="button"
+              disabled={isPending}
+              onClick={handleActivate}
+            >
+              {isPending ? "Processando..." : "Confirmar reativação"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     );
   }
 

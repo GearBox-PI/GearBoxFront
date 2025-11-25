@@ -75,7 +75,7 @@ export function useFipeModels(brandCode: string | null) {
     queryKey: ["fipe", "models", brandCode],
     queryFn: () =>
       fipeRequest<{ modelos: FipeModel[] }>(
-        `/carros/marcas/${brandCode}/modelos`
+        `/carros/marcas/${brandCode}/modelos`,
       ),
     enabled: Boolean(brandCode),
     staleTime: 24 * 60 * 60 * 1000,
@@ -85,12 +85,15 @@ export function useFipeModels(brandCode: string | null) {
   return { models: query.data ?? [], ...mapQueryState(query) };
 }
 
-export function useFipeYears(brandCode: string | null, modelCode: string | null) {
+export function useFipeYears(
+  brandCode: string | null,
+  modelCode: string | null,
+) {
   const query = useQuery({
     queryKey: ["fipe", "years", brandCode, modelCode],
     queryFn: () =>
       fipeRequest<FipeYear[]>(
-        `/carros/marcas/${brandCode}/modelos/${modelCode}/anos`
+        `/carros/marcas/${brandCode}/modelos/${modelCode}/anos`,
       ),
     enabled: Boolean(brandCode && modelCode),
     staleTime: 24 * 60 * 60 * 1000,
@@ -102,11 +105,11 @@ export function useFipeYears(brandCode: string | null, modelCode: string | null)
 export async function getFipeVehicleDetails(
   brandCode: string,
   modelCode: string,
-  yearCode: string
+  yearCode: string,
 ): Promise<FipeVehicle | null> {
   try {
     return await fipeRequest<FipeVehicle>(
-      `/carros/marcas/${brandCode}/modelos/${modelCode}/anos/${yearCode}`
+      `/carros/marcas/${brandCode}/modelos/${modelCode}/anos/${yearCode}`,
     );
   } catch (err) {
     console.error("Erro ao buscar detalhes:", err);

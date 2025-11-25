@@ -21,7 +21,12 @@ import { listServices } from "@/services/gearbox";
 import { useAuth } from "@/contexts/AuthContext";
 import { gearboxKeys } from "@/lib/queryKeys";
 import { QUERY_STALE_TIMES } from "@/config/query";
-import type { PaginatedMeta, Service } from "@/types/api";
+import type { PaginatedMeta, PaginatedResponse, Service } from "@/types/api";
+
+type PaginatedListResult<T> = {
+  list: T[];
+  meta: PaginatedMeta;
+};
 
 type ServiceFilters = {
   startDate?: string | null;
@@ -53,14 +58,14 @@ export function useServices({
     endDate: filters?.endDate ?? undefined,
   };
 
-  return useQuery({
+  return useQuery<PaginatedResponse<Service>, Error, PaginatedListResult<Service>>({
     queryKey: gearboxKeys.services.list(queryParams),
     queryFn: () => listServices(token!, queryParams),
     enabled: Boolean(token) && enabled,
     staleTime: QUERY_STALE_TIMES.services,
     select: (data) => ({
-      list: data.data as Service[],
-      meta: data.meta as PaginatedMeta,
+      list: data.data,
+      meta: data.meta,
     }),
   });
 }

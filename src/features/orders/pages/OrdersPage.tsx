@@ -65,10 +65,14 @@ import {
 } from "@/shared/components/ui/dialog";
 import { useOrders } from "@/hooks/useOrders";
 import { gearboxKeys } from "@/lib/queryKeys";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const statusConfig = (
-  t: (key: string) => string
+  t: (key: string) => string,
 ): Record<
   ServiceStatus,
   { label: string; icon: typeof Clock; className: string; iconClass: string }
@@ -140,7 +144,7 @@ const ServiceDescription = ({ description }: { description: string }) => {
         <p
           className={cn(
             "text-sm text-foreground whitespace-pre-wrap break-words",
-            shouldTruncate && "line-clamp-3"
+            shouldTruncate && "line-clamp-3",
           )}
         >
           {description || t("common.empty.noData")}
@@ -180,7 +184,7 @@ export default function Ordens() {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<ServiceStatus | "todos">(
-    "todos"
+    "todos",
   );
   const [createdFrom, setCreatedFrom] = useState("");
   const [createdTo, setCreatedTo] = useState("");
@@ -280,7 +284,7 @@ export default function Ordens() {
       const base = getDateIfValid(service.createdAt);
       if (base) {
         return new Date(
-          base.getTime() + service.prazoEstimadoDias * 24 * 60 * 60 * 1000
+          base.getTime() + service.prazoEstimadoDias * 24 * 60 * 60 * 1000,
         );
       }
     }
@@ -323,7 +327,7 @@ export default function Ordens() {
       const base = getDateIfValid(service.createdAt);
       if (base) {
         return new Date(
-          base.getTime() + service.prazoEstimadoDias * 24 * 60 * 60 * 1000
+          base.getTime() + service.prazoEstimadoDias * 24 * 60 * 60 * 1000,
         );
       }
     }
@@ -343,7 +347,7 @@ export default function Ordens() {
     if (!mechanicId) return [];
     return services.filter(
       (service) =>
-        service.userId === mechanicId || service.assignedToId === mechanicId
+        service.userId === mechanicId || service.assignedToId === mechanicId,
     );
   }, [isOwner, services, user?.id]);
 
@@ -397,7 +401,7 @@ export default function Ordens() {
     clientName: string,
     currentStatus: ServiceStatus,
     nextStatus: ServiceStatus,
-    canUpdate: boolean
+    canUpdate: boolean,
   ) => {
     if (!canUpdate) return;
     if (statusDialogOpen || currentStatus === nextStatus) return;
@@ -510,7 +514,7 @@ export default function Ordens() {
                 clientMap.get(service.clientId) ?? "Cliente não encontrado";
               const car = carMap.get(service.carId);
               const total = currencyFormat.format(
-                Number(service.totalValue) || 0
+                Number(service.totalValue) || 0,
               );
               const canUpdateService =
                 isOwner ||
@@ -522,10 +526,10 @@ export default function Ordens() {
                   key={service.id}
                   className="border-border/50 bg-card/50 backdrop-blur-sm shadow-sm hover:shadow-md transition-all"
                 >
-                  <CardContent className="space-y-5 p-6">
+                  <CardContent className="space-y-4 p-4 md:space-y-5 md:p-6">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                       <div>
-                        <p className="text-lg font-semibold text-foreground">
+                        <p className="text-base md:text-lg font-semibold text-foreground">
                           {clientName}
                         </p>
                         <div className="mt-1">
@@ -540,13 +544,13 @@ export default function Ordens() {
                         </div>
                       </div>
                       <div className="text-right flex flex-col items-end">
-                        <p className="text-2xl font-bold text-foreground">
+                        <p className="text-xl md:text-2xl font-bold text-foreground">
                           {total}
                         </p>
                         <Badge
                           className={cn(
                             "mt-1 w-fit px-3 py-1 text-xs font-semibold border border-transparent",
-                            config.className
+                            config.className,
                           )}
                         >
                           <StatusIcon
@@ -557,7 +561,7 @@ export default function Ordens() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-4 border-y border-border/40 py-4">
+                    <div className="grid grid-cols-2 gap-3 md:gap-4 text-sm sm:grid-cols-4 border-y border-border/40 py-3 md:py-4">
                       <div>
                         <p className="text-xs text-muted-foreground uppercase tracking-wide">
                           Ordem
@@ -571,7 +575,9 @@ export default function Ordens() {
                               #{service.id.slice(0, 8)}
                             </p>
                           </TooltipTrigger>
-                          <TooltipContent side="top">#{service.id}</TooltipContent>
+                          <TooltipContent side="top">
+                            #{service.id}
+                          </TooltipContent>
                         </Tooltip>
                       </div>
                       <div>
@@ -581,7 +587,7 @@ export default function Ordens() {
                         <p className="font-medium text-foreground">
                           {service.createdAt
                             ? new Date(service.createdAt).toLocaleDateString(
-                                "pt-BR"
+                                "pt-BR",
                               )
                             : "—"}
                         </p>
@@ -604,7 +610,7 @@ export default function Ordens() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    <div className="grid grid-cols-2 gap-3 md:gap-4 sm:grid-cols-3">
                       <div>
                         <p className="text-xs text-muted-foreground uppercase tracking-wide">
                           {t("orders.deadline.forecast")}
@@ -670,8 +676,8 @@ export default function Ordens() {
                       description={service.description ?? ""}
                     />
 
-                    <div className="flex flex-col gap-4 pt-2 border-t border-border/60">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex flex-col gap-3 pt-2 border-t border-border/60 md:gap-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 md:gap-4">
                         <div className="space-y-1 flex-1">
                           <p className="text-xs text-muted-foreground uppercase tracking-wide">
                             Atualizar status
@@ -686,7 +692,7 @@ export default function Ordens() {
                                     clientName,
                                     service.status,
                                     value as ServiceStatus,
-                                    canUpdateService
+                                    canUpdateService,
                                   )
                                 }
                                 disabled={isUpdatingStatus || statusDialogOpen}
@@ -878,7 +884,7 @@ export default function Ordens() {
               onClick={() => {
                 if (!extendTargetId) return;
                 const currentService = services.find(
-                  (s) => s.id === extendTargetId
+                  (s) => s.id === extendTargetId,
                 );
                 if (!currentService) return;
                 let newDate: Date | null = null;
@@ -890,7 +896,7 @@ export default function Ordens() {
                   const base = getDataPrevista(currentService) ?? new Date();
                   if (!Number.isNaN(daysNumber)) {
                     newDate = new Date(
-                      base.getTime() + daysNumber * 24 * 60 * 60 * 1000
+                      base.getTime() + daysNumber * 24 * 60 * 60 * 1000,
                     );
                   }
                 }

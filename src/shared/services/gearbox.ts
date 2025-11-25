@@ -59,52 +59,90 @@ export function logout(token: string) {
 
 export function createUser(
   token: string,
-  payload: { nome: string; email: string; senha: string; tipo: Role; ativo?: boolean }
+  payload: {
+    nome: string;
+    email: string;
+    senha: string;
+    tipo: Role;
+    ativo?: boolean;
+  },
 ) {
-  return apiRequest<ApiUser>("/users", { method: "POST", body: payload, token });
+  return apiRequest<ApiUser>("/users", {
+    method: "POST",
+    body: payload,
+    token,
+  });
 }
 
 export function listUsers(token: string, params?: ListParams) {
-  return apiRequest<PaginatedResponse<ApiUser>>(`/users${buildQueryString(params)}`, {
-    token,
-  });
+  return apiRequest<PaginatedResponse<ApiUser>>(
+    `/users${buildQueryString(params)}`,
+    {
+      token,
+    },
+  );
 }
 
 export function updateUser(
   token: string,
   id: string,
-  payload: Partial<{ nome: string; email: string; senha: string; tipo: Role; ativo: boolean }>
+  payload: Partial<{
+    nome: string;
+    email: string;
+    senha: string;
+    tipo: Role;
+    ativo: boolean;
+  }>,
 ) {
-  return apiRequest<ApiUser>(`/users/${id}`, { method: "PUT", body: payload, token });
+  return apiRequest<ApiUser>(`/users/${id}`, {
+    method: "PUT",
+    body: payload,
+    token,
+  });
 }
 
 export function deleteUser(
   token: string,
   id: string,
-  payload?: { transferToUserId?: string | null }
+  payload?: { transferToUserId?: string | null },
 ) {
-  return apiRequest<void>(`/users/${id}`, { method: "DELETE", token, body: payload });
+  return apiRequest<void>(`/users/${id}`, {
+    method: "DELETE",
+    token,
+    body: payload,
+  });
 }
 
 export function listClients(token: string, params?: ListParams) {
-  return apiRequest<PaginatedResponse<Client>>(`/clients${buildQueryString(params)}`, {
-    token,
-  });
+  return apiRequest<PaginatedResponse<Client>>(
+    `/clients${buildQueryString(params)}`,
+    {
+      token,
+    },
+  );
 }
 
 export function createClient(
   token: string,
-  payload: { nome: string; telefone: string; email?: string | null }
+  payload: { nome: string; telefone: string; email?: string | null },
 ) {
-  return apiRequest<Client>("/clients", { method: "POST", body: payload, token });
+  return apiRequest<Client>("/clients", {
+    method: "POST",
+    body: payload,
+    token,
+  });
 }
 
 export function updateClient(
   token: string,
   id: string,
-  payload: Partial<{ nome: string; telefone: string; email?: string | null }>
+  payload: Partial<{ nome: string; telefone: string; email?: string | null }>,
 ) {
-  return apiRequest<Client>(`/clients/${id}`, { method: "PUT", body: payload, token });
+  return apiRequest<Client>(`/clients/${id}`, {
+    method: "PUT",
+    body: payload,
+    token,
+  });
 }
 
 export function deleteClient(token: string, id: string) {
@@ -112,29 +150,46 @@ export function deleteClient(token: string, id: string) {
 }
 
 export function listCars(token: string, params?: ListParams) {
-  return apiRequest<PaginatedResponse<Car>>(`/cars${buildQueryString(params)}`, {
-    token,
-  });
+  return apiRequest<PaginatedResponse<Car>>(
+    `/cars${buildQueryString(params)}`,
+    {
+      token,
+    },
+  );
 }
 
 export function listServices(token: string, params?: ListParams) {
-  return apiRequest<PaginatedResponse<Service>>(`/services${buildQueryString(params)}`, {
-    token,
-  });
+  return apiRequest<PaginatedResponse<Service>>(
+    `/services${buildQueryString(params)}`,
+    {
+      token,
+    },
+  );
 }
 
 export function updateService(
   token: string,
   id: string,
-  payload: Partial<{ status: ServiceStatus; dataPrevista: string; prazoEstimadoDias: number }>
+  payload: Partial<{
+    status: ServiceStatus;
+    dataPrevista: string;
+    prazoEstimadoDias: number;
+  }>,
 ) {
-  return apiRequest<Service>(`/services/${id}`, { method: "PUT", body: payload, token });
+  return apiRequest<Service>(`/services/${id}`, {
+    method: "PUT",
+    body: payload,
+    token,
+  });
 }
 
 export function listBudgets(token: string, params?: ListParams) {
-  return apiRequest<PaginatedResponse<Budget>>(`/budgets${buildQueryString(params)}`, {
-    token,
-  });
+  return apiRequest<PaginatedResponse<Budget>>(
+    `/budgets${buildQueryString(params)}`,
+    {
+      token,
+    },
+  );
 }
 
 export function createBudget(
@@ -146,9 +201,13 @@ export function createBudget(
     amount: number;
     status?: BudgetStatus;
     prazoEstimadoDias?: number | null;
-  }
+  },
 ) {
-  return apiRequest<Budget>("/budgets", { method: "POST", body: payload, token });
+  return apiRequest<Budget>("/budgets", {
+    method: "POST",
+    body: payload,
+    token,
+  });
 }
 
 export function updateBudget(
@@ -161,21 +220,28 @@ export function updateBudget(
     amount: number;
     status: BudgetStatus;
     prazoEstimadoDias: number | null;
-  }>
+  }>,
 ) {
-  return apiRequest<Budget>(`/budgets/${id}`, { method: "PUT", body: payload, token });
+  return apiRequest<Budget>(`/budgets/${id}`, {
+    method: "PUT",
+    body: payload,
+    token,
+  });
 }
 
 export function acceptBudget(
   token: string,
   id: string,
-  payload: { assignedToId: string; confirm: boolean }
+  payload: { assignedToId: string; confirm: boolean },
 ) {
-  return apiRequest<{ budget: Budget; service: Service }>(`/budgets/${id}/accept`, {
-    method: "POST",
-    token,
-    body: payload,
-  });
+  return apiRequest<{ budget: Budget; service: Service }>(
+    `/budgets/${id}/accept`,
+    {
+      method: "POST",
+      token,
+      body: payload,
+    },
+  );
 }
 
 export function rejectBudget(token: string, id: string) {
@@ -187,7 +253,13 @@ export function rejectBudget(token: string, id: string) {
 
 export function createCar(
   token: string,
-  payload: { clientId: string; placa: string; marca: string; modelo: string; ano: number }
+  payload: {
+    clientId: string;
+    placa: string;
+    marca: string;
+    modelo: string;
+    ano: number;
+  },
 ) {
   return apiRequest<Car>("/cars", { method: "POST", body: payload, token });
 }

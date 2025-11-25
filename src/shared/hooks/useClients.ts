@@ -49,8 +49,9 @@ export function useClients({
   });
 
   const clientMap = useMemo(() => {
-    const entries = query.data?.list?.map((client) => [client.id, client.nome]) ?? [];
-    return new Map(entries);
+    const entries =
+      query.data?.list?.map((client): [string, string] => [client.id, client.nome]) ?? [];
+    return new Map<string, string>(entries);
   }, [query.data?.list]);
 
   return { ...query, clientMap };

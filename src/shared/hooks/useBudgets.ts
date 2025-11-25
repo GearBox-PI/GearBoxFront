@@ -21,7 +21,12 @@ import { listBudgets } from "@/services/gearbox";
 import { useAuth } from "@/contexts/AuthContext";
 import { gearboxKeys } from "@/lib/queryKeys";
 import { QUERY_STALE_TIMES } from "@/config/query";
-import type { Budget, PaginatedMeta } from "@/types/api";
+import type { Budget, PaginatedMeta, PaginatedResponse } from "@/types/api";
+
+type PaginatedListResult<T> = {
+  list: T[];
+  meta: PaginatedMeta;
+};
 
 type UseBudgetsParams = {
   page?: number;
@@ -50,15 +55,15 @@ export function useBudgets({
     endDate: filters?.endDate ?? undefined,
   };
 
-  return useQuery({
+  return useQuery<PaginatedResponse<Budget>, Error, PaginatedListResult<Budget>>({
     queryKey: gearboxKeys.budgets.list(queryParams),
     queryFn: () => listBudgets(token!, queryParams),
     enabled: Boolean(token) && enabled,
     staleTime: QUERY_STALE_TIMES.budgets,
     keepPreviousData: true,
     select: (data) => ({
-      list: data.data as Budget[],
-      meta: data.meta as PaginatedMeta,
+      list: data.data,
+      meta: data.meta,
     }),
   });
 }

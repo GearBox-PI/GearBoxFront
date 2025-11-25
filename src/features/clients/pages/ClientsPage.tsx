@@ -130,7 +130,7 @@ export default function ClientsPage() {
 
   const clients = useMemo(
     () => clientsQuery.data?.data ?? [],
-    [clientsQuery.data]
+    [clientsQuery.data],
   );
   const cars = useMemo(() => carsQuery.data?.data ?? [], [carsQuery.data]);
 
@@ -147,7 +147,7 @@ export default function ClientsPage() {
       if (matchesBase) return true;
       const clientCars = carsByClient.get(client.id) ?? [];
       return clientCars.some((car) =>
-        `${car.marca} ${car.modelo} ${car.placa}`.toLowerCase().includes(term)
+        `${car.marca} ${car.modelo} ${car.placa}`.toLowerCase().includes(term),
       );
     });
   }, [clients, searchTerm, carsByClient]);
@@ -163,7 +163,7 @@ export default function ClientsPage() {
 
   const handleEditClient = (
     id: string,
-    values: { nome: string; telefone: string; email?: string }
+    values: { nome: string; telefone: string; email?: string },
   ) => updateClientMutation.mutateAsync({ id, data: values });
 
   const handleDeleteClient = (id: string) =>
@@ -226,8 +226,8 @@ export default function ClientsPage() {
           {clientsQuery.error instanceof Error
             ? clientsQuery.error.message
             : carsQuery.error instanceof Error
-            ? carsQuery.error.message
-            : t("emptyState.error")}
+              ? carsQuery.error.message
+              : t("emptyState.error")}
         </p>
       ) : filteredClients.length === 0 ? (
         <div className="mt-10">
@@ -258,7 +258,7 @@ export default function ClientsPage() {
                   key={client.id}
                   className="border-border/50 bg-card/50 backdrop-blur-sm shadow-sm hover:shadow-md transition-all"
                 >
-                  <CardContent className="space-y-5 p-6">
+                  <CardContent className="space-y-4 p-4 md:space-y-5 md:p-6">
                     <div className="flex flex-col gap-2">
                       <p className="text-xs uppercase tracking-wide text-muted-foreground">
                         {t("clients.table.name")}
@@ -278,7 +278,7 @@ export default function ClientsPage() {
                           <p className="text-xs text-muted-foreground">
                             {t("clients.table.email")}
                           </p>
-                          <p className="text-sm text-foreground">
+                          <p className="text-sm text-foreground break-all">
                             {client.email ?? t("common.empty.noData")}
                           </p>
                         </div>
@@ -296,8 +296,8 @@ export default function ClientsPage() {
                       </div>
                     </div>
 
-                    <div className="rounded-lg border border-border/60 bg-muted/30 p-4">
-                      <div className="flex items-center justify-between gap-2">
+                    <div className="rounded-lg border border-border/60 bg-muted/30 p-3 md:p-4">
+                      <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <div>
                           <p className="text-xs text-muted-foreground">
                             {t("vehicles.title")}
@@ -314,15 +314,17 @@ export default function ClientsPage() {
                             <Button
                               size="sm"
                               variant="outline"
-                          className="border-sky-200 dark:border-sky-400/60 bg-sky-100 dark:bg-sky-500/10 text-sky-700 dark:text-sky-200 hover:bg-sky-200 dark:hover:bg-sky-500/20"
-                          onClick={open}
-                          disabled={disabled || createCarMutation.isPending}
-                        >
-                          <Car className="mr-1 h-3.5 w-3.5" />
-                          {t("clients.actions.addCar", { defaultValue: "Adicionar carro" })}
-                        </Button>
-                      )}
-                    />
+                              className="w-full sm:w-auto border-sky-200 dark:border-sky-400/60 bg-sky-100 dark:bg-sky-500/10 text-sky-700 dark:text-sky-200 hover:bg-sky-200 dark:hover:bg-sky-500/20"
+                              onClick={open}
+                              disabled={disabled || createCarMutation.isPending}
+                            >
+                              <Car className="mr-1 h-3.5 w-3.5" />
+                              {t("clients.actions.addCar", {
+                                defaultValue: "Adicionar carro",
+                              })}
+                            </Button>
+                          )}
+                        />
                       </div>
                       {clientCars.length > 0 ? (
                         <div className="mt-3 flex flex-wrap gap-2">
@@ -343,7 +345,7 @@ export default function ClientsPage() {
                       )}
                     </div>
 
-                    <div className="grid gap-2 rounded-lg border border-border/60 bg-muted/30 p-4 text-sm text-muted-foreground">
+                    <div className="grid gap-2 rounded-lg border border-border/60 bg-muted/30 p-3 md:p-4 text-xs md:text-sm text-muted-foreground">
                       <p>
                         Cadastrado por{" "}
                         <span className="font-semibold text-foreground">

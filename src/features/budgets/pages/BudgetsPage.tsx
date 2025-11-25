@@ -82,7 +82,7 @@ const EMPTY_USERS: ApiUser[] = [];
 const EMPTY_BUDGETS: Budget[] = [];
 
 const statusConfig = (
-  t: (key: string) => string
+  t: (key: string) => string,
 ): Record<
   BudgetStatus,
   { label: string; description: string; badgeClass: string }
@@ -143,7 +143,7 @@ const BudgetDescription = ({ description }: { description: string }) => {
         <p
           className={cn(
             "text-sm text-foreground whitespace-pre-wrap break-words",
-            shouldTruncate && "line-clamp-3"
+            shouldTruncate && "line-clamp-3",
           )}
         >
           {description || t("common.empty.noData")}
@@ -183,7 +183,7 @@ export default function BudgetsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<BudgetStatus | "todos">(
-    "todos"
+    "todos",
   );
   const [createdFrom, setCreatedFrom] = useState("");
   const [createdTo, setCreatedTo] = useState("");
@@ -312,14 +312,14 @@ export default function BudgetsPage() {
   const activeMechanics = useMemo(
     () =>
       safeMechanics.filter(
-        (mechanic) => mechanic.tipo === "mecanico" && mechanic.ativo
+        (mechanic) => mechanic.tipo === "mecanico" && mechanic.ativo,
       ),
-    [safeMechanics]
+    [safeMechanics],
   );
 
   const activeMechanicIds = useMemo(
     () => new Set(activeMechanics.map((mechanic) => mechanic.id)),
-    [activeMechanics]
+    [activeMechanics],
   );
 
   const getAssignedMechanicId = (budget: Budget): string | undefined => {
@@ -332,7 +332,7 @@ export default function BudgetsPage() {
 
   const clientMap = useMemo(() => {
     const entries = safeClients.map(
-      (client) => [client.id, client.nome] as const
+      (client) => [client.id, client.nome] as const,
     );
     return new Map(entries);
   }, [safeClients]);
@@ -344,7 +344,7 @@ export default function BudgetsPage() {
 
   const mechanicMap = useMemo(() => {
     const entries = safeMechanics.map(
-      (mechanic) => [mechanic.id, mechanic.nome] as const
+      (mechanic) => [mechanic.id, mechanic.nome] as const,
     );
     const map = new Map(entries);
     if (user) {
@@ -366,13 +366,13 @@ export default function BudgetsPage() {
         budget.createdBy?.id === mechanicId
       );
     },
-    [isOwner, user?.id]
+    [isOwner, user?.id],
   );
 
   const filteredBudgets = useMemo(() => {
     const budgetList = budgetsQuery.data
       ? isOwner
-        ? budgets ?? EMPTY_BUDGETS
+        ? (budgets ?? EMPTY_BUDGETS)
         : (budgets ?? EMPTY_BUDGETS).filter(isBudgetOwnedByUser)
       : EMPTY_BUDGETS;
     const term = searchTerm.trim().toLowerCase();
@@ -447,7 +447,7 @@ export default function BudgetsPage() {
       description: string;
       amount: number;
       prazoEstimadoDias?: number | null;
-    }
+    },
   ) => {
     await editBudgetMutation.mutateAsync({ id, data: values });
   };
@@ -580,7 +580,7 @@ export default function BudgetsPage() {
             const responsibleName =
               budget.user?.nome ??
               (budget.userId
-                ? mechanicMap.get(budget.userId) ?? budget.userId.slice(0, 8)
+                ? (mechanicMap.get(budget.userId) ?? budget.userId.slice(0, 8))
                 : "—");
             const config =
               statusConfigMap[budget.status] ?? statusConfigMap.aberto;
@@ -588,7 +588,7 @@ export default function BudgetsPage() {
               ? dateFormat.format(new Date(budget.createdAt))
               : "—";
             const formattedAmount = currencyFormat.format(
-              Number(budget.amount) || 0
+              Number(budget.amount) || 0,
             );
             const approving =
               approveBudgetMutation.variables?.id === budget.id &&
@@ -602,8 +602,8 @@ export default function BudgetsPage() {
             const assignedMechanicId = getAssignedMechanicId(budget);
             const assignedMechanicLabel =
               assignedMechanicId && assignedMechanicId.length
-                ? mechanicMap.get(assignedMechanicId) ??
-                  assignedMechanicId.slice(0, 8)
+                ? (mechanicMap.get(assignedMechanicId) ??
+                  assignedMechanicId.slice(0, 8))
                 : "—";
             const hasActiveMechanics = activeMechanics.length > 0;
             const canManageBudget = isBudgetOwner;
@@ -627,7 +627,7 @@ export default function BudgetsPage() {
                 key={budget.id}
                 className="border-border/50 bg-card/50 backdrop-blur-sm shadow-sm hover:shadow-md transition-all"
               >
-                <CardContent className="space-y-5 p-6">
+                <CardContent className="space-y-4 p-4 md:space-y-5 md:p-6">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div>
                       <p className="text-lg font-semibold text-foreground">
@@ -645,13 +645,13 @@ export default function BudgetsPage() {
                       </div>
                     </div>
                     <div className="text-right flex flex-col items-end">
-                      <p className="text-2xl font-bold text-foreground">
+                      <p className="text-xl md:text-2xl font-bold text-foreground">
                         {formattedAmount}
                       </p>
                       <Badge
                         className={cn(
                           "mt-1 w-fit px-3 py-1 text-xs font-semibold",
-                          config.badgeClass
+                          config.badgeClass,
                         )}
                       >
                         {config.label}
@@ -659,7 +659,7 @@ export default function BudgetsPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-4 border-y border-border/40 py-4">
+                  <div className="grid grid-cols-2 gap-3 md:gap-4 text-sm sm:grid-cols-4 border-y border-border/40 py-4">
                     <div>
                       <p className="text-xs text-muted-foreground uppercase tracking-wide">
                         Orçamento
@@ -739,7 +739,7 @@ export default function BudgetsPage() {
                           }}
                           onSubmit={(values) =>
                             requestConfirm("edit", () =>
-                              handleEditBudget(budget.id, values)
+                              handleEditBudget(budget.id, values),
                             )
                           }
                           renderTrigger={({ open, disabled }) => (
@@ -787,7 +787,7 @@ export default function BudgetsPage() {
                                 disabled={approveDisabled}
                                 onClick={() =>
                                   requestConfirm("approve", () =>
-                                    handleApproveBudget(budget)
+                                    handleApproveBudget(budget),
                                   )
                                 }
                                 aria-label={t("common.actions.confirm", {
@@ -814,7 +814,7 @@ export default function BudgetsPage() {
                                 disabled={budget.status !== "aberto" || denying}
                                 onClick={() =>
                                   requestConfirm("cancel", () =>
-                                    handleDenyBudget(budget.id)
+                                    handleDenyBudget(budget.id),
                                   )
                                 }
                                 aria-label={t("budgets.status.cancelar", {
@@ -930,7 +930,7 @@ export default function BudgetsPage() {
 
   const requestConfirm = (
     action: "edit" | "approve" | "cancel",
-    proceed: () => Promise<void> | void
+    proceed: () => Promise<void> | void,
   ) =>
     new Promise<void>((resolve, reject) => {
       confirmDialogActionRef.current = null;

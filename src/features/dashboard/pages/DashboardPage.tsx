@@ -26,7 +26,7 @@ import { ptBR } from "date-fns/locale";
 import {
   Wrench,
   Users,
-  Car,
+  Car as CarIcon,
   TrendingUp,
   Clock,
   CheckCircle2,
@@ -39,8 +39,15 @@ import {
   CalendarRange,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import type { ServiceStatus, Service, Budget, BudgetStatus } from "@/types/api";
+import type {
+  ServiceStatus,
+  Service,
+  Budget,
+  BudgetStatus,
+  Car as CarEntity,
+} from "@/types/api";
 import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 import {
   Dialog,
   DialogContent,
@@ -49,14 +56,23 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/shared/components/ui/dialog";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { useServices } from "@/hooks/useServices";
 import { useClients } from "@/hooks/useClients";
 import { useCars } from "@/hooks/useCars";
 import { useBudgets } from "@/hooks/useBudgets";
 import type { DateRange } from "react-day-picker";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type ExtendedService = Service & {
   dataPrevista?: string | null;
@@ -71,7 +87,7 @@ type ExtendedService = Service & {
 };
 
 const statusConfig = (
-  t: (key: string) => string
+  t: TFunction,
 ): Record<
   ServiceStatus,
   { label: string; icon: typeof Clock; className: string; iconClass: string }
@@ -189,10 +205,7 @@ const isOlderThanDays = (value: string | undefined | null, days: number) => {
 
 const normalizePriority = (priority?: string | null) =>
   priority?.toLowerCase().trim() ?? "";
-const formatPriority = (
-  priority: string | null | undefined,
-  t: (key: string, options?: any) => string
-) => {
+const formatPriority = (priority: string | null | undefined, t: TFunction) => {
   const normalized = normalizePriority(priority);
   if (!normalized) return null;
   const labels: Record<string, string> = {
@@ -206,10 +219,7 @@ const formatPriority = (
   return labels[normalized] ?? priority;
 };
 
-const budgetStatusLabel = (
-  status: BudgetStatus,
-  t: (key: string, options?: any) => string
-) => {
+const budgetStatusLabel = (status: BudgetStatus, t: TFunction) => {
   const mapping: Record<BudgetStatus, string> = {
     aberto: t("budgets.status.aberto"),
     aceito: t("budgets.status.aceito"),
@@ -235,10 +245,10 @@ const RecentOrderItem = ({
   isDelayed: boolean;
   dueDate: Date | null;
   responsibleName: string;
-  car: any;
+  car?: CarEntity | null;
   clientName: string;
   priorityLabel: string | null;
-  t: (key: string, options?: any) => string;
+  t: TFunction;
 }) => {
   const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
   const StatusIcon = statusLabels[order.status].icon;
@@ -246,14 +256,19 @@ const RecentOrderItem = ({
   const shouldTruncate = description && description.length > 150;
 
   return (
-    <div className="flex items-center justify-between gap-4 p-4 rounded-lg bg-card/40 border border-border/50 hover:bg-card/60 transition-colors">
-      <div className="flex-1 space-y-1">
+    <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between p-4 rounded-lg bg-card/40 border border-border/50 hover:bg-card/60 transition-colors">
+      <div className="flex-1 space-y-1 w-full">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-semibold text-foreground">{order.id}</span>
+          <span
+            className="font-semibold text-foreground text-xs md:text-sm truncate max-w-[150px]"
+            title={order.id}
+          >
+            {order.id}
+          </span>
           <Badge
             className={cn(
               "gap-1 text-xs font-semibold border border-transparent",
-              statusLabels[order.status].className
+              statusLabels[order.status].className,
             )}
           >
             <StatusIcon
@@ -282,7 +297,7 @@ const RecentOrderItem = ({
         <p
           className={cn(
             "text-sm text-muted-foreground whitespace-pre-wrap break-words",
-            shouldTruncate && "line-clamp-2"
+            shouldTruncate && "line-clamp-2",
           )}
         >
           {description || t("dashboardGeneral.recentOrders.noDescription")}
@@ -326,7 +341,9 @@ const RecentOrderItem = ({
                 <DialogFooter>
                   <Button
                     onClick={() => setIsDescriptionOpen(false)}
-                    aria-label={t("common.actions.close", { defaultValue: "Fechar" })}
+                    aria-label={t("common.actions.close", {
+                      defaultValue: "Fechar",
+                    })}
                   >
                     {t("common.actions.close") || "Fechar"}
                   </Button>
@@ -357,7 +374,7 @@ const RecentOrderItem = ({
           </span>
         </div>
       </div>
-      <div className="text-right shrink-0">
+      <div className="text-right shrink-0 w-full sm:w-auto border-t border-border/40 pt-2 sm:border-0 sm:pt-0">
         <p className="text-sm font-semibold text-foreground">
           {order.totalValue
             ? currencyFormat.format(Number(order.totalValue))
@@ -382,8 +399,9 @@ export default function Dashboard() {
   const [selectedService, setSelectedService] =
     useState<ExtendedService | null>(null);
   const [dateRange, setDateRange] = useState<DateRange | undefined>(() =>
-    createDefaultDateRange()
+    createDefaultDateRange(),
   );
+  const isMobile = useIsMobile();
 
   const serviceFilters = useMemo(() => {
     const start = dateRange?.from ?? null;
@@ -396,13 +414,13 @@ export default function Dashboard() {
   }, [dateRange]);
 
   const hasActivePeriodFilter = Boolean(
-    serviceFilters?.startDate || serviceFilters?.endDate
+    serviceFilters?.startDate || serviceFilters?.endDate,
   );
 
   const selectedRangeLabel = useMemo(() => {
     if (dateRange?.from && dateRange?.to) {
       return `${formatDateForLabel(dateRange.from)} - ${formatDateForLabel(
-        dateRange.to
+        dateRange.to,
       )}`;
     }
     if (dateRange?.from) {
@@ -423,25 +441,24 @@ export default function Dashboard() {
     perPage: 50,
     filters: serviceFilters,
   });
-  const clientsForMapQuery = useClients({ page: 1, perPage: 200 });
-  const carsForMapQuery = useCars({ page: 1, perPage: 200 });
+  const {
+    clientMap,
+    isLoading: clientsLoading,
+  } = useClients({ page: 1, perPage: 200 });
+  const {
+    carMap,
+    isLoading: carsLoading,
+  } = useCars({ page: 1, perPage: 200 });
 
-  const services = (servicesQuery.data?.list ?? []) as ExtendedService[];
-  const budgets = (budgetsQuery.data?.list ?? []) as Budget[];
-  const clientMap = useMemo(() => {
-    const entries =
-      clientsForMapQuery.data?.list?.map((client) => [
-        client.id,
-        client.nome,
-      ]) ?? [];
-    return new Map(entries);
-  }, [clientsForMapQuery.data]);
-
-  const carMap = useMemo(() => {
-    const entries =
-      carsForMapQuery.data?.list?.map((car) => [car.id, car]) ?? [];
-    return new Map(entries);
-  }, [carsForMapQuery.data]);
+  const services = useMemo<ExtendedService[]>(
+    () =>
+      ((servicesQuery.data?.list as ExtendedService[] | undefined) ?? []).slice(),
+    [servicesQuery.data?.list],
+  );
+  const budgets = useMemo<Budget[]>(
+    () => ((budgetsQuery.data?.list as Budget[] | undefined) ?? []).slice(),
+    [budgetsQuery.data?.list],
+  );
 
   const visibleServices = useMemo(() => {
     if (isOwner) return services;
@@ -449,7 +466,7 @@ export default function Dashboard() {
     if (!mechanicId) return [];
     return services.filter(
       (service) =>
-        service.userId === mechanicId || service.assignedToId === mechanicId
+        service.userId === mechanicId || service.assignedToId === mechanicId,
     );
   }, [isOwner, services, user?.id]);
 
@@ -469,13 +486,13 @@ export default function Dashboard() {
           return bDate - aDate;
         })
         .slice(0, 5),
-    [visibleServices]
+    [visibleServices],
   );
 
   const openOrders =
     visibleServices.filter(
       (service) =>
-        service.status === "Pendente" || service.status === "Em andamento"
+        service.status === "Pendente" || service.status === "Em andamento",
     ).length ?? 0;
 
   const totalRevenue =
@@ -485,10 +502,10 @@ export default function Dashboard() {
     }, 0) ?? 0;
 
   const clientIds = new Set(
-    visibleServices.map((service) => service.clientId).filter(Boolean)
+    visibleServices.map((service) => service.clientId).filter(Boolean),
   );
   const vehicleIds = new Set(
-    visibleServices.map((service) => service.carId).filter(Boolean)
+    visibleServices.map((service) => service.carId).filter(Boolean),
   );
 
   const stats = [
@@ -518,7 +535,7 @@ export default function Dashboard() {
         : t("dashboardGeneral.stats.vehiclesUser"),
       value: String(vehicleIds.size),
       change: t("dashboardGeneral.stats.vehiclesChange"),
-      icon: Car,
+      icon: CarIcon,
       color: "text-success",
       bgColor: "bg-success-light",
     },
@@ -542,17 +559,17 @@ export default function Dashboard() {
     return updatedAt ? isSameDay(updatedAt, new Date()) : false;
   });
   const pendingServices = visibleServices.filter(
-    (service) => service.status === "Pendente"
+    (service) => service.status === "Pendente",
   );
   const pendingBudgets = visibleBudgets.filter(
-    (budget) => budget.status === "aberto"
+    (budget) => budget.status === "aberto",
   );
   const slowBudgets = visibleBudgets.filter(
     (budget) =>
-      budget.status === "aberto" && isOlderThanDays(budget.createdAt, 5)
+      budget.status === "aberto" && isOlderThanDays(budget.createdAt, 5),
   );
   const problemOrders = visibleServices.filter(
-    (service) => service.status === "Cancelado"
+    (service) => service.status === "Cancelado",
   );
 
   const alertItems = isOwner
@@ -629,15 +646,15 @@ export default function Dashboard() {
 
   const loadingDashboard =
     servicesQuery.isLoading ||
-    clientsForMapQuery.isLoading ||
-    carsForMapQuery.isLoading ||
+    clientsLoading ||
+    carsLoading ||
     budgetsQuery.isLoading;
 
   return (
     <div className="page-container">
       <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <h1 className="heading-accent text-3xl font-bold text-foreground mb-2">
+          <h1 className="heading-accent text-2xl md:text-3xl font-bold text-foreground mb-2">
             {t("dashboardGeneral.title")}
           </h1>
           <p className="text-muted-foreground">
@@ -656,12 +673,12 @@ export default function Dashboard() {
                   variant="outline"
                   aria-label={t("dashboardGeneral.periodFilter.label")}
                   className={cn(
-                    "flex min-w-[250px] items-center justify-start gap-2 text-left font-normal",
-                    !hasActivePeriodFilter && "text-muted-foreground"
+                    "flex w-full md:w-auto md:min-w-[250px] items-center justify-start gap-2 text-left font-normal h-auto py-2 whitespace-normal",
+                    !hasActivePeriodFilter && "text-muted-foreground",
                   )}
                 >
-                  <CalendarRange className="h-4 w-4 text-primary" />
-                  <span>{selectedRangeLabel}</span>
+                  <CalendarRange className="h-4 w-4 text-primary shrink-0" />
+                  <span className="break-words">{selectedRangeLabel}</span>
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="end">
@@ -670,7 +687,7 @@ export default function Dashboard() {
                   mode="range"
                   selected={dateRange}
                   onSelect={setDateRange}
-                  numberOfMonths={2}
+                  numberOfMonths={isMobile ? 1 : 2}
                   defaultMonth={dateRange?.from ?? new Date()}
                   locale={ptBR}
                 />
@@ -710,21 +727,23 @@ export default function Dashboard() {
               key={stat.title}
               className="border-border shadow-md hover:shadow-lg transition-shadow"
             >
-              <CardContent className="p-6">
+              <CardContent className="p-4 md:p-6">
                 <div className="flex items-start justify-between">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--primary))] mb-1">
                       {stat.title}
                     </p>
-                    <h3 className="text-3xl font-bold text-foreground mb-2">
+                    <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
                       {stat.value}
                     </h3>
                     <p className="text-xs text-muted-foreground">
                       {stat.change}
                     </p>
                   </div>
-                  <div className={`p-3 rounded-lg ${stat.bgColor}`}>
-                    <stat.icon className={`w-6 h-6 ${stat.color}`} />
+                  <div className={`p-2 md:p-3 rounded-lg ${stat.bgColor}`}>
+                    <stat.icon
+                      className={`w-5 h-5 md:w-6 md:h-6 ${stat.color}`}
+                    />
                   </div>
                 </div>
               </CardContent>
@@ -808,9 +827,12 @@ export default function Dashboard() {
                               setDetailDialogOpen(true);
                             }}
                             className="flex w-full items-center justify-between text-xs text-muted-foreground rounded-md border border-transparent hover:border-border/80 hover:bg-background px-2 py-2 transition-colors"
-                            aria-label={t("dashboardGeneral.todayTasks.openDetails", {
-                              defaultValue: "Abrir detalhes do serviço",
-                            })}
+                            aria-label={t(
+                              "dashboardGeneral.todayTasks.openDetails",
+                              {
+                                defaultValue: "Abrir detalhes do serviço",
+                              },
+                            )}
                           >
                             <div className="flex items-center gap-2">
                               <ListChecks className="w-3 h-3 text-primary" />
@@ -820,12 +842,16 @@ export default function Dashboard() {
                                     #{task.id.substring(0, 8)}
                                   </span>
                                 </TooltipTrigger>
-                                <TooltipContent side="top">#{task.id}</TooltipContent>
+                                <TooltipContent side="top">
+                                  #{task.id}
+                                </TooltipContent>
                               </Tooltip>
                             </div>
                             <span className="truncate">
                               {clientMap.get(task.clientId) ??
-                                t("dashboardGeneral.recentOrders.unknownClient")}
+                                t(
+                                  "dashboardGeneral.recentOrders.unknownClient",
+                                )}
                             </span>
                           </button>
                         </TooltipTrigger>
@@ -955,7 +981,7 @@ export default function Dashboard() {
                       <Badge
                         className={cn(
                           "gap-1 text-xs font-semibold border border-transparent",
-                          status.className
+                          status.className,
                         )}
                       >
                         <StatusIcon
@@ -997,7 +1023,7 @@ export default function Dashboard() {
                       </p>
                       <p className="font-semibold text-foreground">
                         {currencyFormat.format(
-                          Number(selectedService.totalValue) || 0
+                          Number(selectedService.totalValue) || 0,
                         )}
                       </p>
                     </div>
@@ -1010,7 +1036,7 @@ export default function Dashboard() {
                       <p className="font-semibold text-foreground">
                         {selectedService.createdAt
                           ? new Date(
-                              selectedService.createdAt
+                              selectedService.createdAt,
                             ).toLocaleDateString("pt-BR")
                           : t("dashboardGeneral.recentOrders.noForecast")}
                       </p>
@@ -1069,7 +1095,7 @@ export default function Dashboard() {
                       <p className="text-sm text-foreground">
                         {t("dashboardGeneral.detailModal.budgetValue", {
                           value: currencyFormat.format(
-                            Number(budget.amount) || 0
+                            Number(budget.amount) || 0,
                           ),
                         })}
                       </p>

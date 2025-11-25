@@ -25,7 +25,10 @@ import {
   useCallback,
   useMemo,
 } from "react";
-import { login as loginRequest, logout as logoutRequest } from "@/services/gearbox";
+import {
+  login as loginRequest,
+  logout as logoutRequest,
+} from "@/services/gearbox";
 import type { Role } from "@/types/api";
 import { UNAUTHORIZED_EVENT } from "@/lib/api";
 import { queryClient } from "@/lib/queryClient";
@@ -90,7 +93,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw new Error(
         error instanceof Error
           ? error.message
-          : "Erro ao fazer login. Verifique suas credenciais."
+          : "Erro ao fazer login. Verifique suas credenciais.",
       );
     }
   }, []);
@@ -116,7 +119,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       logout();
     };
     window.addEventListener(UNAUTHORIZED_EVENT, handleUnauthorized);
-    return () => window.removeEventListener(UNAUTHORIZED_EVENT, handleUnauthorized);
+    return () =>
+      window.removeEventListener(UNAUTHORIZED_EVENT, handleUnauthorized);
   }, [logout]);
 
   const isOwner = user?.role === "dono";
@@ -124,7 +128,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo(
     () => ({ user, token, login, logout, isOwner, isAuthenticated }),
-    [user, token, login, logout, isOwner, isAuthenticated]
+    [user, token, login, logout, isOwner, isAuthenticated],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

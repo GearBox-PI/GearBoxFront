@@ -48,8 +48,8 @@
     "ownerPanel": "Painel do Administrador"
   },
   "auth": {
-    "welcomeTitle": "Bem-vindo ao Gear Box",
-    "welcomeSubtitle": "Faça login para gerenciar ordens, clientes e veículos",
+    "welcomeTitle": "Gear Box",
+    "welcomeSubtitle": "Gerencie orçamentos, serviços, clientes e funcionários",
     "email": "E-mail",
     "password": "Senha",
     "loginSuccessTitle": "Login realizado com sucesso",
@@ -214,8 +214,8 @@
     "defaultSubtitle": "Visão consolidada"
   },
   "login": {
-    "title": "Bem-vindo ao Gear Box",
-    "subtitle": "Faça login para gerenciar ordens, clientes e veículos",
+    "title": "Gear Box",
+    "subtitle": "Gerencie orçamentos, serviços, clientes e funcionários",
     "email": "E-mail",
     "password": "Senha",
     "placeholderEmail": "seu@email.com",

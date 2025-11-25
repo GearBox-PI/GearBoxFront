@@ -16,7 +16,7 @@
  * Caso contrário, veja <https://www.gnu.org/licenses/>.
  */
 
-export type Role = 'dono' | 'mecanico';
+export type Role = "dono" | "mecanico";
 
 export interface ApiUser {
   id: string;
@@ -76,7 +76,11 @@ export interface Car {
   updatedAt?: string;
 }
 
-export type ServiceStatus = 'Pendente' | 'Em andamento' | 'Concluído' | 'Cancelado';
+export type ServiceStatus =
+  | "Pendente"
+  | "Em andamento"
+  | "Concluído"
+  | "Cancelado";
 
 export interface Service {
   id: string;
@@ -108,7 +112,7 @@ export interface Service {
   priority?: string | null;
 }
 
-export type BudgetStatus = 'aberto' | 'aceito' | 'recusado' | 'cancelado';
+export type BudgetStatus = "aberto" | "aceito" | "recusado" | "cancelado";
 
 export interface Budget {
   id: string;

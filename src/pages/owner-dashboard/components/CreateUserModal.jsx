@@ -65,8 +65,8 @@ export function CreateUserModal({
   const submitLabel = loading
     ? "Salvando..."
     : mode === "edit"
-    ? "Salvar alterações"
-    : "Criar usuário";
+      ? "Salvar alterações"
+      : "Criar usuário";
   const passwordRequired = mode === "create";
 
   const resetForm = () => setForm({ ...DEFAULT_VALUES, ...initialData });
@@ -105,7 +105,7 @@ export function CreateUserModal({
     setForm((currentForm) =>
       areFormValuesEqual(nextFormValues, currentForm)
         ? currentForm
-        : nextFormValues
+        : nextFormValues,
     );
   }, [initialData]);
 

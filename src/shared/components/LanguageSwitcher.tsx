@@ -61,7 +61,7 @@ export function LanguageSwitcher({
           collapsed
             ? "justify-center px-0 border-none h-10 w-10 mx-auto [&>svg]:hidden"
             : "justify-between px-3",
-          className
+          className,
         )}
         style={{
           color: "var(--sidebar-text)",
