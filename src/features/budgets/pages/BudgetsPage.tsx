@@ -225,16 +225,16 @@ export default function BudgetsPage() {
   const confirmDialogSettledRef = useRef(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { toast } = useToast();
-  const { t } = useTranslation();
-  const normalizedSearch = searchTerm.trim();
-  const [optimisticStatuses, setOptimisticStatuses] = useState<
-    Record<string, BudgetStatus | undefined>
-  >({});
-  const [lastApprovedService, setLastApprovedService] = useState<{
-    budgetId: string;
-    serviceId: string;
-  } | null>(null);
+ const { toast } = useToast();
+ const { t } = useTranslation();
+ const normalizedSearch = searchTerm.trim();
+ const [optimisticStatuses, setOptimisticStatuses] = useState<
+   Record<string, BudgetStatus | undefined>
+ >({});
+ const [lastApprovedService, setLastApprovedService] = useState<{
+   budgetId: string;
+   serviceId: string;
+ } | null>(null);
 
   const setOptimisticStatus = useCallback(
     (budgetId: string, status?: BudgetStatus) => {
@@ -258,15 +258,15 @@ export default function BudgetsPage() {
     }
   }, [budgetsQuery.data]);
 
-  const budgetsQuery = useBudgets({
-    page,
-    perPage: 10,
-    search: normalizedSearch || undefined,
-    filters: {
-      startDate: createdFrom || null,
-      endDate: createdTo || null,
-    },
-  });
+ const budgetsQuery = useBudgets({
+   page,
+   perPage: 10,
+   search: normalizedSearch || undefined,
+   filters: {
+     startDate: createdFrom || null,
+     endDate: createdTo || null,
+   },
+ });
   const clientsQuery = useClients({ page: 1, perPage: 200 });
   const carsQuery = useCars({ page: 1, perPage: 200 });
 
