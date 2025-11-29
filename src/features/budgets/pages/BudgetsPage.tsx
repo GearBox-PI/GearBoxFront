@@ -39,6 +39,7 @@ import {
   rejectBudget,
 } from "@/services/gearbox";
 import type { ApiUser, Budget, BudgetStatus, Car, Client } from "@/types/api";
+import { ApiError } from "@/lib/api";
 import { BudgetFormDialog } from "@/features/budgets/components/BudgetFormDialog";
 import { Input } from "@/components/ui/input";
 import {
@@ -81,6 +82,32 @@ const EMPTY_CLIENTS: Client[] = [];
 const EMPTY_CARS: Car[] = [];
 const EMPTY_USERS: ApiUser[] = [];
 const EMPTY_BUDGETS: Budget[] = [];
+
+const extractApiErrorMessage = (error: unknown) => {
+  if (error instanceof ApiError) {
+    const payload = error.payload as
+      | { error?: string; message?: string; errors?: Array<{ message?: string }> }
+      | undefined;
+    if (payload?.errors && payload.errors.length > 0) {
+      const message = payload.errors[0]?.message;
+      if (message) return message;
+    }
+    if (typeof payload?.error === "string") return payload.error;
+    if (typeof payload?.message === "string") return payload.message;
+    return error.message;
+  }
+  if (error instanceof Error) return error.message;
+  return null;
+};
+
+const normalizeErrorMessage = (
+  message: string | null,
+  fallback: string,
+) => {
+  if (!message) return fallback;
+  if (/\b(select|update|delete|insert)\b/i.test(message)) return fallback;
+  return message;
+};
 
 const statusConfig = (
   t: (key: string) => string,
@@ -210,6 +237,10 @@ export default function BudgetsPage() {
     page,
     perPage: 10,
     search: normalizedSearch || undefined,
+    filters: {
+      startDate: createdFrom || null,
+      endDate: createdTo || null,
+    },
   });
   const clientsQuery = useClients({ page: 1, perPage: 200 });
   const carsQuery = useCars({ page: 1, perPage: 200 });
