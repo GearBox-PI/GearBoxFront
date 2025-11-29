@@ -309,12 +309,27 @@ export default function BudgetsPage() {
   const approveBudgetMutation = useMutation({
     mutationFn: ({ id, assignedToId }: { id: string; assignedToId: string }) =>
       acceptBudget(token!, id, { assignedToId, confirm: true }),
+    onMutate: async ({ id }) => {
+      setOptimisticStatus(id, "aceito");
+      return { id };
+    },
+    onError: (error: unknown, _vars, context) => {
+      if (context?.id) {
+        setOptimisticStatus(context.id, undefined);
+      }
+      const description = normalizeErrorMessage(
+        extractApiErrorMessage(error),
+        t("budgets.toasts.defaultError"),
+      );
+      toast({
+        title: t("budgets.toasts.approveError"),
+        description,
+        variant: "destructive",
+      });
+    },
     onSuccess: ({ service }, variables) => {
       queryClient.invalidateQueries({ queryKey: gearboxKeys.budgets.all });
       queryClient.invalidateQueries({ queryKey: gearboxKeys.services.all });
-      if (variables?.id) {
-        setOptimisticStatus(variables.id, "aceito");
-      }
       setLastApprovedService({
         budgetId: service.budgetId ?? "",
         serviceId: service.id,
@@ -330,20 +345,6 @@ export default function BudgetsPage() {
             {t("navigation.orders")}
           </ToastAction>
         ),
-      });
-    },
-    onError: (error: unknown, variables) => {
-      if (variables?.id) {
-        setOptimisticStatus(variables.id, undefined);
-      }
-      const description = normalizeErrorMessage(
-        extractApiErrorMessage(error),
-        t("budgets.toasts.defaultError"),
-      );
-      toast({
-        title: t("budgets.toasts.approveError"),
-        description,
-        variant: "destructive",
       });
     },
   });
@@ -561,27 +562,11 @@ export default function BudgetsPage() {
       return;
     }
 
-    try {
-      setOptimisticStatus(budgetToApprove.id, "aceito");
-      await approveBudgetMutation.mutateAsync({
-        id: budgetToApprove.id,
-        assignedToId,
-      });
-      closeApprovalDialog();
-    } catch (error) {
-      setOptimisticStatus(budgetToApprove.id, undefined);
-      if (error instanceof ApiError || error instanceof Error) {
-        const description = normalizeErrorMessage(
-          extractApiErrorMessage(error),
-          t("budgets.toasts.defaultError"),
-        );
-        toast({
-          title: t("budgets.toasts.approveError"),
-          description,
-          variant: "destructive",
-        });
-      }
-    }
+    closeApprovalDialog();
+    approveBudgetMutation.mutate({
+      id: budgetToApprove.id,
+      assignedToId,
+    });
   };
 
   const handleApproveBudget = async (budget: Budget) => {
@@ -597,26 +582,10 @@ export default function BudgetsPage() {
       });
       return;
     }
-    try {
-      setOptimisticStatus(budget.id, "aceito");
-      await approveBudgetMutation.mutateAsync({
-        id: budget.id,
-        assignedToId: user.id,
-      });
-    } catch (error) {
-      setOptimisticStatus(budget.id, undefined);
-      if (error instanceof ApiError || error instanceof Error) {
-        const description = normalizeErrorMessage(
-          extractApiErrorMessage(error),
-          t("budgets.toasts.defaultError"),
-        );
-        toast({
-          title: t("budgets.toasts.approveError"),
-          description,
-          variant: "destructive",
-        });
-      }
-    }
+    approveBudgetMutation.mutate({
+      id: budget.id,
+      assignedToId: user.id,
+    });
   };
 
   const handleDenyBudget = async (id: string) => {
