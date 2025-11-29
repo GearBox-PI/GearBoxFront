@@ -103,6 +103,12 @@ export async function apiRequest<T>(
       const record = payload as Record<string, unknown>;
       if (typeof record.error === "string") return record.error;
       if (typeof record.message === "string") return record.message;
+      if (Array.isArray(record.errors) && record.errors.length > 0) {
+        const firstError = record.errors[0];
+        if (firstError && typeof firstError.message === "string") {
+          return firstError.message;
+        }
+      }
     }
     return null;
   };

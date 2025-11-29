@@ -62,7 +62,23 @@ export default function Login() {
         error instanceof Error ? error.message : t("login.errorDesc");
 
       if (error instanceof ApiError) {
-        if (error.status === 401) {
+        const errorsPayload =
+          error.payload && typeof error.payload === "object"
+            ? ((error.payload as Record<string, unknown>).errors as
+                | Array<{ message?: string; code?: string }>
+                | undefined)
+            : undefined;
+        const invalidCredentials =
+          error.status === 401 ||
+          ((error.status === 400 || error.status === 422) &&
+            Array.isArray(errorsPayload) &&
+            errorsPayload.some(
+              (item) =>
+                item?.code === "E_INVALID_CREDENTIALS" ||
+                item?.message?.toLowerCase().includes("invalid credential"),
+            ));
+
+        if (invalidCredentials) {
           title = t("login.errors.invalidCredentialsTitle");
           description = t("login.errors.invalidCredentialsDescription");
         } else if (error.isNetworkError || error.status === 0) {
