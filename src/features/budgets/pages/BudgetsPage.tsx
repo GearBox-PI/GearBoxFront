@@ -252,12 +252,6 @@ export default function BudgetsPage() {
     [],
   );
 
-  useEffect(() => {
-    if (budgetsQuery.data) {
-      setOptimisticStatuses({});
-    }
-  }, [budgetsQuery.data]);
-
  const budgetsQuery = useBudgets({
    page,
    perPage: 10,
@@ -267,6 +261,12 @@ export default function BudgetsPage() {
      endDate: createdTo || null,
    },
  });
+
+  useEffect(() => {
+    if (budgetsQuery.data) {
+      setOptimisticStatuses({});
+    }
+  }, [budgetsQuery.data]);
   const clientsQuery = useClients({ page: 1, perPage: 200 });
   const carsQuery = useCars({ page: 1, perPage: 200 });
 
