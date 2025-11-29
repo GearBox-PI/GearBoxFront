@@ -49,9 +49,14 @@ type BudgetFormValues = {
   prazoEstimadoDias: string;
 };
 
+type BudgetInitialValues = Partial<BudgetFormValues> & {
+  amount?: string | number | null;
+  prazoEstimadoDias?: string | number | null;
+};
+
 type BudgetFormDialogProps = {
   mode?: "create" | "edit";
-  initialValues?: Partial<BudgetFormValues>;
+  initialValues?: BudgetInitialValues;
   clients: Client[];
   cars: Car[];
   triggerLabel?: string;
@@ -324,22 +329,23 @@ export function BudgetFormDialog({
 }
 
 function normalizeInitialValues(
-  initialValues?: Partial<BudgetFormValues>,
+  initialValues?: BudgetInitialValues,
 ): BudgetFormValues {
   if (!initialValues) return { ...DEFAULT_VALUES };
+  const estimatedDays = initialValues.prazoEstimadoDias;
+  const amountValue = initialValues.amount;
   return {
     clientId: initialValues.clientId ?? DEFAULT_VALUES.clientId,
     carId: initialValues.carId ?? DEFAULT_VALUES.carId,
     description: initialValues.description ?? DEFAULT_VALUES.description,
     amount:
-      typeof initialValues.amount === "number"
-        ? String(initialValues.amount)
-        : (initialValues.amount ?? DEFAULT_VALUES.amount),
+      typeof amountValue === "number"
+        ? String(amountValue)
+        : (amountValue ?? DEFAULT_VALUES.amount),
     prazoEstimadoDias:
-      typeof (initialValues as any).prazoEstimadoDias === "number"
-        ? String((initialValues as any).prazoEstimadoDias)
-        : ((initialValues as any).prazoEstimadoDias ??
-          DEFAULT_VALUES.prazoEstimadoDias),
+      typeof estimatedDays === "number"
+        ? String(estimatedDays)
+        : (estimatedDays ?? DEFAULT_VALUES.prazoEstimadoDias),
   };
 }
 

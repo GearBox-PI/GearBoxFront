@@ -441,18 +441,17 @@ export default function Dashboard() {
     perPage: 50,
     filters: serviceFilters,
   });
-  const {
-    clientMap,
-    isLoading: clientsLoading,
-  } = useClients({ page: 1, perPage: 200 });
-  const {
-    carMap,
-    isLoading: carsLoading,
-  } = useCars({ page: 1, perPage: 200 });
+  const { clientMap, isLoading: clientsLoading } = useClients({
+    page: 1,
+    perPage: 200,
+  });
+  const { carMap, isLoading: carsLoading } = useCars({ page: 1, perPage: 200 });
 
   const services = useMemo<ExtendedService[]>(
     () =>
-      ((servicesQuery.data?.list as ExtendedService[] | undefined) ?? []).slice(),
+      (
+        (servicesQuery.data?.list as ExtendedService[] | undefined) ?? []
+      ).slice(),
     [servicesQuery.data?.list],
   );
   const budgets = useMemo<Budget[]>(

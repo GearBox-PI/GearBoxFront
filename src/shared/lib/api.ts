@@ -86,11 +86,18 @@ export async function apiRequest<T>(
 
   const responseBody = await parseJsonSafe(response);
 
+  const extractErrorMessage = (payload: unknown): string | null => {
+    if (payload && typeof payload === "object") {
+      const record = payload as Record<string, unknown>;
+      if (typeof record.error === "string") return record.error;
+      if (typeof record.message === "string") return record.message;
+    }
+    return null;
+  };
+
   if (!response.ok) {
     const error = new ApiError(
-      (responseBody as any)?.error ||
-        (responseBody as any)?.message ||
-        "Erro ao comunicar com a API",
+      extractErrorMessage(responseBody) || "Erro ao comunicar com a API",
     );
     error.status = response.status;
     error.payload = responseBody;

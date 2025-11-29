@@ -54,18 +54,41 @@ const AUTH_USER_KEY = "auth_user";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+function getStoredUser(): User | null {
+  if (typeof window === "undefined") return null;
+  const stored = window.localStorage.getItem(AUTH_USER_KEY);
+  if (!stored) return null;
+  try {
+    return JSON.parse(stored) as User;
+  } catch (error) {
+    console.warn("Não foi possível carregar o usuário armazenado", error);
+    return null;
+  }
+}
+
+function getStoredToken(): string | null {
+  if (typeof window === "undefined") return null;
+  return window.localStorage.getItem(AUTH_TOKEN_KEY);
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(() => getStoredUser());
+  const [token, setToken] = useState<string | null>(() => getStoredToken());
 
   useEffect(() => {
-    const storedToken = localStorage.getItem(AUTH_TOKEN_KEY);
-    const storedUser = localStorage.getItem(AUTH_USER_KEY);
-
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
-    }
+    if (typeof window === "undefined") return;
+    const handleStorage = (event: StorageEvent) => {
+      if (
+        event.key === AUTH_TOKEN_KEY ||
+        event.key === AUTH_USER_KEY ||
+        event.key === null
+      ) {
+        setUser(getStoredUser());
+        setToken(getStoredToken());
+      }
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {

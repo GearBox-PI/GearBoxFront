@@ -358,11 +358,7 @@ function MechanicStatusButton({
             >
               Cancelar
             </Button>
-            <Button
-              type="button"
-              disabled={isPending}
-              onClick={handleActivate}
-            >
+            <Button type="button" disabled={isPending} onClick={handleActivate}>
               {isPending ? "Processando..." : "Confirmar reativação"}
             </Button>
           </DialogFooter>

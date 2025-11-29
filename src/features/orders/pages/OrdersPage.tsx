@@ -266,7 +266,10 @@ export default function Ordens() {
     closeStatusDialog();
   };
 
-  const services = servicesQuery.data?.list ?? [];
+  const services = useMemo(
+    () => servicesQuery.data?.list ?? [],
+    [servicesQuery.data],
+  );
   const getDateIfValid = (value?: string | null) => {
     if (!value) return null;
     const parsed = new Date(value);
@@ -276,8 +279,8 @@ export default function Ordens() {
 
   const getDataPrevista = (service: (typeof services)[number]) => {
     const date =
-      getDateIfValid((service as any).dataPrevista) ??
-      getDateIfValid((service as any).forecastDate) ??
+      getDateIfValid(service.dataPrevista ?? undefined) ??
+      getDateIfValid(service.forecastDate ?? undefined) ??
       null;
     if (date) return date;
     if (service.prazoEstimadoDias && service.createdAt) {
@@ -911,7 +914,7 @@ export default function Ordens() {
                 updateStatusMutation.mutate({
                   id: extendTargetId,
                   status: currentService.status,
-                  ...({ dataPrevista: newDate.toISOString() } as any),
+                  dataPrevista: newDate.toISOString(),
                 });
                 setExtendDialogOpen(false);
                 setExtendDays("");

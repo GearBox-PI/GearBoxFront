@@ -263,3 +263,24 @@ export function createCar(
 ) {
   return apiRequest<Car>("/cars", { method: "POST", body: payload, token });
 }
+
+export function deleteCar(token: string, id: string) {
+  return apiRequest<void>(`/cars/${id}`, { method: "DELETE", token });
+}
+
+export function updateCar(
+  token: string,
+  id: string,
+  payload: Partial<{
+    placa: string;
+    marca: string;
+    modelo: string;
+    ano: number;
+  }>,
+) {
+  return apiRequest<Car>(`/cars/${id}`, {
+    method: "PUT",
+    body: payload,
+    token,
+  });
+}

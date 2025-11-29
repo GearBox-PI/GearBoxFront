@@ -55,7 +55,11 @@ export function useBudgets({
     endDate: filters?.endDate ?? undefined,
   };
 
-  return useQuery<PaginatedResponse<Budget>, Error, PaginatedListResult<Budget>>({
+  return useQuery<
+    PaginatedResponse<Budget>,
+    Error,
+    PaginatedListResult<Budget>
+  >({
     queryKey: gearboxKeys.budgets.list(queryParams),
     queryFn: () => listBudgets(token!, queryParams),
     enabled: Boolean(token) && enabled,

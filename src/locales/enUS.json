@@ -361,7 +361,24 @@
       "empty": "No clients found."
     },
     "actions": {
-      "addCar": "Add car"
+      "addCar": "Add car",
+      "removeCar": "Remove car",
+      "deleting": "Deleting..."
+    },
+    "confirmations": {
+      "clientDeleteTitle": "Remove client",
+      "clientDeleteDescription": "This action deletes {{name}} and all linked vehicles. Do you want to continue?",
+      "carDeleteTitle": "Remove vehicle",
+      "carDeleteDescription": "Do you want to remove {{car}} (plate {{plate}}) from client {{client}}?"
+    },
+    "toasts": {
+      "clientRemovedTitle": "Client removed",
+      "clientRemovedDescription": "{{name}} was deleted successfully.",
+      "clientRemovedError": "Unable to remove the client",
+      "carRemovedTitle": "Vehicle removed",
+      "carRemovedDescription": "{{car}} was unlinked from the client.",
+      "carRemovedError": "Unable to remove the vehicle",
+      "defaultError": "Please try again."
     }
   },
   "vehicles": {
@@ -374,8 +391,28 @@
       "brand": "Brand",
       "year": "Year",
       "client": "Client",
+      "createdAt": "Created at",
       "actions": "Actions",
       "empty": "No vehicles found."
+    },
+    "actions": {
+      "openEdit": "Edit vehicle",
+      "delete": "Delete vehicle",
+      "updating": "Updating...",
+      "deleting": "Deleting..."
+    },
+    "confirmations": {
+      "deleteTitle": "Remove vehicle",
+      "deleteDescription": "Do you want to remove {{model}} (plate {{plate}})? This action cannot be undone."
+    },
+    "toasts": {
+      "updatedTitle": "Vehicle updated",
+      "updatedDescription": "Information saved successfully.",
+      "updateError": "Unable to update the vehicle",
+      "deletedTitle": "Vehicle removed",
+      "deletedDescription": "The vehicle was deleted.",
+      "deleteError": "Unable to remove the vehicle",
+      "defaultError": "Please try again."
     }
   },
   "dashboardGeneral": {

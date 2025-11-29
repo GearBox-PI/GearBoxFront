@@ -45,6 +45,7 @@ import {
   updateClient,
   deleteClient,
   createCar,
+  deleteCar,
 } from "@/services/gearbox";
 import type { Client, Car as CarType } from "@/types/api";
 import { ClientFormDialog } from "@/features/clients/components/ClientFormDialog";
@@ -95,21 +96,25 @@ export default function ClientsPage() {
   });
 
   const deleteClientMutation = useMutation({
-    mutationFn: (id: string) => deleteClient(token!, id),
-    onSuccess: () => {
+    mutationFn: ({ id }: { id: string; name: string }) =>
+      deleteClient(token!, id),
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["clients"] });
+      queryClient.invalidateQueries({ queryKey: ["cars"] });
       toast({
-        title: t("common.actions.delete"),
-        description: t("common.empty.noData"),
+        title: t("clients.toasts.clientRemovedTitle"),
+        description: t("clients.toasts.clientRemovedDescription", {
+          name: variables?.name ?? "",
+        }),
       });
     },
     onError: (error: unknown) => {
       toast({
-        title: t("orders.toasts.updateError"),
+        title: t("clients.toasts.clientRemovedError"),
         description:
           error instanceof Error
             ? error.message
-            : t("budgets.toasts.defaultError"),
+            : t("clients.toasts.defaultError"),
         variant: "destructive",
       });
     },
@@ -125,6 +130,30 @@ export default function ClientsPage() {
     }) => createCar(token!, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cars"] });
+    },
+  });
+
+  const deleteCarMutation = useMutation({
+    mutationFn: ({ id }: { id: string; label: string }) =>
+      deleteCar(token!, id),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["cars"] });
+      toast({
+        title: t("clients.toasts.carRemovedTitle"),
+        description: t("clients.toasts.carRemovedDescription", {
+          car: variables?.label ?? "",
+        }),
+      });
+    },
+    onError: (error: unknown) => {
+      toast({
+        title: t("clients.toasts.carRemovedError"),
+        description:
+          error instanceof Error
+            ? error.message
+            : t("clients.toasts.defaultError"),
+        variant: "destructive",
+      });
     },
   });
 
@@ -166,8 +195,8 @@ export default function ClientsPage() {
     values: { nome: string; telefone: string; email?: string },
   ) => updateClientMutation.mutateAsync({ id, data: values });
 
-  const handleDeleteClient = (id: string) =>
-    deleteClientMutation.mutateAsync(id);
+  const handleDeleteClient = (id: string, name: string) =>
+    deleteClientMutation.mutateAsync({ id, name });
 
   const handleAddCar = (values: {
     clientId: string;
@@ -176,6 +205,9 @@ export default function ClientsPage() {
     modelo: string;
     ano: number;
   }) => createCarMutation.mutateAsync(values);
+
+  const handleDeleteCar = (id: string, label: string) =>
+    deleteCarMutation.mutateAsync({ id, label });
 
   return (
     <div className="page-container space-y-8">
@@ -250,7 +282,7 @@ export default function ClientsPage() {
                 ? new Date(client.updatedAt).toLocaleDateString("pt-BR")
                 : "—";
               const deleting =
-                deleteClientMutation.variables === client.id &&
+                deleteClientMutation.variables?.id === client.id &&
                 deleteClientMutation.isPending;
 
               return (
@@ -327,16 +359,76 @@ export default function ClientsPage() {
                         />
                       </div>
                       {clientCars.length > 0 ? (
-                        <div className="mt-3 flex flex-wrap gap-2">
-                          {clientCars.map((car) => (
-                            <Badge
-                              key={car.id}
-                              variant="outline"
-                              className="text-xs"
-                            >
-                              {car.placa} · {car.marca} {car.modelo}
-                            </Badge>
-                          ))}
+                        <div className="mt-3 flex flex-col gap-2">
+                          {clientCars.map((car) => {
+                            const carLabel = `${car.placa} · ${car.marca} ${car.modelo}`;
+                            const removingCar =
+                              deleteCarMutation.variables?.id === car.id &&
+                              deleteCarMutation.isPending;
+                            return (
+                              <div
+                                key={car.id}
+                                className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border/60 bg-background/70 px-3 py-2"
+                              >
+                                <Badge variant="outline" className="text-xs">
+                                  {carLabel}
+                                </Badge>
+                                {isOwner && (
+                                  <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                      <Button
+                                        size="icon"
+                                        variant="ghost"
+                                        className="text-destructive hover:text-destructive focus-visible:ring-destructive"
+                                        disabled={removingCar}
+                                      >
+                                        {removingCar ? (
+                                          <Loader2 className="h-4 w-4 animate-spin" />
+                                        ) : (
+                                          <Trash2 className="h-4 w-4" />
+                                        )}
+                                        <span className="sr-only">
+                                          {t("clients.actions.removeCar")}
+                                        </span>
+                                      </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                      <AlertDialogHeader>
+                                        <AlertDialogTitle>
+                                          {t(
+                                            "clients.confirmations.carDeleteTitle",
+                                          )}
+                                        </AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                          {t(
+                                            "clients.confirmations.carDeleteDescription",
+                                            {
+                                              car: `${car.marca} ${car.modelo}`,
+                                              plate: car.placa,
+                                              client: client.nome,
+                                            },
+                                          )}
+                                        </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter>
+                                        <AlertDialogCancel>
+                                          {t("common.actions.cancel")}
+                                        </AlertDialogCancel>
+                                        <AlertDialogAction
+                                          onClick={() =>
+                                            handleDeleteCar(car.id, carLabel)
+                                          }
+                                          className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                                        >
+                                          {t("common.actions.delete")}
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+                                )}
+                              </div>
+                            );
+                          })}
                         </div>
                       ) : (
                         <p className="mt-3 text-xs text-muted-foreground">
@@ -395,26 +487,34 @@ export default function ClientsPage() {
                               disabled={deleting}
                             >
                               <Trash2 className="mr-1.5 h-3.5 w-3.5" />
-                              {deleting ? "Excluindo..." : "Excluir"}
+                              {deleting
+                                ? t("clients.actions.deleting")
+                                : t("common.actions.delete")}
                             </Button>
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
                               <AlertDialogTitle>
-                                Remover cliente
+                                {t("clients.confirmations.clientDeleteTitle")}
                               </AlertDialogTitle>
                               <AlertDialogDescription>
-                                Esta ação remove {client.nome} e todos os
-                                veículos vinculados. Deseja continuar?
+                                {t(
+                                  "clients.confirmations.clientDeleteDescription",
+                                  { name: client.nome },
+                                )}
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                              <AlertDialogCancel>
+                                {t("common.actions.cancel")}
+                              </AlertDialogCancel>
                               <AlertDialogAction
-                                onClick={() => handleDeleteClient(client.id)}
+                                onClick={() =>
+                                  handleDeleteClient(client.id, client.nome)
+                                }
                                 className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
                               >
-                                Confirmar exclusão
+                                {t("common.actions.delete")}
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>

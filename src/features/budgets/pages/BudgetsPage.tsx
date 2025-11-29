@@ -411,6 +411,7 @@ export default function BudgetsPage() {
   }, [
     budgets,
     budgetsQuery.data,
+    isOwner,
     isBudgetOwnedByUser,
     searchTerm,
     clientMap,

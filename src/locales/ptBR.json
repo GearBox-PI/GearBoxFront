@@ -361,7 +361,24 @@
       "empty": "Nenhum cliente encontrado."
     },
     "actions": {
-      "addCar": "Adicionar carro"
+      "addCar": "Adicionar carro",
+      "removeCar": "Remover carro",
+      "deleting": "Excluindo..."
+    },
+    "confirmations": {
+      "clientDeleteTitle": "Remover cliente",
+      "clientDeleteDescription": "Esta ação remove {{name}} e todos os veículos vinculados. Deseja continuar?",
+      "carDeleteTitle": "Remover veículo",
+      "carDeleteDescription": "Deseja remover o veículo {{car}} (placa {{plate}}) do cliente {{client}}?"
+    },
+    "toasts": {
+      "clientRemovedTitle": "Cliente removido",
+      "clientRemovedDescription": "{{name}} foi excluído com sucesso.",
+      "clientRemovedError": "Não foi possível remover o cliente",
+      "carRemovedTitle": "Veículo removido",
+      "carRemovedDescription": "{{car}} foi desvinculado do cliente.",
+      "carRemovedError": "Não foi possível remover o veículo",
+      "defaultError": "Tente novamente."
     }
   },
   "vehicles": {
@@ -374,8 +391,28 @@
       "brand": "Marca",
       "year": "Ano",
       "client": "Cliente",
+      "createdAt": "Criado em",
       "actions": "Ações",
       "empty": "Nenhum veículo encontrado."
+    },
+    "actions": {
+      "openEdit": "Editar veículo",
+      "delete": "Excluir veículo",
+      "updating": "Atualizando...",
+      "deleting": "Excluindo..."
+    },
+    "confirmations": {
+      "deleteTitle": "Remover veículo",
+      "deleteDescription": "Deseja remover o veículo {{model}} (placa {{plate}})? Esta ação não poderá ser desfeita."
+    },
+    "toasts": {
+      "updatedTitle": "Veículo atualizado",
+      "updatedDescription": "As informações foram salvas com sucesso.",
+      "updateError": "Não foi possível atualizar o veículo",
+      "deletedTitle": "Veículo removido",
+      "deletedDescription": "O veículo foi excluído.",
+      "deleteError": "Não foi possível remover o veículo",
+      "defaultError": "Tente novamente."
     }
   },
   "dashboardGeneral": {

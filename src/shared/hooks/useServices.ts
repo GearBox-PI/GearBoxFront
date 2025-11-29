@@ -58,7 +58,11 @@ export function useServices({
     endDate: filters?.endDate ?? undefined,
   };
 
-  return useQuery<PaginatedResponse<Service>, Error, PaginatedListResult<Service>>({
+  return useQuery<
+    PaginatedResponse<Service>,
+    Error,
+    PaginatedListResult<Service>
+  >({
     queryKey: gearboxKeys.services.list(queryParams),
     queryFn: () => listServices(token!, queryParams),
     enabled: Boolean(token) && enabled,
