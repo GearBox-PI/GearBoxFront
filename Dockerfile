@@ -14,14 +14,12 @@ RUN npm run build
 # ---------- Runtime stage ----------
 FROM nginx:stable-alpine AS runner
 
-# Remove default config and add our SPA-aware configuration
-RUN rm /etc/nginx/conf.d/default.conf
-COPY nginx.conf /etc/nginx/templates/default.conf.template
+# Config simples de SPA
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-ENV PORT=80
-
-# Copy compiled assets from the builder image
+# Copia a build do Vite
 COPY --from=builder /app/dist /usr/share/nginx/html
 
 EXPOSE 80
+
 CMD ["nginx", "-g", "daemon off;"]
