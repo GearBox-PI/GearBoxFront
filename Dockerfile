@@ -21,8 +21,12 @@ ENV NGINX_ENTRYPOINT_WORKER_PROCESSES_AUTOTUNE=off
 # Remove a config padrão para usar o template com envsubst
 RUN rm /etc/nginx/conf.d/default.conf
 
-# Config principal para controlar os workers e incluir os sites
-COPY nginx.main.conf /etc/nginx/templates/nginx.conf.template
+# Template principal para controlar os workers e incluir os sites
+COPY nginx.main.conf.template /etc/nginx/main.conf.template
+
+# Script para gerar o nginx.conf antes das configs padrão do entrypoint
+COPY docker-entrypoint.d/05-main-conf.sh /docker-entrypoint.d/05-main-conf.sh
+RUN chmod +x /docker-entrypoint.d/05-main-conf.sh
 
 # Config simples de SPA (processada pelo entrypoint via envsubst)
 COPY nginx.conf /etc/nginx/templates/default.conf.template
